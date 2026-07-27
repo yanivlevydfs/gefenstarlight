@@ -226,6 +226,16 @@ export interface Media {
   alt?: string | null;
   caption?: string | null;
   credit?: string | null;
+  publicUrl?: string | null;
+  publicSizes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   sourceFile?: string | null;
   /**
    * Videos only — the still shown before playback starts.
@@ -718,6 +728,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   credit?: T;
+  publicUrl?: T;
+  publicSizes?: T;
   sourceFile?: T;
   poster?: T;
   updatedAt?: T;

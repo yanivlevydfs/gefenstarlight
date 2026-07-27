@@ -172,6 +172,23 @@ async function main() {
         data: { alt, sourceFile: filename },
         filePath,
       })
+
+      // Record the absolute CDN addresses now, while the storage plugin is
+      // active. The site reads these, so images keep working on a deployment
+      // that has not been given the Blob token.
+      if (doc.url?.startsWith('http')) {
+        const publicSizes: Record<string, string> = {}
+        for (const [name, variant] of Object.entries(doc.sizes ?? {})) {
+          const variantUrl = (variant as { url?: string | null } | undefined)?.url
+          if (variantUrl?.startsWith('http')) publicSizes[name] = variantUrl
+        }
+        await payload.update({
+          collection: 'media',
+          id: doc.id,
+          data: { publicUrl: doc.url, publicSizes },
+        })
+      }
+
       mediaIds.set(filename, doc.id)
       return doc.id
     } catch (error) {

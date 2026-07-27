@@ -9,6 +9,9 @@ type PayloadMedia = {
   mimeType?: string | null
   poster?: unknown
   sizes?: Record<string, PayloadSize | undefined>
+  /** Absolute CDN address recorded at import time. */
+  publicUrl?: string | null
+  publicSizes?: Record<string, string | null | undefined> | null
 }
 
 export type ResolvedMedia = {
@@ -29,14 +32,22 @@ export type SizeName = 'thumbnail' | 'card' | 'wide' | 'full'
 export function mediaUrl(value: unknown, size: SizeName = 'card'): ResolvedMedia | null {
   if (!value || typeof value !== 'object') return null
   const media = value as PayloadMedia
-  if (!media.url) return null
+
+  const source = media.publicUrl || media.url
+  if (!source) return null
 
   const isVideo = Boolean(media.mimeType?.startsWith('video/'))
   // Videos have no generated sizes — always use the original file.
   const chosen = isVideo ? undefined : media.sizes?.[size]
 
+  // Prefer the absolute CDN address captured at import time. Payload only
+  // produces those while its storage plugin is active, so relying on `url`
+  // alone leaves every image broken on a deployment without the Blob token.
+  const sized = isVideo ? undefined : media.publicSizes?.[size]
+  const url = sized || (media.publicUrl && !chosen?.url ? media.publicUrl : (chosen?.url ?? source))
+
   return {
-    url: chosen?.url ?? media.url,
+    url,
     alt: media.alt ?? '',
     caption: media.caption ?? undefined,
     width: chosen?.width ?? media.width ?? undefined,

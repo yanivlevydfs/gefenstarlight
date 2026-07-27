@@ -56,6 +56,21 @@ export const Media: CollectionConfig = {
       label: { he: 'קרדיט צילום', en: 'Photo credit' },
     },
     {
+      name: 'publicUrl',
+      type: 'text',
+      admin: { hidden: true },
+      label: { he: 'כתובת ציבורית', en: 'Public URL' },
+      // Absolute CDN address, recorded at import time. Payload only builds Blob
+      // URLs when its storage plugin is active, so a deployment missing the Blob
+      // token would otherwise serve image paths that resolve to nothing.
+    },
+    {
+      name: 'publicSizes',
+      type: 'json',
+      admin: { hidden: true },
+      label: { he: 'כתובות הגדלים', en: 'Sized URLs' },
+    },
+    {
       name: 'sourceFile',
       type: 'text',
       index: true,
