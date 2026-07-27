@@ -132,8 +132,18 @@ export default buildConfig({
       generateDescription: ({ doc }) => doc?.summary ?? doc?.excerpt ?? '',
     }),
     // In production media lives in Vercel Blob; locally it stays on disk.
+    //
+    // `disablePayloadAccessControl` makes Payload hand out the Blob CDN URL
+    // directly instead of proxying every image through /api/media/file. These
+    // are public photos, so the proxy bought nothing and cost a function
+    // invocation per image — and Next's image optimizer rejected those URLs.
     ...(blobToken
-      ? [vercelBlobStorage({ collections: { media: true }, token: blobToken })]
+      ? [
+          vercelBlobStorage({
+            collections: { media: { disablePayloadAccessControl: true } },
+            token: blobToken,
+          }),
+        ]
       : []),
   ],
 })
