@@ -1,5 +1,5 @@
 import { cache } from 'react'
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 
 import type { Locale } from '@/i18n/routing'
@@ -49,7 +49,7 @@ export const getNavigation = cache(async (locale: Locale) => {
 type ListArgs = {
   locale: Locale
   limit?: number
-  where?: Record<string, unknown>
+  where?: Where
   sort?: string
   depth?: number
 }
