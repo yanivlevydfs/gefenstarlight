@@ -61,6 +61,22 @@ const albumTitles: Record<string, { he: string; en: string }> = {
 /** Wix page keys that are chrome-only and should not become albums. */
 const skipAlbums = new Set(['תרומות', 'צור-קשר', 'donate', 'about-us', 'en', 'תקנון'])
 
+/**
+ * Payload identifies array rows by `id`. Writing an array in a second locale
+ * without those ids makes it drop the existing rows and create new ones, which
+ * silently discards the first locale's text. Carrying the ids across turns the
+ * second write into an update of the same rows.
+ */
+function withRowIds<T extends object>(
+  rows: T[],
+  existing: ({ id?: string | null } | undefined)[] | null | undefined,
+): (T & { id?: string })[] {
+  return rows.map((row, index) => {
+    const id = existing?.[index]?.id
+    return id ? { ...row, id } : row
+  })
+}
+
 function slugForAlbum(key: string): string {
   const map: Record<string, string> = {
     'גלריה': 'gallery',
@@ -386,19 +402,27 @@ async function main() {
     },
   })
 
+  const settingsHe = await payload.findGlobal({ slug: 'site-settings', locale: 'he', depth: 0 })
+
   await payload.updateGlobal({
     slug: 'site-settings',
     locale: 'en',
     data: {
       ...siteSettings.en,
       bank: { ...siteSettings.en.bank, ...siteSettings.bank },
-      phones: siteSettings.phones.map((p) => ({ number: p.number, label: p.en })),
-      donationTiers: donationTiers.map((tier) => ({
-        label: tier.en,
-        amount: tier.amount,
-        url: tier.url,
-        kind: tier.kind,
-      })),
+      phones: withRowIds(
+        siteSettings.phones.map((p) => ({ number: p.number, label: p.en })),
+        settingsHe.phones,
+      ),
+      donationTiers: withRowIds(
+        donationTiers.map((tier) => ({
+          label: tier.en,
+          amount: tier.amount,
+          url: tier.url,
+          kind: tier.kind,
+        })),
+        settingsHe.donationTiers,
+      ),
     },
   })
   log('site settings')
@@ -417,17 +441,22 @@ async function main() {
     },
   })
 
+  const navHe = await payload.findGlobal({ slug: 'navigation', locale: 'he', depth: 0 })
+
   await payload.updateGlobal({
     slug: 'navigation',
     locale: 'en',
     data: {
-      items: navigationItems.map((item) => ({
-        label: item.en,
-        href: item.href,
-        description: item.enDesc,
-        highlight: Boolean(item.highlight),
-        legacyPaths: item.legacyPaths.map((path) => ({ path })),
-      })),
+      items: withRowIds(
+        navigationItems.map((item) => ({
+          label: item.en,
+          href: item.href,
+          description: item.enDesc,
+          highlight: Boolean(item.highlight),
+          legacyPaths: item.legacyPaths.map((path) => ({ path })),
+        })),
+        navHe.items,
+      ),
     },
   })
   log('navigation')
@@ -443,12 +472,17 @@ async function main() {
     },
   })
 
+  const homeHe = await payload.findGlobal({ slug: 'home-page', locale: 'he', depth: 0 })
+
   await payload.updateGlobal({
     slug: 'home-page',
     locale: 'en',
     data: {
       ...homePage.en,
-      goals: homePage.goals.map((goal) => ({ ...goal.en, icon: goal.icon })),
+      goals: withRowIds(
+        homePage.goals.map((goal) => ({ ...goal.en, icon: goal.icon })),
+        homeHe.goals,
+      ),
     },
   })
   log('home page')
