@@ -55,5 +55,18 @@ export const Media: CollectionConfig = {
       type: 'text',
       label: { he: 'קרדיט צילום', en: 'Photo credit' },
     },
+    {
+      name: 'poster',
+      type: 'upload',
+      relationTo: 'media',
+      label: { he: 'תמונת פתיחה לסרטון', en: 'Video poster frame' },
+      admin: {
+        description: {
+          he: 'רלוונטי רק לסרטונים — התמונה שתוצג לפני ההפעלה.',
+          en: 'Videos only — the still shown before playback starts.',
+        },
+        condition: (data) => Boolean(data?.mimeType?.startsWith('video/')),
+      },
+    },
   ],
 }

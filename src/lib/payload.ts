@@ -3,6 +3,18 @@ import { getPayload, type Payload, type Where } from 'payload'
 import config from '@payload-config'
 
 import type { Locale } from '@/i18n/routing'
+import type {
+  Album,
+  Article,
+  BoardMember,
+  HomePage,
+  Media,
+  Navigation,
+  Page,
+  Project,
+  SiteSetting,
+  Testimonial,
+} from '@/payload-types'
 
 /** Shared Payload instance. `getPayload` is already memoised per process. */
 export const getPayloadClient = cache(async () => getPayload({ config }))
@@ -11,9 +23,9 @@ export const getPayloadClient = cache(async () => getPayload({ config }))
  * Every CMS read goes through here.
  *
  * Payload throws if it cannot reach a database or `PAYLOAD_SECRET` is unset —
- * which happens on a fresh clone before seeding, and on a CI build that has no
- * env vars yet. The public site must still render in those cases, so failures
- * fall back to a default rather than breaking the page.
+ * which happens on a fresh clone before seeding, and on a CI build with no env
+ * vars. The public site must still render in those cases, so failures fall back
+ * to a default rather than breaking the page.
  */
 async function safely<T>(read: (payload: Payload) => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -24,36 +36,33 @@ async function safely<T>(read: (payload: Payload) => Promise<T>, fallback: T): P
   }
 }
 
-type Doc = Record<string, unknown>
+/* ------------------------------------------------------------------ globals */
 
-export type CollectionName =
-  | 'projects'
-  | 'albums'
-  | 'articles'
-  | 'pages'
-  | 'board-members'
-  | 'testimonials'
-
-export const getHomePage = cache(async (locale: Locale) =>
-  safely<Doc | null>(
-    (payload) => payload.findGlobal({ slug: 'home-page', locale, depth: 2 }) as Promise<Doc>,
-    null,
-  ),
+export const getHomePage = cache(
+  async (locale: Locale): Promise<HomePage | null> =>
+    safely<HomePage | null>(
+      (payload) => payload.findGlobal({ slug: 'home-page', locale, depth: 2 }),
+      null,
+    ),
 )
 
-export const getSiteSettings = cache(async (locale: Locale) =>
-  safely<Doc | null>(
-    (payload) => payload.findGlobal({ slug: 'site-settings', locale, depth: 2 }) as Promise<Doc>,
-    null,
-  ),
+export const getSiteSettings = cache(
+  async (locale: Locale): Promise<SiteSetting | null> =>
+    safely<SiteSetting | null>(
+      (payload) => payload.findGlobal({ slug: 'site-settings', locale, depth: 2 }),
+      null,
+    ),
 )
 
-export const getNavigation = cache(async (locale: Locale) =>
-  safely<Doc | null>(
-    (payload) => payload.findGlobal({ slug: 'navigation', locale, depth: 2 }) as Promise<Doc>,
-    null,
-  ),
+export const getNavigation = cache(
+  async (locale: Locale): Promise<Navigation | null> =>
+    safely<Navigation | null>(
+      (payload) => payload.findGlobal({ slug: 'navigation', locale, depth: 2 }),
+      null,
+    ),
 )
+
+/* -------------------------------------------------------------- collections */
 
 type ListArgs = {
   locale: Locale
@@ -63,50 +72,183 @@ type ListArgs = {
   depth?: number
 }
 
-export const listDocs = cache(
-  async (
-    collection: CollectionName,
-    { locale, limit = 100, where, sort, depth = 2 }: ListArgs,
-  ): Promise<Doc[]> =>
-    safely<Doc[]>(async (payload) => {
-      const result = await payload.find({ collection, locale, limit, where, sort, depth })
-      return result.docs as Doc[]
+export const listProjects = cache(
+  async ({ locale, limit = 200, where, sort = '-date', depth = 2 }: ListArgs): Promise<Project[]> =>
+    safely<Project[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'projects',
+        locale,
+        limit,
+        where,
+        sort,
+        depth,
+      })
+      return docs
     }, []),
 )
 
-export const findDocBySlug = cache(
-  async (
-    collection: 'projects' | 'albums' | 'articles' | 'pages',
-    slug: string,
-    locale: Locale,
-  ): Promise<Doc | null> =>
-    safely<Doc | null>(async (payload) => {
+export const listAlbums = cache(
+  async ({ locale, limit = 200, where, sort = '-date', depth = 1 }: ListArgs): Promise<Album[]> =>
+    safely<Album[]>(async (payload) => {
+      const { docs } = await payload.find({ collection: 'albums', locale, limit, where, sort, depth })
+      return docs
+    }, []),
+)
+
+export const listArticles = cache(
+  async ({
+    locale,
+    limit = 200,
+    where,
+    sort = '-publishedAt',
+    depth = 2,
+  }: ListArgs): Promise<Article[]> =>
+    safely<Article[]>(async (payload) => {
       const { docs } = await payload.find({
-        collection,
+        collection: 'articles',
+        locale,
+        limit,
+        where,
+        sort,
+        depth,
+      })
+      return docs
+    }, []),
+)
+
+export const listBoardMembers = cache(
+  async (locale: Locale): Promise<BoardMember[]> =>
+    safely<BoardMember[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'board-members',
+        locale,
+        limit: 100,
+        sort: 'order',
+        depth: 1,
+      })
+      return docs
+    }, []),
+)
+
+export const listTestimonials = cache(
+  async (locale: Locale, where?: Where): Promise<Testimonial[]> =>
+    safely<Testimonial[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'testimonials',
+        locale,
+        limit: 100,
+        sort: 'order',
+        where,
+        depth: 0,
+      })
+      return docs
+    }, []),
+)
+
+/** Every uploaded video, newest first — the source for the videos page. */
+export const listVideos = cache(
+  async (locale: Locale): Promise<Media[]> =>
+    safely<Media[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'media',
+        locale,
+        depth: 1,
+        limit: 200,
+        sort: '-createdAt',
+        where: { mimeType: { like: 'video' } },
+      })
+      return docs
+    }, []),
+)
+
+/** Owner-created content pages, used to build the sitemap. */
+export const listPagesForSitemap = cache(
+  async (locale: Locale): Promise<Page[]> =>
+    safely<Page[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'pages',
+        locale,
+        limit: 200,
+        depth: 0,
+      })
+      return docs
+    }, []),
+)
+
+/* ------------------------------------------------------------ single lookups */
+
+export const findProject = cache(
+  async (slug: string, locale: Locale): Promise<Project | null> =>
+    safely<Project | null>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'projects',
         locale,
         depth: 3,
         limit: 1,
         where: { slug: { equals: slug } },
       })
-      return (docs[0] as Doc) ?? null
+      return docs[0] ?? null
+    }, null),
+)
+
+export const findAlbum = cache(
+  async (slug: string, locale: Locale): Promise<Album | null> =>
+    safely<Album | null>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'albums',
+        locale,
+        depth: 2,
+        limit: 1,
+        where: { slug: { equals: slug } },
+      })
+      return docs[0] ?? null
+    }, null),
+)
+
+export const findArticle = cache(
+  async (slug: string, locale: Locale): Promise<Article | null> =>
+    safely<Article | null>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'articles',
+        locale,
+        depth: 3,
+        limit: 1,
+        where: { slug: { equals: slug } },
+      })
+      return docs[0] ?? null
+    }, null),
+)
+
+export const findPage = cache(
+  async (slug: string, locale: Locale): Promise<Page | null> =>
+    safely<Page | null>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'pages',
+        locale,
+        depth: 3,
+        limit: 1,
+        where: { slug: { equals: slug } },
+      })
+      return docs[0] ?? null
     }, null),
 )
 
 /**
  * Resolve an old Wix path (e.g. `/גלריה`) to its new home by asking the CMS
- * which document claims it. Keeps redirects data-driven instead of hard-coded.
+ * which document claims it. Keeps redirects data-driven instead of hard-coded,
+ * so the site owner can add a page and its old link without a code change.
  */
 export const findByLegacyPath = cache(
-  async (path: string, locale: Locale): Promise<string | null> => {
-    const targets: { collection: 'projects' | 'articles' | 'pages' | 'albums'; prefix: string }[] = [
-      { collection: 'projects', prefix: 'projects' },
-      { collection: 'articles', prefix: 'news' },
-      { collection: 'albums', prefix: 'gallery' },
-      { collection: 'pages', prefix: '' },
-    ]
+  async (path: string, locale: Locale): Promise<string | null> =>
+    safely<string | null>(async (payload) => {
+      const lookups = [
+        { collection: 'projects', prefix: 'projects' },
+        { collection: 'articles', prefix: 'news' },
+        { collection: 'albums', prefix: 'gallery' },
+        { collection: 'pages', prefix: '' },
+      ] as const
 
-    return safely<string | null>(async (payload) => {
-      for (const { collection, prefix } of targets) {
+      for (const { collection, prefix } of lookups) {
         const { docs } = await payload.find({
           collection,
           locale,
@@ -114,12 +256,9 @@ export const findByLegacyPath = cache(
           limit: 1,
           where: { 'legacyPaths.path': { equals: path } },
         })
-        const doc = docs[0] as { slug?: string } | undefined
-        if (doc?.slug) {
-          return prefix ? `/${locale}/${prefix}/${doc.slug}` : `/${locale}/${doc.slug}`
-        }
+        const slug = docs[0]?.slug
+        if (slug) return prefix ? `/${locale}/${prefix}/${slug}` : `/${locale}/${slug}`
       }
       return null
-    }, null)
-  },
+    }, null),
 )

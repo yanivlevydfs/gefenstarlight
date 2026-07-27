@@ -7,21 +7,11 @@ import { ArrowLeft, Heart, Sparkles, Star, Trophy, Users } from 'lucide-react'
 import { Starfield } from '@/components/site/starfield'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
-import { getHomePage, listDocs } from '@/lib/payload'
+import { getHomePage, listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl } from '@/lib/media'
 
 const goalIcons = { star: Star, users: Users, heart: Heart, trophy: Trophy, sparkles: Sparkles }
-
-type Goal = { title?: string; body?: string; icon?: keyof typeof goalIcons }
-type Project = {
-  id: string | number
-  slug?: string
-  title?: string
-  summary?: string
-  date?: string
-  cover?: unknown
-}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -31,30 +21,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const typedLocale = locale as Locale
   const t = await getTranslations()
 
-  const [home, projects] = await Promise.all([
+  const [h, projects] = await Promise.all([
     getHomePage(typedLocale),
-    listDocs('projects', {
-      locale: typedLocale,
-      limit: 3,
-      sort: '-date',
-      where: { featured: { equals: true } },
-    }) as Promise<Project[]>,
+    listProjects({ locale: typedLocale, limit: 3, where: { featured: { equals: true } } }),
   ])
 
-  const h = (home ?? {}) as {
-    heroKicker?: string
-    heroTitle?: string
-    heroLead?: string
-    heroImage?: unknown
-    focusTitle?: string
-    focusBody?: string
-    goals?: Goal[]
-    ctaTitle?: string
-    ctaBody?: string
-  }
-
-  const heroImage = mediaUrl(h.heroImage, 'wide')
-  const goals = h.goals?.length ? h.goals : []
+  const heroImage = mediaUrl(h?.heroImage, 'wide')
+  const goals = h?.goals ?? []
 
   return (
     <>
@@ -77,19 +50,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container-page relative flex min-h-[78vh] flex-col justify-center py-24">
           <Reveal>
             <p className="text-sm font-semibold tracking-[0.2em] text-star-300 uppercase">
-              {h.heroKicker || t('home.heroKicker')}
+              {h?.heroKicker || t('home.heroKicker')}
             </p>
           </Reveal>
 
           <Reveal delay={0.08}>
             <h1 className="mt-5 max-w-4xl text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
-              <span className="text-gradient-star">{h.heroTitle || t('home.heroTitle')}</span>
+              <span className="text-gradient-star">{h?.heroTitle || t('home.heroTitle')}</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.16}>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream-50/80 sm:text-xl">
-              {h.heroLead || t('home.heroLead')}
+              {h?.heroLead || t('home.heroLead')}
             </p>
           </Reveal>
 
@@ -118,11 +91,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="border-y border-white/10 bg-night-900">
         <div className="container-page grid gap-10 py-20 lg:grid-cols-[0.8fr_1.2fr]">
           <Reveal>
-            <h2 className="text-3xl sm:text-4xl">{h.focusTitle || t('home.focusTitle')}</h2>
+            <h2 className="text-3xl sm:text-4xl">{h?.focusTitle || t('home.focusTitle')}</h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="text-lg leading-relaxed text-cream-50/75">
-              {h.focusBody || t('home.focusBody')}
+              {h?.focusBody || t('home.focusBody')}
             </p>
           </Reveal>
         </div>
@@ -209,11 +182,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="aurora absolute inset-0 -z-10" />
         <div className="container-page py-24 text-center">
           <Reveal>
-            <h2 className="text-4xl sm:text-5xl">{h.ctaTitle || t('home.ctaTitle')}</h2>
+            <h2 className="text-4xl sm:text-5xl">{h?.ctaTitle || t('home.ctaTitle')}</h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-cream-50/75">
-              {h.ctaBody || t('home.ctaBody')}
+              {h?.ctaBody || t('home.ctaBody')}
             </p>
           </Reveal>
           <Reveal delay={0.18}>

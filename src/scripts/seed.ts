@@ -15,6 +15,7 @@ import { getPayload } from 'payload'
 // Payload CLI, which does not resolve tsconfig path aliases.
 import config from '../payload.config.js'
 
+import type { Album, BoardMember, Page, Project, Testimonial } from '../payload-types.js'
 import { toLexical } from './lexical'
 import { projects } from './content/projects'
 import { pages as contentPages } from './content/pages'
@@ -110,9 +111,9 @@ async function main() {
   }
 
   /** filename -> Payload media id */
-  const mediaIds = new Map<string, string | number>()
+  const mediaIds = new Map<string, number>()
 
-  async function uploadOnce(filename: string, alt: string): Promise<string | number | null> {
+  async function uploadOnce(filename: string, alt: string): Promise<number | null> {
     if (mediaIds.has(filename)) return mediaIds.get(filename)!
 
     const existing = await payload.find({
@@ -144,18 +145,26 @@ async function main() {
 
   // ---------------------------------------------------------------- albums
   /** album key -> Payload album id */
-  const albumIds = new Map<string, string | number>()
+  const albumIds = new Map<string, number>()
 
   for (const [key, items] of Object.entries(manifest)) {
     if (skipAlbums.has(key)) continue
     const titles = albumTitles[key] ?? { he: key, en: key }
     const slug = slugForAlbum(key)
 
-    const uploaded: (string | number)[] = []
+    const uploaded: number[] = []
     for (const item of items) {
       const id = await uploadOnce(item.file, titles.he)
-      if (id) uploaded.push(id)
-      if (item.posterFile) await uploadOnce(item.posterFile, titles.he)
+      if (!id) continue
+      uploaded.push(id)
+
+      // Videos carry a poster frame so the grid has something to show.
+      if (item.posterFile) {
+        const posterId = await uploadOnce(item.posterFile, titles.he)
+        if (posterId) {
+          await payload.update({ collection: 'media', id, data: { poster: posterId } })
+        }
+      }
     }
     if (uploaded.length === 0) continue
 
@@ -176,7 +185,7 @@ async function main() {
       _status: 'published' as const,
     }
 
-    const doc = existing.docs[0]
+    const doc: Album = existing.docs[0]
       ? await payload.update({ collection: 'albums', id: existing.docs[0].id, locale: 'he', data })
       : await payload.create({ collection: 'albums', locale: 'he', data })
 
@@ -216,7 +225,7 @@ async function main() {
       _status: 'published' as const,
     }
 
-    const doc = existing.docs[0]
+    const doc: Project = existing.docs[0]
       ? await payload.update({
           collection: 'projects',
           id: existing.docs[0].id,
@@ -267,8 +276,13 @@ async function main() {
       _status: 'published' as const,
     }
 
-    const doc = existing.docs[0]
-      ? await payload.update({ collection: 'pages', id: existing.docs[0].id, locale: 'he', data: heData })
+    const doc: Page = existing.docs[0]
+      ? await payload.update({
+          collection: 'pages',
+          id: existing.docs[0].id,
+          locale: 'he',
+          data: heData,
+        })
       : await payload.create({ collection: 'pages', locale: 'he', data: heData })
 
     await payload.update({
@@ -295,7 +309,7 @@ async function main() {
       where: { name: { equals: person.he.name } },
     })
 
-    const doc = existing.docs[0]
+    const doc: BoardMember = existing.docs[0]
       ? await payload.update({
           collection: 'board-members',
           id: existing.docs[0].id,
@@ -325,7 +339,7 @@ async function main() {
       where: { author: { equals: item.he.author } },
     })
 
-    const doc = existing.docs[0]
+    const doc: Testimonial = existing.docs[0]
       ? await payload.update({
           collection: 'testimonials',
           id: existing.docs[0].id,

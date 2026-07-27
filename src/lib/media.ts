@@ -7,6 +7,7 @@ type PayloadMedia = {
   width?: number | null
   height?: number | null
   mimeType?: string | null
+  poster?: unknown
   sizes?: Record<string, PayloadSize | undefined>
 }
 
@@ -47,7 +48,49 @@ export function mediaUrl(value: unknown, size: SizeName = 'card'): ResolvedMedia
 /** Resolve a list of upload relationships, dropping any that failed to load. */
 export function mediaList(value: unknown, size: SizeName = 'card'): ResolvedMedia[] {
   if (!Array.isArray(value)) return []
-  return value
-    .map((item) => mediaUrl(item, size))
-    .filter((item): item is ResolvedMedia => item !== null)
+  const resolved: ResolvedMedia[] = []
+  for (const item of value) {
+    const media = mediaUrl(item, size)
+    if (media) resolved.push(media)
+  }
+  return resolved
+}
+
+export type GalleryItem = {
+  src: string
+  thumb: string
+  alt: string
+  caption?: string
+  width?: number
+  height?: number
+  isVideo: boolean
+  poster?: string
+}
+
+/** Turn an album's `items` into the shape the gallery grid and lightbox want. */
+export function toGalleryItems(value: unknown): GalleryItem[] {
+  if (!Array.isArray(value)) return []
+
+  const items: GalleryItem[] = []
+  for (const raw of value) {
+    const full = mediaUrl(raw, 'full')
+    const thumb = mediaUrl(raw, 'thumbnail')
+    if (!full || !thumb) continue
+
+    const poster = full.isVideo
+      ? (mediaUrl((raw as PayloadMedia).poster, 'card')?.url ?? undefined)
+      : undefined
+
+    items.push({
+      src: full.url,
+      thumb: thumb.url,
+      alt: full.alt,
+      caption: full.caption,
+      width: full.width,
+      height: full.height,
+      isVideo: full.isVideo,
+      poster,
+    })
+  }
+  return items
 }
