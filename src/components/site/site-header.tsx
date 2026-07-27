@@ -21,7 +21,12 @@ type Props = {
 export function SiteHeader({ navigation, settings, locale }: Props) {
   const t = useTranslations()
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  // The menu is open only for the route it was opened on, so navigating away
+  // closes it without an effect that would trigger a cascading render.
+  const [openedAt, setOpenedAt] = useState<string | null>(null)
+  const open = openedAt === pathname
+  const setOpen = (next: boolean) => setOpenedAt(next ? pathname : null)
+
   const [scrolled, setScrolled] = useState(false)
 
   const items = navFromGlobal(
@@ -46,12 +51,8 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
     ((settings as { organisationName?: string } | null)?.organisationName as string) ||
     t('meta.siteName')
 
-  // Close the overlay whenever the route changes.
-  useEffect(() => setOpen(false), [pathname])
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
-    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])

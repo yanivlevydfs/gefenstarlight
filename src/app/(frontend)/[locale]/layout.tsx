@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { Frank_Ruhl_Libre, Heebo } from 'next/font/google'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
@@ -94,6 +96,9 @@ export default async function FrontendLayout({
           </main>
           <SiteFooter navigation={navigation} settings={settings} locale={typedLocale} />
         </NextIntlClientProvider>
+
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
