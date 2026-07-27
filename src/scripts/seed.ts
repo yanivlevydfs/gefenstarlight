@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url'
 import { getPayload } from 'payload'
 // Relative rather than the `@payload-config` alias — the seed runs through the
 // Payload CLI, which does not resolve tsconfig path aliases.
-import config from '../payload.config'
+import config from '../payload.config.js'
 
 import { toLexical } from './lexical'
 import { projects } from './content/projects'

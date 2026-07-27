@@ -69,9 +69,17 @@ export default buildConfig({
 
   // Postgres in production (Vercel/Neon). With no DATABASE_URI set, the site
   // runs off a local SQLite file so `run.bat` works with zero setup.
+  // `push` keeps the dev database in sync with this config automatically. It is
+  // interactive, so scripts (seed, migrations, CI) turn it off with PAYLOAD_PUSH=false.
   db: process.env.DATABASE_URI?.startsWith('postgres')
-    ? postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI } })
-    : sqliteAdapter({ client: { url: process.env.DATABASE_URI || 'file:./gefen.db' } }),
+    ? postgresAdapter({
+        pool: { connectionString: process.env.DATABASE_URI },
+        push: process.env.PAYLOAD_PUSH !== 'false' && process.env.NODE_ENV !== 'production',
+      })
+    : sqliteAdapter({
+        client: { url: process.env.DATABASE_URI || 'file:./gefen.db' },
+        push: process.env.PAYLOAD_PUSH !== 'false',
+      }),
 
   secret: process.env.PAYLOAD_SECRET || '',
 

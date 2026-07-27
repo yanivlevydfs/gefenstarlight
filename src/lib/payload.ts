@@ -1,5 +1,5 @@
 import { cache } from 'react'
-import { getPayload, type Where } from 'payload'
+import { getPayload, type Payload, type Where } from 'payload'
 import config from '@payload-config'
 
 import type { Locale } from '@/i18n/routing'
@@ -8,43 +8,52 @@ import type { Locale } from '@/i18n/routing'
 export const getPayloadClient = cache(async () => getPayload({ config }))
 
 /**
- * Payload throws if the database has not been created yet (first run, before
- * `seed`). The site should still render, so reads fall back to a default.
+ * Every CMS read goes through here.
+ *
+ * Payload throws if it cannot reach a database or `PAYLOAD_SECRET` is unset —
+ * which happens on a fresh clone before seeding, and on a CI build that has no
+ * env vars yet. The public site must still render in those cases, so failures
+ * fall back to a default rather than breaking the page.
  */
-async function safely<T>(read: () => Promise<T>, fallback: T): Promise<T> {
+async function safely<T>(read: (payload: Payload) => Promise<T>, fallback: T): Promise<T> {
   try {
-    return await read()
+    return await read(await getPayloadClient())
   } catch (error) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('[payload] read failed, using fallback:', (error as Error).message)
-    }
+    console.warn('[payload] read failed, using fallback:', (error as Error).message)
     return fallback
   }
 }
 
-export const getHomePage = cache(async (locale: Locale) => {
-  const payload = await getPayloadClient()
-  return safely(
-    () => payload.findGlobal({ slug: 'home-page', locale, depth: 2 }),
-    null as Awaited<ReturnType<typeof payload.findGlobal>> | null,
-  )
-})
+type Doc = Record<string, unknown>
 
-export const getSiteSettings = cache(async (locale: Locale) => {
-  const payload = await getPayloadClient()
-  return safely(
-    () => payload.findGlobal({ slug: 'site-settings', locale, depth: 2 }),
-    null as Awaited<ReturnType<typeof payload.findGlobal>> | null,
-  )
-})
+export type CollectionName =
+  | 'projects'
+  | 'albums'
+  | 'articles'
+  | 'pages'
+  | 'board-members'
+  | 'testimonials'
 
-export const getNavigation = cache(async (locale: Locale) => {
-  const payload = await getPayloadClient()
-  return safely(
-    () => payload.findGlobal({ slug: 'navigation', locale, depth: 2 }),
-    null as Awaited<ReturnType<typeof payload.findGlobal>> | null,
-  )
-})
+export const getHomePage = cache(async (locale: Locale) =>
+  safely<Doc | null>(
+    (payload) => payload.findGlobal({ slug: 'home-page', locale, depth: 2 }) as Promise<Doc>,
+    null,
+  ),
+)
+
+export const getSiteSettings = cache(async (locale: Locale) =>
+  safely<Doc | null>(
+    (payload) => payload.findGlobal({ slug: 'site-settings', locale, depth: 2 }) as Promise<Doc>,
+    null,
+  ),
+)
+
+export const getNavigation = cache(async (locale: Locale) =>
+  safely<Doc | null>(
+    (payload) => payload.findGlobal({ slug: 'navigation', locale, depth: 2 }) as Promise<Doc>,
+    null,
+  ),
+)
 
 type ListArgs = {
   locale: Locale
@@ -56,16 +65,13 @@ type ListArgs = {
 
 export const listDocs = cache(
   async (
-    collection: 'projects' | 'albums' | 'articles' | 'pages' | 'board-members' | 'testimonials',
+    collection: CollectionName,
     { locale, limit = 100, where, sort, depth = 2 }: ListArgs,
-  ) => {
-    const payload = await getPayloadClient()
-    return safely(
-      async () =>
-        (await payload.find({ collection, locale, limit, where, sort, depth })).docs,
-      [] as unknown[],
-    )
-  },
+  ): Promise<Doc[]> =>
+    safely<Doc[]>(async (payload) => {
+      const result = await payload.find({ collection, locale, limit, where, sort, depth })
+      return result.docs as Doc[]
+    }, []),
 )
 
 export const findDocBySlug = cache(
@@ -73,9 +79,8 @@ export const findDocBySlug = cache(
     collection: 'projects' | 'albums' | 'articles' | 'pages',
     slug: string,
     locale: Locale,
-  ) => {
-    const payload = await getPayloadClient()
-    return safely(async () => {
+  ): Promise<Doc | null> =>
+    safely<Doc | null>(async (payload) => {
       const { docs } = await payload.find({
         collection,
         locale,
@@ -83,7 +88,38 @@ export const findDocBySlug = cache(
         limit: 1,
         where: { slug: { equals: slug } },
       })
-      return docs[0] ?? null
-    }, null as unknown)
+      return (docs[0] as Doc) ?? null
+    }, null),
+)
+
+/**
+ * Resolve an old Wix path (e.g. `/גלריה`) to its new home by asking the CMS
+ * which document claims it. Keeps redirects data-driven instead of hard-coded.
+ */
+export const findByLegacyPath = cache(
+  async (path: string, locale: Locale): Promise<string | null> => {
+    const targets: { collection: 'projects' | 'articles' | 'pages' | 'albums'; prefix: string }[] = [
+      { collection: 'projects', prefix: 'projects' },
+      { collection: 'articles', prefix: 'news' },
+      { collection: 'albums', prefix: 'gallery' },
+      { collection: 'pages', prefix: '' },
+    ]
+
+    return safely<string | null>(async (payload) => {
+      for (const { collection, prefix } of targets) {
+        const { docs } = await payload.find({
+          collection,
+          locale,
+          depth: 0,
+          limit: 1,
+          where: { 'legacyPaths.path': { equals: path } },
+        })
+        const doc = docs[0] as { slug?: string } | undefined
+        if (doc?.slug) {
+          return prefix ? `/${locale}/${prefix}/${doc.slug}` : `/${locale}/${doc.slug}`
+        }
+      }
+      return null
+    }, null)
   },
 )
