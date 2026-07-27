@@ -6,11 +6,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft } from 'lucide-react'
 
 import { GalleryGrid } from '@/components/site/gallery-grid'
+import { JsonLd } from '@/components/site/json-ld'
 import { PageHeader } from '@/components/site/page-header'
 import { routing, type Locale } from '@/i18n/routing'
 import { findAlbum, listAlbums } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { breadcrumbSchema, imageGallerySchema, pageMetadata } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const albums = await listAlbums({ locale: 'he', depth: 0 })
@@ -31,11 +33,13 @@ export async function generateMetadata({
   if (!album) return {}
 
   const cover = mediaUrl(album.cover, 'wide')
-  return {
+  return pageMetadata({
+    locale: locale as Locale,
+    path: `/gallery/${slug}`,
     title: album.title,
-    description: album.description,
-    openGraph: cover ? { images: [{ url: cover.url }] } : undefined,
-  }
+    description: album.description ?? undefined,
+    image: cover,
+  })
 }
 
 export default async function AlbumPage({
@@ -55,8 +59,24 @@ export default async function AlbumPage({
 
   const items = toGalleryItems(album.items)
 
+  const schema = [
+    imageGallerySchema({
+      locale: typedLocale,
+      path: `/gallery/${slug}`,
+      name: album.title,
+      description: album.description ?? undefined,
+      images: items.filter((i) => !i.isVideo).map((i) => i.src),
+    }),
+    breadcrumbSchema(typedLocale, [
+      { name: t('nav.home'), path: '' },
+      { name: t('gallery.title'), path: '/gallery' },
+      { name: album.title, path: `/gallery/${slug}` },
+    ]),
+  ]
+
   return (
     <>
+      <JsonLd data={schema} />
       <PageHeader
         kicker={t('gallery.albums')}
         title={album.title}

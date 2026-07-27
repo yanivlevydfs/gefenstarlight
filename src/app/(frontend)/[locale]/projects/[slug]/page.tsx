@@ -6,13 +6,15 @@ import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/serve
 import { ArrowLeft, ExternalLink, MapPin, Quote } from 'lucide-react'
 
 import { GalleryGrid } from '@/components/site/gallery-grid'
+import { JsonLd } from '@/components/site/json-ld'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { RichText } from '@/components/site/rich-text'
 import { routing, type Locale } from '@/i18n/routing'
-import { findProject, listProjects } from '@/lib/payload'
+import { findProject, getSiteSettings, listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { articleSchema, breadcrumbSchema, pageMetadata } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const projects = await listProjects({ locale: 'he', depth: 0 })
@@ -33,11 +35,15 @@ export async function generateMetadata({
   if (!project) return {}
 
   const cover = mediaUrl(project.cover, 'wide')
-  return {
+  return pageMetadata({
+    locale: locale as Locale,
+    path: `/projects/${slug}`,
     title: project.title,
     description: project.summary,
-    openGraph: cover ? { images: [{ url: cover.url }] } : undefined,
-  }
+    image: cover,
+    type: 'article',
+    publishedTime: project.date,
+  })
 }
 
 export default async function ProjectPage({
@@ -60,8 +66,28 @@ export default async function ProjectPage({
   const albumItems = toGalleryItems(album?.items)
   const quotes = project.quotes ?? []
 
+  const settings = await getSiteSettings(typedLocale)
+  const cover = mediaUrl(project.cover, 'wide')
+  const schema = [
+    articleSchema({
+      locale: typedLocale,
+      path: `/projects/${slug}`,
+      headline: project.title,
+      description: project.summary,
+      image: cover?.url,
+      datePublished: project.date,
+      organisationName: settings?.organisationName || t('meta.siteName'),
+    }),
+    breadcrumbSchema(typedLocale, [
+      { name: t('nav.home'), path: '' },
+      { name: t('projects.title'), path: '/projects' },
+      { name: project.title, path: `/projects/${slug}` },
+    ]),
+  ]
+
   return (
     <>
+      <JsonLd data={schema} />
       <PageHeader
         kicker={t('projects.title')}
         title={project.title}

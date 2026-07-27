@@ -5,10 +5,12 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Banknote, ExternalLink, Globe2, Heart, Repeat, ShieldCheck } from 'lucide-react'
 
 import { CopyButton } from '@/components/site/copy-button'
+import { JsonLd } from '@/components/site/json-ld'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload'
+import { breadcrumbSchema, donateSchema, pageMetadata } from '@/lib/seo'
 
 type Tier = {
   label?: string
@@ -33,7 +35,13 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'donate' })
-  return { title: t('title') }
+  const settings = await getSiteSettings(locale as Locale)
+  return pageMetadata({
+    locale: locale as Locale,
+    path: '/donate',
+    title: t('title'),
+    description: settings?.donationIntro ?? undefined,
+  })
 }
 
 export default async function DonatePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -54,6 +62,15 @@ export default async function DonatePage({ params }: { params: Promise<{ locale:
 
   return (
     <>
+      <JsonLd
+        data={[
+          donateSchema(locale as Locale, t('donate.title')),
+          breadcrumbSchema(locale as Locale, [
+            { name: t('nav.home'), path: '' },
+            { name: t('nav.donate'), path: '/donate' },
+          ]),
+        ]}
+      />
       <PageHeader title={t('donate.title')} subtitle={settings?.donationIntro} />
 
       <div className="container-page grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr]">
