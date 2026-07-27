@@ -61,6 +61,19 @@ export const Navigation: GlobalConfig = {
           type: 'checkbox',
           label: { he: 'להדגיש (כפתור תרומה)', en: 'Highlight (donate button)' },
         },
+        {
+          name: 'legacyPaths',
+          type: 'array',
+          label: { he: 'כתובות ישנות (הפניה אוטומטית)', en: 'Legacy URLs (auto-redirect)' },
+          admin: {
+            description: {
+              he: 'כתובות מהאתר הישן שיפנו אוטומטית לעמוד הזה, למשל /גלריה',
+              en: 'Paths from the old site that redirect here, e.g. /gallery',
+            },
+            initCollapsed: true,
+          },
+          fields: [{ name: 'path', type: 'text', required: true, label: { he: 'נתיב', en: 'Path' } }],
+        },
       ],
     },
     {

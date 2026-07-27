@@ -18,10 +18,25 @@ import { mediaUrl, toGalleryItems } from '@/lib/media'
  *     by asking the CMS which document claims that path. Nothing is hard-coded.
  */
 
+/**
+ * Route params arrive percent-encoded for non-ASCII segments, and the old Wix
+ * URLs are Hebrew — so decode before matching anything against the CMS.
+ */
+function decodeSegments(rest: string[]): string[] {
+  return rest.map((segment) => {
+    try {
+      return decodeURIComponent(segment)
+    } catch {
+      return segment
+    }
+  })
+}
+
 async function resolve(locale: Locale, rest: string[]) {
-  const slug = rest[rest.length - 1]
-  const page = rest.length === 1 ? await findPage(slug, locale) : null
-  return { slug, page }
+  const segments = decodeSegments(rest)
+  const slug = segments[segments.length - 1]
+  const page = segments.length === 1 ? await findPage(slug, locale) : null
+  return { segments, slug, page }
 }
 
 export async function generateMetadata({
@@ -53,11 +68,11 @@ export default async function CatchAllPage({
   setRequestLocale(locale)
 
   const typedLocale = locale as Locale
-  const { page } = await resolve(typedLocale, rest)
+  const { page, segments } = await resolve(typedLocale, rest)
 
   if (!page) {
     // Not a CMS page — see whether an old Wix URL points at something.
-    const destination = await findByLegacyPath('/' + rest.join('/'), typedLocale)
+    const destination = await findByLegacyPath('/' + segments.join('/'), typedLocale)
     if (destination) permanentRedirect(destination)
     notFound()
   }

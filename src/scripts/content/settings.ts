@@ -96,14 +96,19 @@ export const donationTiers = [
   },
 ]
 
+/**
+ * `legacyPaths` are the old Wix section URLs. They are stored on the menu entry
+ * so the owner can edit both the menu and its old links from the admin console.
+ */
 export const navigationItems = [
-  { href: '/', he: 'בית', en: 'Home', heDesc: 'דף הבית', enDesc: 'Home page' },
+  { href: '/', he: 'בית', en: 'Home', heDesc: 'דף הבית', enDesc: 'Home page', legacyPaths: [] },
   {
     href: '/gefen',
     he: 'מיהו גפן',
     en: 'About Gefen',
     heDesc: 'הסיפור של גפן אבירם ז״ל',
     enDesc: "Gefen Aviram's story",
+    legacyPaths: [],
   },
   {
     href: '/about',
@@ -111,6 +116,7 @@ export const navigationItems = [
     en: 'About Us',
     heDesc: 'האנשים שמאחורי העמותה',
     enDesc: 'The people behind the foundation',
+    legacyPaths: ['/עלינו', '/about-us'],
   },
   {
     href: '/projects',
@@ -118,6 +124,7 @@ export const navigationItems = [
     en: 'Projects',
     heDesc: 'הפעילות שלנו בשטח',
     enDesc: 'Our work on the ground',
+    legacyPaths: ['/פרוייקטים'],
   },
   {
     href: '/gallery',
@@ -125,6 +132,7 @@ export const navigationItems = [
     en: 'Pictures',
     heDesc: 'אלבומי תמונות מהפעילות',
     enDesc: 'Photo albums from our activity',
+    legacyPaths: ['/גלריה'],
   },
   {
     href: '/videos',
@@ -132,6 +140,7 @@ export const navigationItems = [
     en: 'Videos',
     heDesc: 'רגעים מתועדים',
     enDesc: 'Moments on film',
+    legacyPaths: ['/סרטונים'],
   },
   {
     href: '/news',
@@ -139,6 +148,7 @@ export const navigationItems = [
     en: 'News',
     heDesc: 'חדשות מהעמותה',
     enDesc: 'News from the foundation',
+    legacyPaths: [],
   },
   {
     href: '/thanks',
@@ -146,6 +156,7 @@ export const navigationItems = [
     en: 'Thank You',
     heDesc: 'מכתבים ממי שנמצא איתם בשטח',
     enDesc: 'Letters from the people on the mat',
+    legacyPaths: ['/תודות'],
   },
   {
     href: '/contact',
@@ -153,6 +164,7 @@ export const navigationItems = [
     en: 'Contact',
     heDesc: 'נשמח לשמוע מכם',
     enDesc: "We'd love to hear from you",
+    legacyPaths: ['/צור-קשר'],
   },
   {
     href: '/terms',
@@ -160,6 +172,7 @@ export const navigationItems = [
     en: 'Bylaws',
     heDesc: 'תקנון ותנאי שימוש',
     enDesc: 'Terms of use',
+    legacyPaths: [],
   },
   {
     href: '/donate',
@@ -168,6 +181,7 @@ export const navigationItems = [
     heDesc: 'עזרו לנו לעזור להם',
     enDesc: 'Help us help them',
     highlight: true,
+    legacyPaths: ['/תרומות', '/donate'],
   },
 ]
 

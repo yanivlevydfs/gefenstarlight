@@ -405,6 +405,7 @@ async function main() {
         href: item.href,
         description: item.heDesc,
         highlight: Boolean(item.highlight),
+        legacyPaths: item.legacyPaths.map((path) => ({ path })),
       })),
     },
   })
@@ -418,6 +419,7 @@ async function main() {
         href: item.href,
         description: item.enDesc,
         highlight: Boolean(item.highlight),
+        legacyPaths: item.legacyPaths.map((path) => ({ path })),
       })),
     },
   })

@@ -921,6 +921,15 @@ export interface Navigation {
         description?: string | null;
         image?: (number | null) | Media;
         highlight?: boolean | null;
+        /**
+         * Paths from the old site that redirect here, e.g. /gallery
+         */
+        legacyPaths?:
+          | {
+              path: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -1023,6 +1032,12 @@ export interface NavigationSelect<T extends boolean = true> {
         description?: T;
         image?: T;
         highlight?: T;
+        legacyPaths?:
+          | T
+          | {
+              path?: T;
+              id?: T;
+            };
         id?: T;
       };
   footerNote?: T;

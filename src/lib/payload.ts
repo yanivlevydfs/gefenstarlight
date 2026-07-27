@@ -259,6 +259,17 @@ export const findByLegacyPath = cache(
         const slug = docs[0]?.slug
         if (slug) return prefix ? `/${locale}/${prefix}/${slug}` : `/${locale}/${slug}`
       }
+
+      // Section URLs (/גלריה, /תרומות…) are claimed by menu entries instead,
+      // so the owner manages those redirects from the menu editor.
+      const nav = await payload.findGlobal({ slug: 'navigation', locale, depth: 0 })
+      const match = nav.items?.find((item) =>
+        item.legacyPaths?.some((entry) => entry.path === path),
+      )
+      if (match?.href) {
+        return match.href === '/' ? `/${locale}` : `/${locale}${match.href}`
+      }
+
       return null
     }, null),
 )
