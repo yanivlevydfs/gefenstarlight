@@ -63,25 +63,28 @@ export function navFromGlobal(global: unknown, fallback: NavItem[]): NavItem[] {
   const items = (global as { items?: unknown[] } | null)?.items
   if (!Array.isArray(items) || items.length === 0) return fallback
 
-  return items
-    .map((raw) => {
-      const item = raw as {
-        label?: string
-        href?: string
-        description?: string
-        image?: unknown
-        highlight?: boolean
-      }
-      if (!item.label || !item.href) return null
-      return {
-        label: item.label,
-        href: item.href.startsWith('/') ? item.href : `/${item.href}`,
-        description: item.description || undefined,
-        image: toNavImage(item.image, item.label),
-        highlight: Boolean(item.highlight),
-      } satisfies NavItem
+  const resolved: NavItem[] = []
+
+  for (const raw of items) {
+    const item = raw as {
+      label?: string
+      href?: string
+      description?: string
+      image?: unknown
+      highlight?: boolean
+    }
+    if (!item.label || !item.href) continue
+
+    resolved.push({
+      label: item.label,
+      href: item.href.startsWith('/') ? item.href : `/${item.href}`,
+      description: item.description || undefined,
+      image: toNavImage(item.image, item.label),
+      highlight: Boolean(item.highlight),
     })
-    .filter((item): item is NavItem => item !== null)
+  }
+
+  return resolved.length > 0 ? resolved : fallback
 }
 
 /** Prefix a CMS-relative href with the active locale. */
