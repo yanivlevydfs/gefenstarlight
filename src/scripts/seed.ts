@@ -58,6 +58,14 @@ const albumTitles: Record<string, { he: string; en: string }> = {
   'עלינו': { he: 'ועד העמותה', en: 'The board' },
 }
 
+/**
+ * Chosen deliberately rather than "first photo in the album": the home page is
+ * about Gefen, so it opens on a portrait of him, and his own page opens on the
+ * photograph of him in his gi holding a Krav Maga certificate.
+ */
+const HERO_HOME = 'a50afb_99d4162785f34f9dba63b197e6e756e5~mv2.jpg'
+const HERO_GEFEN = 'a50afb_b6629c93bd6f45aaa9f0f8ce77bae747~mv2.jpg'
+
 /** Wix page keys that are chrome-only and should not become albums. */
 const skipAlbums = new Set(['תרומות', 'צור-קשר', 'donate', 'about-us', 'en', 'תקנון'])
 
@@ -304,8 +312,12 @@ async function main() {
       where: { slug: { equals: page.slug } },
     })
 
-    // Use the first photo of the attached album as the page's hero image.
-    const heroFile = page.albumKey ? manifest[page.albumKey]?.[0]?.file : undefined
+    const heroFile =
+      page.slug === 'gefen'
+        ? HERO_GEFEN
+        : page.albumKey
+          ? manifest[page.albumKey]?.find((item) => !item.isVideo)?.file
+          : undefined
     const heroId = heroFile ? mediaIds.get(heroFile) : undefined
 
     const heData = {
@@ -406,8 +418,9 @@ async function main() {
   log(`testimonials: ${testimonials.length}`)
 
   // --------------------------------------------------------------- globals
-  const heroAlbum = manifest['home'] ?? manifest['גלריה'] ?? []
-  const heroImageId = heroAlbum[0] ? mediaIds.get(heroAlbum[0].file) : undefined
+  const heroImageId =
+    mediaIds.get(HERO_HOME) ??
+    (manifest['home']?.[0] ? mediaIds.get(manifest['home'][0].file) : undefined)
 
   await payload.updateGlobal({
     slug: 'site-settings',
