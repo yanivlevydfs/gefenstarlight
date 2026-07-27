@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
@@ -66,12 +67,12 @@ export async function SiteFooter({
           <ul className="mt-4 grid grid-cols-2 gap-y-2 text-sm">
             {items.map((item) => (
               <li key={item.href}>
-                <a
+                <Link
                   href={localeHref(item.href, locale)}
                   className="text-cream-50/70 transition hover:text-star-300"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

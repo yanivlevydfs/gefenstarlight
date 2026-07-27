@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion } from 'motion/react'
 import { Heart, Menu, X } from 'lucide-react'
@@ -84,7 +85,7 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
         }`}
       >
         <div className="container-page flex items-center gap-4">
-          <a
+          <Link
             href={localeHref('/', locale)}
             className="group flex shrink-0 items-center gap-3"
             aria-label={orgName}
@@ -93,11 +94,11 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
             <span className="hidden font-display text-lg leading-tight font-bold sm:block">
               {orgName}
             </span>
-          </a>
+          </Link>
 
           <nav className="mx-auto hidden items-center gap-1 lg:flex" aria-label={t('nav.menu')}>
             {primary.slice(0, 7).map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={localeHref(item.href, locale)}
                 aria-current={isActive(item.href) ? 'page' : undefined}
@@ -114,7 +115,7 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
                     className="absolute inset-x-3 -bottom-0.5 h-px bg-star-400"
                   />
                 )}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -122,13 +123,13 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
             <LocaleSwitcher locale={locale} />
 
             {donate && (
-              <a
+              <Link
                 href={localeHref(donate.href, locale)}
                 className="hidden items-center gap-2 rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-night-950 shadow-lg shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40 sm:inline-flex"
               >
                 <Heart className="size-4" aria-hidden />
                 {donate.label}
-              </a>
+              </Link>
             )}
 
             <button
@@ -212,7 +213,7 @@ function MegaMenu({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.03 * index, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
-                <a
+                <Link
                   href={localeHref(item.href, locale)}
                   className={`group relative flex h-40 flex-col justify-end overflow-hidden rounded-card border p-5 transition-colors ${
                     item.highlight
@@ -243,7 +244,7 @@ function MegaMenu({
                       </span>
                     )}
                   </span>
-                </a>
+                </Link>
               </motion.li>
             ))}
           </ul>

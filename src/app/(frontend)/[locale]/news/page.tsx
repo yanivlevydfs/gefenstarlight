@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server'
@@ -46,7 +47,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
               const cover = mediaUrl(article.cover, 'card')
               return (
                 <Reveal key={article.id} delay={0.05 * (i % 6)} as="li">
-                  <a
+                  <Link
                     href={localeHref(`/news/${article.slug}`, typedLocale)}
                     className="group flex h-full flex-col overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
@@ -78,7 +79,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                         </p>
                       )}
                     </div>
-                  </a>
+                  </Link>
                 </Reveal>
               )
             })}

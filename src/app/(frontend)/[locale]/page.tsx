@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -68,20 +69,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
           <Reveal delay={0.24}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <a
+              <Link
                 href={localeHref('/donate', typedLocale)}
                 className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3.5 font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40"
               >
                 <Heart className="size-5" aria-hidden />
                 {t('actions.donateNow')}
-              </a>
-              <a
+              </Link>
+              <Link
                 href={localeHref('/gefen', typedLocale)}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 font-medium transition hover:border-star-400/60 hover:text-star-300"
               >
                 {t('nav.gefen')}
                 <ArrowLeft className="flip-x size-4" aria-hidden />
-              </a>
+              </Link>
             </div>
           </Reveal>
         </div>
@@ -133,13 +134,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <h2 className="text-3xl sm:text-4xl">{t('home.latestTitle')}</h2>
                 <p className="mt-2 text-cream-50/60">{t('home.latestSubtitle')}</p>
               </div>
-              <a
+              <Link
                 href={localeHref('/projects', typedLocale)}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-star-300 transition hover:text-star-200"
               >
                 {t('projects.allProjects')}
                 <ArrowLeft className="flip-x size-4" aria-hidden />
-              </a>
+              </Link>
             </div>
           </Reveal>
 
@@ -148,7 +149,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               const cover = mediaUrl(project.cover, 'card')
               return (
                 <Reveal key={project.id} delay={0.06 * i} as="li">
-                  <a
+                  <Link
                     href={localeHref(`/projects/${project.slug}`, typedLocale)}
                     className="group block h-full overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
@@ -169,7 +170,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                         {project.summary}
                       </p>
                     </div>
-                  </a>
+                  </Link>
                 </Reveal>
               )
             })}
@@ -190,13 +191,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </p>
           </Reveal>
           <Reveal delay={0.18}>
-            <a
+            <Link
               href={localeHref('/donate', typedLocale)}
               className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-8 py-4 text-lg font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300"
             >
               <Heart className="size-5" aria-hidden />
               {t('actions.donateNow')}
-            </a>
+            </Link>
           </Reveal>
         </div>
       </section>

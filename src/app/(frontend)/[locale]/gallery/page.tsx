@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -55,7 +56,7 @@ export default async function GalleryIndexPage({
 
               return (
                 <Reveal key={album.id} delay={0.05 * (i % 6)} as="li">
-                  <a
+                  <Link
                     href={localeHref(`/gallery/${album.slug}`, typedLocale)}
                     className="group block overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
@@ -84,7 +85,7 @@ export default async function GalleryIndexPage({
                         </p>
                       )}
                     </div>
-                  </a>
+                  </Link>
                 </Reveal>
               )
             })}

@@ -12,9 +12,9 @@ Production, Preview and Development.
 
 | Variable | Required | Value |
 | --- | --- | --- |
-| `PAYLOAD_SECRET` | **yes** | A long random string. Signs admin sessions. Generate once and never change it, or everyone is logged out. |
-| `DATABASE_URI` | **yes** | A `postgres://…` connection string. |
-| `BLOB_READ_WRITE_TOKEN` | **yes** | From Vercel Blob. Without it, uploads from the admin console fail. |
+| `PAYLOAD_SECRET` | strongly recommended | A long random string. Signs admin sessions. Set it once and never change it, or everyone is logged out. |
+| `DATABASE_URI` | only as an override | A `postgres://…` string. Not needed on Vercel — see below. |
+| `BLOB_READ_WRITE_TOKEN` | **yes** | Set automatically when a Blob store is connected. The store **must be created with Public access**. |
 | `NEXT_PUBLIC_SITE_URL` | recommended | `https://www.gefenstarlight.com` — used for canonical URLs, `sitemap.xml` and social previews. |
 
 Generate a secret:
@@ -23,9 +23,38 @@ Generate a secret:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-> **The build fails without `PAYLOAD_SECRET`.** Everything else degrades
-> gracefully — the site renders with fallback copy — but the secret is checked
-> at start-up.
+### The database connection is picked up automatically
+
+Vercel's Neon/Postgres integration already sets `POSTGRES_URL` and
+`DATABASE_URL` on the project. The config reads the first of `DATABASE_URI`,
+`POSTGRES_URL`, `DATABASE_URL`, so connecting the database is enough — nothing
+needs copying by hand. `DATABASE_URI` exists so the seed can target a specific
+database.
+
+Verify it from your machine:
+
+```bash
+POSTGRES_URL="postgres://…" node --import tsx src/scripts/check-env-fallback.ts
+```
+
+### If `PAYLOAD_SECRET` is missing
+
+Payload will not start without a secret, which would take the admin console
+down. When the variable is absent the config derives a stable secret from the
+database credential and logs a warning, so a missing variable is a warning
+rather than an outage. Set it properly anyway: if the database password is ever
+rotated, a derived secret changes and every admin is signed out.
+
+### The Blob store must be Public
+
+Vercel Blob stores are created as either public or private, and
+[the access mode cannot be changed afterwards](https://vercel.com/docs/vercel-blob).
+Payload's adapter only supports public access, and website images have to be
+readable by browsers anyway. A private store rejects every upload with
+*"Cannot use public access on a private store"*.
+
+If you created a private store: delete it and create a new one with **Public**
+access, then reconnect it to the project.
 
 ### Why Postgres and not the local file
 

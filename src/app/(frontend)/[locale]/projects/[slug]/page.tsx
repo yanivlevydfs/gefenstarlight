@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server'
@@ -89,13 +90,13 @@ export default async function ProjectPage({
       </PageHeader>
 
       <article className="container-page py-14">
-        <a
+        <Link
           href={localeHref('/projects', typedLocale)}
           className="inline-flex items-center gap-2 text-sm font-semibold text-star-300 transition hover:text-star-200"
         >
           <ArrowLeft className="flip-x size-4" aria-hidden />
           {t('actions.backToProjects')}
-        </a>
+        </Link>
 
         <div className="mt-10 max-w-3xl">
           <RichText data={project.body} />

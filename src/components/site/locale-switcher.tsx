@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Languages } from 'lucide-react'
@@ -18,7 +19,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
   const href = '/' + segments.join('/')
 
   return (
-    <a
+    <Link
       href={href}
       lang={other}
       hrefLang={other}
@@ -27,6 +28,6 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
     >
       <Languages className="size-4" aria-hidden />
       {t(other)}
-    </a>
+    </Link>
   )
 }
