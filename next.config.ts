@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+      { protocol: 'https', hostname: '*.blob.vercel-storage.com' },
+    ],
+    // Uploads are served by Payload at /api/media/file/... whenever Blob storage
+    // is not configured. Without this the optimizer rejects them outright and
+    // every photo on the site fails to load.
+    localPatterns: [
+      { pathname: '/api/media/**' },
+      { pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
   },

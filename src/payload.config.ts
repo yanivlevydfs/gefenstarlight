@@ -27,6 +27,13 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const blobToken = process.env.BLOB_READ_WRITE_TOKEN
 
+if (!blobToken && process.env.NODE_ENV === 'production') {
+  console.warn(
+    '[payload] BLOB_READ_WRITE_TOKEN is not set. Uploads will be served from the ' +
+      'local filesystem, which is read-only on Vercel — images will not load.',
+  )
+}
+
 /**
  * The first Postgres connection string we can find. Vercel's Neon integration
  * provides POSTGRES_URL and DATABASE_URL automatically; DATABASE_URI is the

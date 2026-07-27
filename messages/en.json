@@ -128,6 +128,13 @@
     "supportTitle": "Support",
     "builtWith": "Built with love, in memory of Gefen"
   },
+  "cookies": {
+    "title": "Cookie notice",
+    "message": "This site uses cookies to measure usage and improve the experience. There is no advertising here and we do not sell any data.",
+    "accept": "Accept",
+    "decline": "No thanks",
+    "learnMore": "Read the terms"
+  },
   "language": {
     "switcher": "Language",
     "he": "עברית",

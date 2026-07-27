@@ -7,6 +7,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
+import { CookieConsent } from '@/components/site/cookie-consent'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
 import { localeDir, localeTag, routing, type Locale } from '@/i18n/routing'
@@ -55,6 +56,8 @@ export async function generateMetadata({
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.gefenstarlight.com'),
     title: { default: siteName, template: `%s · ${siteName}` },
     description,
+    manifest: '/manifest.webmanifest',
+    appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: siteName },
     alternates: {
       canonical: `/${locale}`,
       languages: { he: '/he', en: '/en', 'x-default': '/he' },
@@ -102,6 +105,7 @@ export default async function FrontendLayout({
             {children}
           </main>
           <SiteFooter navigation={navigation} settings={settings} locale={typedLocale} />
+          <CookieConsent locale={typedLocale} />
         </NextIntlClientProvider>
 
         <Analytics />
