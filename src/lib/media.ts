@@ -40,11 +40,12 @@ export function mediaUrl(value: unknown, size: SizeName = 'card'): ResolvedMedia
   // Videos have no generated sizes — always use the original file.
   const chosen = isVideo ? undefined : media.sizes?.[size]
 
-  // Prefer the absolute CDN address captured at import time. Payload only
-  // produces those while its storage plugin is active, so relying on `url`
-  // alone leaves every image broken on a deployment without the Blob token.
+  // Always prefer the absolute CDN address captured at import time. When the
+  // storage plugin is inactive Payload still returns a relative `/api/media`
+  // path here, which looks valid but resolves to nothing once deployed — so it
+  // must lose to the recorded URL, not merely act as a fallback.
   const sized = isVideo ? undefined : media.publicSizes?.[size]
-  const url = sized || (media.publicUrl && !chosen?.url ? media.publicUrl : (chosen?.url ?? source))
+  const url = sized || media.publicUrl || chosen?.url || source
 
   return {
     url,

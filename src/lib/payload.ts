@@ -54,6 +54,15 @@ export const getSiteSettings = cache(
     ),
 )
 
+/**
+ * The image every page header falls back to — the portrait of Gefen the home
+ * page opens on — so no page is left with a flat, empty banner.
+ */
+export const getDefaultHero = cache(async (locale: Locale) => {
+  const settings = await getSiteSettings(locale)
+  return settings?.shareImage ?? null
+})
+
 export const getNavigation = cache(
   async (locale: Locale): Promise<Navigation | null> =>
     safely<Navigation | null>(

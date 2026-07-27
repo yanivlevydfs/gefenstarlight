@@ -1,11 +1,14 @@
 import Image from 'next/image'
+import { getLocale } from 'next-intl/server'
 
 import { Starfield } from '@/components/site/starfield'
 import { Reveal } from '@/components/site/reveal'
-import type { ResolvedMedia } from '@/lib/media'
+import { mediaUrl, type ResolvedMedia } from '@/lib/media'
+import { getDefaultHero } from '@/lib/payload'
+import type { Locale } from '@/i18n/routing'
 
 /** The shared hero band at the top of every inner page. */
-export function PageHeader({
+export async function PageHeader({
   kicker,
   title,
   subtitle,
@@ -18,16 +21,20 @@ export function PageHeader({
   image?: ResolvedMedia | null
   children?: React.ReactNode
 }) {
+  // Pages without artwork of their own fall back to the portrait of Gefen.
+  const locale = (await getLocale()) as Locale
+  const hero = image ?? mediaUrl(await getDefaultHero(locale), 'wide')
+
   return (
     <section className="relative isolate overflow-hidden border-b border-white/10">
-      {image && (
+      {hero && (
         <Image
-          src={image.url}
+          src={hero.url}
           alt=""
           fill
           priority
           sizes="100vw"
-          className="-z-10 object-cover opacity-25"
+          className="-z-10 animate-drift object-cover opacity-25"
         />
       )}
       <div className="aurora absolute inset-0 -z-10" />
