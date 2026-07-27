@@ -56,7 +56,7 @@ export async function SiteFooter({
             <StarMark className="size-8 text-star-400" />
             <span className="font-display text-xl font-bold">{orgName}</span>
           </div>
-          {s?.tagline && <p className="mt-3 max-w-xs text-sm text-cream-50/65">{s.tagline}</p>}
+          {s?.tagline && <p className="mt-4 max-w-xs text-sm text-cream-50/65">{s.tagline}</p>}
           <p className="mt-6 text-sm text-cream-50/45">{t('footer.builtWith')}</p>
         </div>
 

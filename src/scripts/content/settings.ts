@@ -3,7 +3,9 @@
 export const siteSettings = {
   he: {
     organisationName: 'אור הכוכבים של גפן',
-    legalName: 'עמותת מתנות קטנות — מתנות גדולות לזכרו של גפן אבירם ז״ל (ע.ר. 580713121)',
+    // The number on the association's own logo. The bylaws page belongs to the
+    // separate "מתנות קטנות" association (ע.ר. 580713121).
+    legalName: 'אור הכוכבים של גפן (ע״ר 580811768) — לזכרו של גפן אבירם ז״ל',
     tagline: 'עמותה לזכרו של גפן אבירם ז״ל, המממנת פעילות אומנויות לחימה לנוער בסיכון.',
     description:
       'עמותת אור הכוכבים של גפן מנציחה את זכרו של גפן אבירם ומממנת פעילות ג׳ודו וקרב מגע לנוער בסיכון, תוך הקניית ערכים של התמדה, נחישות ותקווה.',
@@ -19,7 +21,7 @@ export const siteSettings = {
   en: {
     organisationName: "Gefen's Starlight",
     legalName:
-      "Matanot Ktanot — Matanot Gdolot, in memory of Gefen Aviram (Registered Association 580713121)",
+      "Gefen's Starlight (Registered Association 580811768) — in memory of Gefen Aviram",
     tagline:
       'A foundation in memory of Gefen Aviram, funding martial-arts programmes for children and youth at risk.',
     description:

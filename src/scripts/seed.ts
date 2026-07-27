@@ -66,6 +66,9 @@ const albumTitles: Record<string, { he: string; en: string }> = {
 const HERO_HOME = 'a50afb_99d4162785f34f9dba63b197e6e756e5~mv2.jpg'
 const HERO_GEFEN = 'a50afb_b6629c93bd6f45aaa9f0f8ce77bae747~mv2.jpg'
 
+// The old Wix logo and green banner artwork are deliberately not imported —
+// they are dated, and the site uses its own starlight mark instead.
+
 /** Wix page keys that are chrome-only and should not become albums. */
 const skipAlbums = new Set(['תרומות', 'צור-קשר', 'donate', 'about-us', 'en', 'תקנון'])
 
@@ -422,11 +425,14 @@ async function main() {
     mediaIds.get(HERO_HOME) ??
     (manifest['home']?.[0] ? mediaIds.get(manifest['home'][0].file) : undefined)
 
+
   await payload.updateGlobal({
     slug: 'site-settings',
     locale: 'he',
     data: {
       ...siteSettings.he,
+      // Social previews use the hero portrait of Gefen.
+      shareImage: heroImageId,
       bank: { ...siteSettings.he.bank, ...siteSettings.bank },
       international: siteSettings.international,
       emails: siteSettings.emails.map((email) => ({ email })),
