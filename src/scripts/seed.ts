@@ -103,11 +103,18 @@ async function main() {
   }
 
   // ---------------------------------------------------------------- media
+  // Media needs somewhere to live. On Vercel that is Blob storage, so skip the
+  // import when no token is configured rather than writing files that the
+  // deployed site could never serve.
   let manifest: Manifest = {}
-  try {
-    manifest = JSON.parse(await fs.readFile(path.join(MEDIA_DIR, 'manifest.json'), 'utf8'))
-  } catch {
-    log('no seed-media/manifest.json found — skipping media import')
+  if (process.env.SEED_SKIP_MEDIA === 'true') {
+    log('SEED_SKIP_MEDIA=true — importing text content only')
+  } else {
+    try {
+      manifest = JSON.parse(await fs.readFile(path.join(MEDIA_DIR, 'manifest.json'), 'utf8'))
+    } catch {
+      log('no seed-media/manifest.json found — skipping media import')
+    }
   }
 
   /** filename -> Payload media id */
