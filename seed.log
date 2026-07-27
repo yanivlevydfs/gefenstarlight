@@ -1,0 +1,4 @@
+﻿
+> gefenstarlight@0.1.0 seed
+> node --env-file=.env --import tsx src/scripts/seed.ts
+
