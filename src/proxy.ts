@@ -9,7 +9,9 @@ export const proxy = createMiddleware(routing)
 
 export const config = {
   matcher: [
-    // Everything except Payload's admin + API, Next internals and real files.
-    '/((?!admin|api|_next|_vercel|media|.*\\..*).*)',
+    // Everything except Payload's admin + API, the health check, Next internals
+    // and real files. Anything matched here gets a locale prefix, which would
+    // turn /health into /he/health and lose the route.
+    '/((?!admin|api|health|_next|_vercel|media|.*\\..*).*)',
   ],
 }
