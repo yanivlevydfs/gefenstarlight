@@ -8,10 +8,13 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { CookieConsent } from '@/components/site/cookie-consent'
+import { JsonLd } from '@/components/site/json-ld'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
 import { localeDir, localeTag, routing, type Locale } from '@/i18n/routing'
+import { mediaUrl } from '@/lib/media'
 import { getNavigation, getSiteSettings } from '@/lib/payload'
+import { alternates, organisationSchema, SITE_URL, websiteSchema } from '@/lib/seo'
 
 import '../../globals.css'
 
@@ -51,16 +54,24 @@ export async function generateMetadata({
 
   const siteName = (settings?.organisationName as string) || t('siteName')
   const description = (settings?.description as string) || t('description')
+  const share = mediaUrl(settings?.shareImage, 'wide')
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.gefenstarlight.com'),
+    metadataBase: new URL(SITE_URL),
     title: { default: siteName, template: `%s · ${siteName}` },
     description,
+    applicationName: siteName,
     manifest: '/manifest.webmanifest',
     appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: siteName },
-    alternates: {
-      canonical: `/${locale}`,
-      languages: { he: '/he', en: '/en', 'x-default': '/he' },
+    alternates: alternates(locale),
+    keywords:
+      locale === 'he'
+        ? ['עמותה', 'נוער בסיכון', 'ג׳ודו', 'קרב מגע', 'אומנויות לחימה', 'תרומה', 'גפן אבירם']
+        : ['charity', 'youth at risk', 'judo', 'krav maga', 'martial arts', 'donate', 'Israel'],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
     },
     openGraph: {
       type: 'website',
@@ -68,6 +79,13 @@ export async function generateMetadata({
       title: siteName,
       description,
       locale: localeTag[locale],
+      images: share ? [{ url: share.url, width: share.width, height: share.height }] : undefined,
+    },
+    twitter: {
+      card: share ? 'summary_large_image' : 'summary',
+      title: siteName,
+      description,
+      images: share ? [share.url] : undefined,
     },
   }
 }
@@ -91,6 +109,23 @@ export default async function FrontendLayout({
     getSiteSettings(typedLocale),
   ])
 
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  const siteName = settings?.organisationName || t('siteName')
+  const logo = mediaUrl(settings?.shareImage, 'wide')
+
+  const schema = [
+    organisationSchema({
+      locale: typedLocale,
+      name: siteName,
+      description: settings?.description ?? undefined,
+      logo: logo?.url,
+      address: settings?.address ?? undefined,
+      emails: settings?.emails?.map((e) => e.email).filter(Boolean),
+      phones: settings?.phones?.map((p) => p.number).filter(Boolean),
+    }),
+    websiteSchema(typedLocale, siteName),
+  ]
+
   return (
     <html
       lang={localeTag[typedLocale]}
@@ -99,6 +134,7 @@ export default async function FrontendLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col">
+        <JsonLd data={schema} />
         <NextIntlClientProvider>
           <SiteHeader navigation={navigation} settings={settings} locale={typedLocale} />
           <main id="main" className="flex-1">
