@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "siteName": "Gefen's Starlight",
+    "tagline": "In loving memory of Gefen Aviram",
+    "description": "Gefen's Starlight Foundation honours the memory of Gefen Aviram by funding martial-arts programmes for children and youth at risk, teaching perseverance, determination and hope."
+  },
+  "nav": {
+    "home": "Home",
+    "gefen": "About Gefen",
+    "about": "About Us",
+    "projects": "Projects",
+    "thanks": "Thank You",
+    "gallery": "Pictures",
+    "videos": "Videos",
+    "news": "News",
+    "donate": "Donate",
+    "contact": "Contact",
+    "terms": "Bylaws",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to main content"
+  },
+  "actions": {
+    "donateNow": "Donate now",
+    "donate": "Donate",
+    "readMore": "Read more",
+    "backToProjects": "Back to projects",
+    "backToGallery": "Back to gallery",
+    "backToNews": "Back to news",
+    "viewAlbum": "View album",
+    "viewAll": "View all",
+    "watch": "Watch",
+    "send": "Send",
+    "sending": "Sending…",
+    "whatsapp": "Message us on WhatsApp",
+    "call": "Call us",
+    "email": "Email us",
+    "copy": "Copy",
+    "copied": "Copied",
+    "playVideo": "Play video",
+    "scrollToTop": "Back to top"
+  },
+  "home": {
+    "heroKicker": "Gefen's Starlight Foundation",
+    "heroTitle": "Every child deserves a star of their own",
+    "heroLead": "The foundation gives children and youth at risk a place in a martial-arts group, and the routine of showing up — week after week.",
+    "focusTitle": "What we focus on",
+    "focusBody": "The foundation allows children and youth at risk to be part of a group in a martial-arts club and to take part regularly in meetings and events. By drawing them into a sport they come to love, we aim to instil perseverance, commitment, sportsmanship and dedication — to raise their sense of worth, encourage positive action and a striving for excellence, and give them a strong sense of self-efficacy.",
+    "ctaTitle": "Help us help them",
+    "ctaBody": "Every donation turns directly into training hours, equipment, and a sense of belonging for a child who needs it.",
+    "goalsTitle": "Our goals",
+    "latestTitle": "What we have been doing",
+    "latestSubtitle": "Our most recent projects",
+    "galleryTeaserTitle": "Moments from the mat",
+    "galleryTeaserBody": "Smiles, new belts, and children discovering what they are capable of.",
+    "thanksTitle": "What people say"
+  },
+  "projects": {
+    "title": "Projects",
+    "allProjects": "All projects",
+    "photosFromProject": "Photos from this project",
+    "empty": "No projects have been added yet.",
+    "quotesTitle": "In their words"
+  },
+  "gallery": {
+    "title": "Pictures",
+    "subtitle": "Albums from the foundation's activity.",
+    "albums": "Albums",
+    "itemCount": "{count, plural, one {1 item} other {# items}}",
+    "photoCount": "{count, plural, one {1 photo} other {# photos}}",
+    "empty": "There are no photos in this album yet.",
+    "openImage": "Open image"
+  },
+  "videos": {
+    "title": "Videos",
+    "subtitle": "Moments captured at training sessions, ceremonies and events.",
+    "empty": "There are no videos to show yet."
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "News and updates from the foundation.",
+    "empty": "No updates yet.",
+    "published": "Published {date}"
+  },
+  "thanks": {
+    "title": "Letters and thanks",
+    "subtitle": "Words from the people who are with them on the mat, day after day."
+  },
+  "about": {
+    "boardTitle": "Board members"
+  },
+  "donate": {
+    "title": "Donate now — thank you!",
+    "onlineTitle": "Secure card donation",
+    "onlineNote": "Payment is processed on a secure Grow (Meshulam) checkout page.",
+    "monthlyTitle": "Monthly standing order",
+    "monthlyNote": "Regular monthly support — the most meaningful way to help.",
+    "customTitle": "Other amount",
+    "bankTitle": "Bank transfer",
+    "bankNote": "For transfers within Israel",
+    "internationalTitle": "International transfer",
+    "branch": "Branch",
+    "account": "Account",
+    "amount": "₪{amount}"
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "We would love to hear from you — questions, partnerships, or joining the activity.",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone",
+    "formTitle": "Send us a message",
+    "name": "Full name",
+    "emailField": "Email",
+    "phoneField": "Phone",
+    "message": "Message",
+    "success": "Thank you for reaching out! We will get back to you soon.",
+    "error": "Something went wrong. Please try again, or message us directly on WhatsApp.",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "navTitle": "Navigate",
+    "contactTitle": "Get in touch",
+    "supportTitle": "Support",
+    "builtWith": "Built with love, in memory of Gefen"
+  },
+  "language": {
+    "switcher": "Language",
+    "he": "עברית",
+    "en": "English"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The link may have changed, or the page may have been removed.",
+    "backHome": "Back to home",
+    "genericTitle": "Something went wrong",
+    "genericBody": "Try refreshing the page. If the problem persists, we would be glad to hear about it.",
+    "retry": "Try again"
+  }
+}

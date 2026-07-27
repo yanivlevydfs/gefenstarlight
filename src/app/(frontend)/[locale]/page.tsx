@@ -1,0 +1,232 @@
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import { hasLocale } from 'next-intl'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { ArrowLeft, Heart, Sparkles, Star, Trophy, Users } from 'lucide-react'
+
+import { Starfield } from '@/components/site/starfield'
+import { Reveal } from '@/components/site/reveal'
+import { routing, type Locale } from '@/i18n/routing'
+import { getHomePage, listDocs } from '@/lib/payload'
+import { localeHref } from '@/lib/nav'
+import { mediaUrl } from '@/lib/media'
+
+const goalIcons = { star: Star, users: Users, heart: Heart, trophy: Trophy, sparkles: Sparkles }
+
+type Goal = { title?: string; body?: string; icon?: keyof typeof goalIcons }
+type Project = {
+  id: string | number
+  slug?: string
+  title?: string
+  summary?: string
+  date?: string
+  cover?: unknown
+}
+
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
+  setRequestLocale(locale)
+
+  const typedLocale = locale as Locale
+  const t = await getTranslations()
+
+  const [home, projects] = await Promise.all([
+    getHomePage(typedLocale),
+    listDocs('projects', {
+      locale: typedLocale,
+      limit: 3,
+      sort: '-date',
+      where: { featured: { equals: true } },
+    }) as Promise<Project[]>,
+  ])
+
+  const h = (home ?? {}) as {
+    heroKicker?: string
+    heroTitle?: string
+    heroLead?: string
+    heroImage?: unknown
+    focusTitle?: string
+    focusBody?: string
+    goals?: Goal[]
+    ctaTitle?: string
+    ctaBody?: string
+  }
+
+  const heroImage = mediaUrl(h.heroImage, 'wide')
+  const goals = h.goals?.length ? h.goals : []
+
+  return (
+    <>
+      {/* ---------------------------------------------------------------- Hero */}
+      <section className="relative isolate overflow-hidden">
+        <div className="absolute inset-0 -z-20 bg-night-950" />
+        {heroImage && (
+          <Image
+            src={heroImage.url}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="-z-10 animate-drift object-cover opacity-30"
+          />
+        )}
+        <div className="aurora absolute inset-0 -z-10" />
+        <Starfield />
+
+        <div className="container-page relative flex min-h-[78vh] flex-col justify-center py-24">
+          <Reveal>
+            <p className="text-sm font-semibold tracking-[0.2em] text-star-300 uppercase">
+              {h.heroKicker || t('home.heroKicker')}
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.08}>
+            <h1 className="mt-5 max-w-4xl text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
+              <span className="text-gradient-star">{h.heroTitle || t('home.heroTitle')}</span>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.16}>
+            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream-50/80 sm:text-xl">
+              {h.heroLead || t('home.heroLead')}
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.24}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <a
+                href={localeHref('/donate', typedLocale)}
+                className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3.5 font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40"
+              >
+                <Heart className="size-5" aria-hidden />
+                {t('actions.donateNow')}
+              </a>
+              <a
+                href={localeHref('/gefen', typedLocale)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 font-medium transition hover:border-star-400/60 hover:text-star-300"
+              >
+                {t('nav.gefen')}
+                <ArrowLeft className="flip-x size-4" aria-hidden />
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------------- Focus */}
+      <section className="border-y border-white/10 bg-night-900">
+        <div className="container-page grid gap-10 py-20 lg:grid-cols-[0.8fr_1.2fr]">
+          <Reveal>
+            <h2 className="text-3xl sm:text-4xl">{h.focusTitle || t('home.focusTitle')}</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="text-lg leading-relaxed text-cream-50/75">
+              {h.focusBody || t('home.focusBody')}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------------- Goals */}
+      {goals.length > 0 && (
+        <section className="container-page py-20">
+          <Reveal>
+            <h2 className="text-3xl sm:text-4xl">{t('home.goalsTitle')}</h2>
+          </Reveal>
+          <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {goals.map((goal, i) => {
+              const Icon = goalIcons[goal.icon ?? 'star'] ?? Star
+              return (
+                <Reveal key={`${goal.title}-${i}`} delay={0.05 * i} as="li">
+                  <div className="h-full rounded-card border border-white/10 bg-night-850/60 p-6 transition hover:border-star-400/40">
+                    <Icon className="size-7 text-star-400" aria-hidden />
+                    <h3 className="mt-4 text-xl">{goal.title}</h3>
+                    <p className="mt-2 leading-relaxed text-cream-50/70">{goal.body}</p>
+                  </div>
+                </Reveal>
+              )
+            })}
+          </ul>
+        </section>
+      )}
+
+      {/* ------------------------------------------------------ Latest projects */}
+      {projects.length > 0 && (
+        <section className="container-page py-10 pb-20">
+          <Reveal>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl sm:text-4xl">{t('home.latestTitle')}</h2>
+                <p className="mt-2 text-cream-50/60">{t('home.latestSubtitle')}</p>
+              </div>
+              <a
+                href={localeHref('/projects', typedLocale)}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-star-300 transition hover:text-star-200"
+              >
+                {t('projects.allProjects')}
+                <ArrowLeft className="flip-x size-4" aria-hidden />
+              </a>
+            </div>
+          </Reveal>
+
+          <ul className="mt-10 grid gap-6 md:grid-cols-3">
+            {projects.map((project, i) => {
+              const cover = mediaUrl(project.cover, 'card')
+              return (
+                <Reveal key={project.id} delay={0.06 * i} as="li">
+                  <a
+                    href={localeHref(`/projects/${project.slug}`, typedLocale)}
+                    className="group block h-full overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-night-800">
+                      {cover && (
+                        <Image
+                          src={cover.url}
+                          alt=""
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover transition duration-700 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl">{project.title}</h3>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
+                        {project.summary}
+                      </p>
+                    </div>
+                  </a>
+                </Reveal>
+              )
+            })}
+          </ul>
+        </section>
+      )}
+
+      {/* ----------------------------------------------------------- Donate CTA */}
+      <section className="relative isolate overflow-hidden border-t border-white/10">
+        <div className="aurora absolute inset-0 -z-10" />
+        <div className="container-page py-24 text-center">
+          <Reveal>
+            <h2 className="text-4xl sm:text-5xl">{h.ctaTitle || t('home.ctaTitle')}</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-cream-50/75">
+              {h.ctaBody || t('home.ctaBody')}
+            </p>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <a
+              href={localeHref('/donate', typedLocale)}
+              className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-8 py-4 text-lg font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300"
+            >
+              <Heart className="size-5" aria-hidden />
+              {t('actions.donateNow')}
+            </a>
+          </Reveal>
+        </div>
+      </section>
+    </>
+  )
+}

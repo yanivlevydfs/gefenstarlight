@@ -1,49 +1,208 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ *  Gefen Starlight — design tokens
+ *  "Warm & hopeful": midnight sky, warm starlight gold, soft cream.
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Surfaces — the night sky */
+  --color-night-950: #04060d;
+  --color-night-900: #080d1b;
+  --color-night-850: #0d1426;
+  --color-night-800: #121b33;
+  --color-night-700: #1b2647;
+  --color-night-600: #27355e;
+  --color-night-500: #3a4a78;
+
+  /* Starlight — the warm accent */
+  --color-star-200: #fdefc8;
+  --color-star-300: #fbe09a;
+  --color-star-400: #f7cd6c;
+  --color-star-500: #edb94a;
+  --color-star-600: #d69c2c;
+  --color-star-700: #a9761d;
+
+  /* Warm neutrals — daylight sections */
+  --color-cream-50: #fdfaf3;
+  --color-cream-100: #f9f2e4;
+  --color-cream-200: #f1e6d0;
+  --color-cream-300: #e3d3b4;
+
+  /* Ink — text on light surfaces */
+  --color-ink-900: #1a1c26;
+  --color-ink-700: #3b3f52;
+  --color-ink-500: #666b80;
+
+  /* Supporting hue — calm, hopeful sky blue */
+  --color-skysoft-400: #8fb6d9;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+
+  --shadow-lift: 0 24px 60px -24px rgb(4 6 13 / 0.55);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-drift: drift 22s ease-in-out infinite alternate;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-html {
-  height: 100%;
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+@keyframes drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1.05);
+  }
+  to {
+    transform: translate3d(2%, 2%, 0) scale(1.15);
+  }
 }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* ------------------------------------------------------------------ *
+ *  Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
   html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
     color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background-color: var(--color-night-950);
+    color: var(--color-cream-50);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-star-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-star-500) 35%, transparent);
+  }
+}
+
+@layer utilities {
+  .container-page {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    max-width: 80rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Soft aurora wash used behind hero + section headers */
+  .aurora {
+    background-image:
+      radial-gradient(
+        60% 55% at 20% 10%,
+        color-mix(in oklab, var(--color-star-500) 18%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        50% 50% at 85% 20%,
+        color-mix(in oklab, var(--color-skysoft-400) 14%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        80% 60% at 50% 100%,
+        color-mix(in oklab, var(--color-night-700) 90%, transparent),
+        transparent 70%
+      );
+  }
+
+  .text-gradient-star {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-star-300),
+      var(--color-star-500) 45%,
+      var(--color-star-200)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background-color: color-mix(in oklab, var(--color-night-850) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  /* Decorative transforms that must know the writing direction */
+  [dir='rtl'] .flip-x {
+    transform: scaleX(-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

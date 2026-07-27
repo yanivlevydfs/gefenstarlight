@@ -1,0 +1,253 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { AnimatePresence, motion } from 'motion/react'
+import { Heart, Menu, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+
+import { StarMark } from '@/components/site/star-mark'
+import { LocaleSwitcher } from '@/components/site/locale-switcher'
+import { defaultNav, localeHref, navFromGlobal, type NavItem } from '@/lib/nav'
+import type { Locale } from '@/i18n/routing'
+
+type Props = {
+  navigation: unknown
+  settings: unknown
+  locale: Locale
+}
+
+export function SiteHeader({ navigation, settings, locale }: Props) {
+  const t = useTranslations()
+  const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  const items = navFromGlobal(
+    navigation,
+    defaultNav({
+      home: t('nav.home'),
+      gefen: t('nav.gefen'),
+      about: t('nav.about'),
+      projects: t('nav.projects'),
+      gallery: t('nav.gallery'),
+      videos: t('nav.videos'),
+      news: t('nav.news'),
+      thanks: t('nav.thanks'),
+      contact: t('nav.contact'),
+      donate: t('nav.donate'),
+    }),
+  )
+
+  const primary = items.filter((item) => !item.highlight)
+  const donate = items.find((item) => item.highlight)
+  const orgName =
+    ((settings as { organisationName?: string } | null)?.organisationName as string) ||
+    t('meta.siteName')
+
+  // Close the overlay whenever the route changes.
+  useEffect(() => setOpen(false), [pathname])
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
+
+  const isActive = (href: string) => {
+    const full = localeHref(href, locale)
+    return href === '/' ? pathname === full : pathname.startsWith(full)
+  }
+
+  return (
+    <>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:start-3 focus:z-100 focus:rounded-full focus:bg-star-400 focus:px-5 focus:py-2 focus:font-semibold focus:text-night-950"
+      >
+        {t('nav.skipToContent')}
+      </a>
+
+      <header
+        className={`sticky top-0 z-50 transition-all duration-500 ${
+          scrolled ? 'glass border-b border-white/10 py-2' : 'border-b border-transparent py-4'
+        }`}
+      >
+        <div className="container-page flex items-center gap-4">
+          <a
+            href={localeHref('/', locale)}
+            className="group flex shrink-0 items-center gap-3"
+            aria-label={orgName}
+          >
+            <StarMark className="size-9 text-star-400 transition-transform duration-500 group-hover:rotate-12" />
+            <span className="hidden font-display text-lg leading-tight font-bold sm:block">
+              {orgName}
+            </span>
+          </a>
+
+          <nav className="mx-auto hidden items-center gap-1 lg:flex" aria-label={t('nav.menu')}>
+            {primary.slice(0, 7).map((item) => (
+              <a
+                key={item.href}
+                href={localeHref(item.href, locale)}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-star-300'
+                    : 'text-cream-50/75 hover:text-cream-50'
+                }`}
+              >
+                {item.label}
+                {isActive(item.href) && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-x-3 -bottom-0.5 h-px bg-star-400"
+                  />
+                )}
+              </a>
+            ))}
+          </nav>
+
+          <div className="ms-auto flex items-center gap-2 lg:ms-0">
+            <LocaleSwitcher locale={locale} />
+
+            {donate && (
+              <a
+                href={localeHref(donate.href, locale)}
+                className="hidden items-center gap-2 rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-night-950 shadow-lg shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40 sm:inline-flex"
+              >
+                <Heart className="size-4" aria-hidden />
+                {donate.label}
+              </a>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm font-medium transition hover:border-star-400/60 hover:text-star-300"
+              aria-expanded={open}
+              aria-haspopup="dialog"
+            >
+              <Menu className="size-4" aria-hidden />
+              <span className="hidden sm:inline">{t('nav.menu')}</span>
+              <span className="sr-only sm:hidden">{t('nav.openMenu')}</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {open && (
+          <MegaMenu
+            items={items}
+            locale={locale}
+            onClose={() => setOpen(false)}
+            closeLabel={t('nav.closeMenu')}
+            title={t('nav.menu')}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+function MegaMenu({
+  items,
+  locale,
+  onClose,
+  closeLabel,
+  title,
+}: {
+  items: NavItem[]
+  locale: Locale
+  onClose: () => void
+  closeLabel: string
+  title: string
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-100 overflow-y-auto bg-night-950/95 backdrop-blur-xl"
+    >
+      <div className="aurora min-h-full">
+        <div className="container-page py-6">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm transition hover:border-star-400/60 hover:text-star-300"
+            >
+              <X className="size-4" aria-hidden />
+              {closeLabel}
+            </button>
+          </div>
+
+          <ul className="mt-8 grid gap-4 pb-16 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((item, index) => (
+              <motion.li
+                key={item.href}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.03 * index, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <a
+                  href={localeHref(item.href, locale)}
+                  className={`group relative flex h-40 flex-col justify-end overflow-hidden rounded-card border p-5 transition-colors ${
+                    item.highlight
+                      ? 'border-star-400/50 bg-star-400/10 hover:border-star-300'
+                      : 'border-white/10 bg-night-850/60 hover:border-star-400/40'
+                  }`}
+                >
+                  {item.image ? (
+                    <Image
+                      src={item.image.url}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="object-cover opacity-35 transition duration-700 group-hover:scale-105 group-hover:opacity-55"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_120%,var(--color-night-700),transparent_70%)] opacity-70 transition group-hover:opacity-100"
+                    />
+                  )}
+
+                  <span className="relative">
+                    <span className="block font-display text-2xl font-bold">{item.label}</span>
+                    {item.description && (
+                      <span className="mt-1 block text-sm text-cream-50/70">
+                        {item.description}
+                      </span>
+                    )}
+                  </span>
+                </a>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
