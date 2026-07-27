@@ -1,5 +1,7 @@
 export type SeedPerson = {
   order: number
+  /** Headshot filename inside `seed-media/`, carried over from the old Wix site. */
+  photo?: string
   he: { name: string; role: string; bio?: string }
   en: { name: string; role: string; bio?: string }
 }
@@ -7,6 +9,7 @@ export type SeedPerson = {
 export const boardMembers: SeedPerson[] = [
   {
     order: 1,
+    photo: 'a50afb_cf8121a58f3d473d9f3596366014bec3~mv2.jpg',
     he: {
       name: 'אסף אבירם הגיתי',
       role: 'יו״ר העמותה',
@@ -20,6 +23,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 2,
+    photo: 'd7301b_f5929444ebea4d078b3c69b314945073~mv2.jpeg',
     he: {
       name: 'חגי אבירם',
       role: 'ועד העמותה',
@@ -33,6 +37,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 3,
+    photo: 'd7301b_7ffa104440804d2fac600002a89c5105~mv2.jpg',
     he: {
       name: 'גל אבירם',
       role: 'ועד העמותה',
@@ -46,6 +51,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 4,
+    photo: 'd7301b_c0aa2f6f8cab4346b4db52041246825e~mv2.jpeg',
     he: {
       name: 'שיר אבירם',
       role: 'ועד העמותה',
@@ -59,6 +65,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 5,
+    photo: 'a50afb_e4f321ca6d5845e191bd1dc0d369ced2~mv2.jpg',
     he: {
       name: 'חגי נצר',
       role: 'ועד העמותה',
@@ -72,6 +79,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 6,
+    photo: 'a50afb_17b62465c45a4f8ba030eba3e81a3344~mv2.jpg',
     he: {
       name: 'הדר טל',
       role: 'עורך דין',

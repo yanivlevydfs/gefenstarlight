@@ -56,6 +56,16 @@ export const Media: CollectionConfig = {
       label: { he: 'קרדיט צילום', en: 'Photo credit' },
     },
     {
+      name: 'sourceFile',
+      type: 'text',
+      index: true,
+      admin: { hidden: true },
+      label: { he: 'קובץ מקור', en: 'Source file' },
+      // The importer matches on this rather than on `filename`: Payload renames
+      // an upload when the name is already taken (foo.jpg -> foo-1.jpg), which
+      // made a re-run fail to recognise its own files and upload them twice.
+    },
+    {
       name: 'poster',
       type: 'upload',
       relationTo: 'media',

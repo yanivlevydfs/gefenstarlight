@@ -30,6 +30,13 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
+/**
+ * Pages are prerendered for speed, then refreshed in the background every
+ * minute. Without this every page is frozen at build time, so anything the
+ * owner changes in the admin console stays invisible until the next deploy.
+ */
+export const revalidate = 60
+
 export async function generateMetadata({
   params,
 }: {

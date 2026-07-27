@@ -4,10 +4,12 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Quote } from 'lucide-react'
 
+import { GalleryGrid } from '@/components/site/gallery-grid'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
-import { listTestimonials } from '@/lib/payload'
+import { findAlbum, listTestimonials } from '@/lib/payload'
+import { toGalleryItems } from '@/lib/media'
 
 export async function generateMetadata({
   params,
@@ -26,7 +28,12 @@ export default async function ThanksPage({ params }: { params: Promise<{ locale:
   setRequestLocale(locale)
 
   const t = await getTranslations('thanks')
-  const items = await listTestimonials(locale as Locale)
+  const [items, album] = await Promise.all([
+    listTestimonials(locale as Locale),
+    // The old site showed scans of the letters themselves alongside the quotes.
+    findAlbum('thanks', locale as Locale),
+  ])
+  const letters = toGalleryItems(album?.items)
 
   return (
     <>
@@ -51,6 +58,12 @@ export default async function ThanksPage({ params }: { params: Promise<{ locale:
             </Reveal>
           ))}
         </ul>
+
+        {letters.length > 0 && (
+          <div className="mt-14">
+            <GalleryGrid items={letters} />
+          </div>
+        )}
       </section>
     </>
   )

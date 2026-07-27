@@ -12,6 +12,8 @@ export const pages: SeedPage[] = [
   {
     slug: 'gefen',
     legacyPaths: ['/אודות-גפן'],
+    // Photographs of Gefen from the old page.
+    albumKey: 'אודות-גפן',
     he: {
       title: 'מיהו גפן אבירם',
       subtitle: 'גפן אבירם ז״ל, בן 9.8 שנים במותו',

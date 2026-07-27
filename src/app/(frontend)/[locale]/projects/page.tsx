@@ -40,6 +40,7 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
     <>
       <PageHeader
         title={t('title')}
+        subtitle={t('subtitle')}
         image={mediaUrl(projects[0]?.cover, 'wide')}
       />
 

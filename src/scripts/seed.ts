@@ -139,10 +139,13 @@ async function main() {
   async function uploadOnce(filename: string, alt: string): Promise<number | null> {
     if (mediaIds.has(filename)) return mediaIds.get(filename)!
 
+    // Matched on sourceFile, not filename: Payload renames a colliding upload
+    // (foo.jpg -> foo-1.jpg), so a filename lookup misses on the second run and
+    // every file gets imported again.
     const existing = await payload.find({
       collection: 'media',
       limit: 1,
-      where: { filename: { equals: filename } },
+      where: { sourceFile: { equals: filename } },
     })
     if (existing.docs[0]) {
       mediaIds.set(filename, existing.docs[0].id)
@@ -155,7 +158,7 @@ async function main() {
       const doc = await payload.create({
         collection: 'media',
         locale: 'he',
-        data: { alt },
+        data: { alt, sourceFile: filename },
         filePath,
       })
       mediaIds.set(filename, doc.id)
@@ -176,10 +179,14 @@ async function main() {
     const slug = slugForAlbum(key)
 
     const uploaded: number[] = []
+    /** First still image, so an album cover is never a video with no thumbnail. */
+    let coverId: number | undefined
+
     for (const item of items) {
       const id = await uploadOnce(item.file, titles.he)
       if (!id) continue
       uploaded.push(id)
+      if (!coverId && !item.isVideo) coverId = id
 
       // Videos carry a poster frame so the grid has something to show.
       if (item.posterFile) {
@@ -203,7 +210,7 @@ async function main() {
       slug,
       kind: hasVideo && items.every((i) => i.isVideo) ? ('videos' as const) : ('photos' as const),
       showInGallery: !['board', 'gefen', 'projects'].includes(slug),
-      cover: uploaded[0],
+      cover: coverId ?? uploaded[0],
       items: uploaded,
       _status: 'published' as const,
     }
@@ -232,6 +239,13 @@ async function main() {
       where: { slug: { equals: project.slug } },
     })
 
+    // Cards and the page header need a cover. Use the first still image of the
+    // project's album — skipping videos, which have no usable thumbnail here.
+    const coverFile = project.albumKey
+      ? manifest[project.albumKey]?.find((item) => !item.isVideo)?.file
+      : undefined
+    const coverId = coverFile ? mediaIds.get(coverFile) : undefined
+
     const heData = {
       title: project.he.title,
       slug: project.slug,
@@ -241,6 +255,7 @@ async function main() {
       summary: project.he.summary,
       body: toLexical(project.he.body, 'rtl'),
       quotes: project.he.quotes,
+      cover: coverId,
       album: albumId,
       ctaUrl: project.ctaUrl,
       ctaLabel: project.he.ctaLabel,
@@ -289,11 +304,16 @@ async function main() {
       where: { slug: { equals: page.slug } },
     })
 
+    // Use the first photo of the attached album as the page's hero image.
+    const heroFile = page.albumKey ? manifest[page.albumKey]?.[0]?.file : undefined
+    const heroId = heroFile ? mediaIds.get(heroFile) : undefined
+
     const heData = {
       title: page.he.title,
       slug: page.slug,
       subtitle: page.he.subtitle,
       body: toLexical(heBody, 'rtl'),
+      hero: heroId,
       legacyPaths: page.legacyPaths.map((p) => ({ path: p })),
       album: page.albumKey ? albumIds.get(page.albumKey) : undefined,
       _status: 'published' as const,
@@ -332,17 +352,23 @@ async function main() {
       where: { name: { equals: person.he.name } },
     })
 
+    const photoId =
+      person.photo && process.env.SEED_SKIP_MEDIA !== 'true'
+        ? await uploadOnce(person.photo, person.he.name)
+        : null
+    const heData = { ...person.he, order: person.order, ...(photoId ? { photo: photoId } : {}) }
+
     const doc: BoardMember = existing.docs[0]
       ? await payload.update({
           collection: 'board-members',
           id: existing.docs[0].id,
           locale: 'he',
-          data: { ...person.he, order: person.order },
+          data: heData,
         })
       : await payload.create({
           collection: 'board-members',
           locale: 'he',
-          data: { ...person.he, order: person.order },
+          data: heData,
         })
 
     await payload.update({
