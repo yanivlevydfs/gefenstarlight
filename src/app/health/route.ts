@@ -37,6 +37,56 @@ async function checkImageProcessing() {
  */
 const PROBE_TOKEN = 'gefen-upload-probe-2026'
 
+/**
+ * Uploads a small file to Blob storage three ways, to find which representation
+ * the runtime accepts. The SDK rejected a plain Node Buffer with
+ * "SharedArrayBuffer is not allowed", which points at how the body is passed
+ * to fetch rather than at the credentials.
+ */
+async function probeBlobBody() {
+  const { put, del } = await import('@vercel/blob')
+  const { default: sharp } = await import('sharp')
+  const token = process.env.BLOB_READ_WRITE_TOKEN
+
+  const jpeg = await sharp({
+    create: { width: 64, height: 64, channels: 3, background: '#654321' },
+  })
+    .jpeg()
+    .toBuffer()
+
+  // A Buffer from the shared pool, a copy with its own backing store, and a Blob.
+  const detached = new Uint8Array(jpeg.byteLength)
+  detached.set(jpeg)
+
+  const candidates: [string, unknown][] = [
+    ['nodeBuffer', jpeg],
+    ['detachedUint8Array', detached],
+    ['blob', new Blob([detached], { type: 'image/jpeg' })],
+  ]
+
+  const results: Record<string, string> = {}
+  for (const [name, body] of candidates) {
+    const key = `probe/${name}-${Date.now()}.jpg`
+    try {
+      const res = await put(key, body as Parameters<typeof put>[1], {
+        access: 'public',
+        token,
+        contentType: 'image/jpeg',
+      })
+      results[name] = 'ok'
+      await del(res.url, { token }).catch(() => {})
+    } catch (error) {
+      results[name] = (error as Error).message.slice(0, 160)
+    }
+  }
+
+  return {
+    pooled: Buffer.poolSize,
+    bufferIsPooled: jpeg.byteOffset !== 0 || jpeg.buffer.byteLength !== jpeg.byteLength,
+    results,
+  }
+}
+
 async function probeUpload() {
   try {
     const [{ getPayload }, { default: config }, { default: sharp }] = await Promise.all([
@@ -81,7 +131,10 @@ async function probeUpload() {
 export async function GET(request: Request) {
   const probe = new URL(request.url).searchParams.get('probe')
   if (probe === PROBE_TOKEN) {
-    return NextResponse.json({ uploadProbe: await probeUpload() })
+    return NextResponse.json({
+      blobBodyProbe: await probeBlobBody().catch((e) => ({ error: String(e).slice(0, 300) })),
+      uploadProbe: await probeUpload(),
+    })
   }
 
   return handleStatus()
