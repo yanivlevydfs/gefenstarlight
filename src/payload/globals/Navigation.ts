@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobalAfterChange } from '../hooks/revalidate'
+
 /**
  * The main menu. Every entry carries its own artwork, which the mega-menu
  * renders as a picture tile — so "menu graphics" are editable, not hard-coded.
@@ -15,6 +17,7 @@ export const Navigation: GlobalConfig = {
     },
   },
   access: { read: () => true },
+  hooks: { afterChange: [revalidateGlobalAfterChange] },
   fields: [
     {
       name: 'items',

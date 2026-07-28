@@ -1,11 +1,14 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobalAfterChange } from '../hooks/revalidate'
+
 /** Everything on the home page, editable without touching code. */
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
   label: { he: 'דף הבית', en: 'Home page' },
   admin: { group: { he: 'עיצוב האתר', en: 'Site' } },
   access: { read: () => true },
+  hooks: { afterChange: [revalidateGlobalAfterChange] },
   fields: [
     {
       type: 'collapsible',

@@ -1,5 +1,6 @@
-import type { CollectionConfig } from 'payload'
+﻿import type { CollectionConfig } from 'payload'
 import { slugField, legacyPathsField } from '../fields/slug'
+import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
 
 /** News / update articles, published at /he/news/<slug>. */
 export const Articles: CollectionConfig = {
@@ -19,6 +20,8 @@ export const Articles: CollectionConfig = {
   },
   access: { read: () => true },
   versions: { drafts: true },
+  // Publish immediately instead of waiting out the revalidation window.
+  hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   fields: [
     {
       name: 'title',

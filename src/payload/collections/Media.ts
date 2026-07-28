@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
+
 /**
  * Every photo and video on the site. Uploads are handled entirely by Payload —
  * it generates the resized variants listed in `imageSizes` on upload.
@@ -21,6 +23,7 @@ export const Media: CollectionConfig = {
   access: {
     read: () => true,
   },
+  hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   upload: {
     mimeTypes: ['image/*', 'video/*'],
     focalPoint: true,

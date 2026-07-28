@@ -1,11 +1,14 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobalAfterChange } from '../hooks/revalidate'
+
 /** Organisation details, contact channels and donation options. */
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: { he: 'הגדרות האתר', en: 'Site settings' },
   admin: { group: { he: 'עיצוב האתר', en: 'Site' } },
   access: { read: () => true },
+  hooks: { afterChange: [revalidateGlobalAfterChange] },
   fields: [
     {
       type: 'tabs',
