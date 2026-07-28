@@ -18,6 +18,20 @@ export type NavItem = {
 type Messages = Record<string, string>
 
 /**
+ * Route params arrive percent-encoded for non-ASCII segments — a Hebrew album
+ * slug reaches the page as `%D7%91…` at request time, misses the CMS lookup
+ * and 404s, even though the same page prerendered fine at build time (where
+ * params come decoded from generateStaticParams). Decode before looking up.
+ */
+export function decodeSlug(slug: string): string {
+  try {
+    return decodeURIComponent(slug)
+  } catch {
+    return slug
+  }
+}
+
+/**
  * The menu the site ships with. The `navigation` global in the admin console
  * overrides this entirely once the owner saves it, so nothing here is fixed.
  */

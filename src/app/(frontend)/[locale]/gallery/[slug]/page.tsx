@@ -10,7 +10,7 @@ import { JsonLd } from '@/components/site/json-ld'
 import { PageHeader } from '@/components/site/page-header'
 import { routing, type Locale } from '@/i18n/routing'
 import { findAlbum, listAlbums } from '@/lib/payload'
-import { localeHref } from '@/lib/nav'
+import { decodeSlug, localeHref } from '@/lib/nav'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
 import { breadcrumbSchema, imageGallerySchema, pageMetadata } from '@/lib/seo'
 
@@ -26,9 +26,10 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>
 }): Promise<Metadata> {
-  const { locale, slug } = await params
+  const { locale, slug: rawSlug } = await params
   if (!hasLocale(routing.locales, locale)) return {}
 
+  const slug = decodeSlug(rawSlug)
   const album = await findAlbum(slug, locale as Locale)
   if (!album) return {}
 
@@ -47,9 +48,11 @@ export default async function AlbumPage({
 }: {
   params: Promise<{ locale: string; slug: string }>
 }) {
-  const { locale, slug } = await params
+  const { locale, slug: rawSlug } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
+
+  const slug = decodeSlug(rawSlug)
 
   const typedLocale = locale as Locale
   const t = await getTranslations()
