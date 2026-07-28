@@ -85,16 +85,12 @@ export function organisationSchema({
   description,
   logo,
   address,
-  emails,
-  phones,
 }: {
   locale: Locale
   name: string
   description?: string
   logo?: string
   address?: string
-  emails?: string[]
-  phones?: string[]
 }): JsonLd {
   return {
     '@context': 'https://schema.org',
@@ -110,14 +106,16 @@ export function organisationSchema({
     address: address
       ? { '@type': 'PostalAddress', streetAddress: address, addressCountry: 'IL' }
       : undefined,
-    email: emails?.[0],
-    telephone: phones?.[0],
-    contactPoint: emails?.map((email) => ({
+    // No address or telephone here on purpose. Structured data is plain text in
+    // the page, so listing them would hand every harvester exactly what the
+    // contact links were rewritten to hide. Visitors reach the foundation
+    // through the contact page, which search engines index anyway.
+    contactPoint: {
       '@type': 'ContactPoint',
-      email,
       contactType: 'general',
+      url: `${SITE_URL}/${locale}/contact`,
       availableLanguage: ['he', 'en'],
-    })),
+    },
     knowsLanguage: ['he', 'en'],
     areaServed: { '@type': 'Country', name: 'Israel' },
   }

@@ -120,8 +120,6 @@ export default async function FrontendLayout({
       description: settings?.description ?? undefined,
       logo: logo?.url,
       address: settings?.address ?? undefined,
-      emails: settings?.emails?.map((e) => e.email).filter(Boolean),
-      phones: settings?.phones?.map((p) => p.number).filter(Boolean),
     }),
     websiteSchema(typedLocale, siteName),
   ]

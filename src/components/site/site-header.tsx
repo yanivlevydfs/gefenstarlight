@@ -199,17 +199,19 @@ function MegaMenu({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-100 overflow-y-auto bg-night-950/95 backdrop-blur-xl"
+      className="fixed inset-0 z-100"
     >
       {/*
-        Gefen's portrait and the starfield sit behind the menu.
+        Gefen's portrait and the starfield sit behind the menu, in a layer of
+        their own that never scrolls.
 
-        They live in their own layer pinned to the viewport rather than inside
-        the scrolling list: `fill` positions an image against its nearest
-        positioned ancestor, so putting it in the scroller left the backdrop
-        ending partway down a long menu.
+        The blur has to live on its own element too: a backdrop filter makes an
+        element the containing block for fixed descendants, so putting it on the
+        wrapper pinned the background to the scroller and the portrait stopped
+        partway down a long menu.
       */}
-      <div className="pointer-events-none fixed inset-0" aria-hidden>
+      <div className="absolute inset-0 bg-night-950/95 backdrop-blur-xl" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
         {backdrop && (
           <Image src={backdrop} alt="" fill sizes="100vw" className="object-cover opacity-15" />
         )}
@@ -217,7 +219,7 @@ function MegaMenu({
         <Starfield />
       </div>
 
-      <div className="relative min-h-full">
+      <div className="absolute inset-0 overflow-y-auto">
         <div className="container-page py-6">
           <div className="flex justify-end">
             <button
