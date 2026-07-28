@@ -97,6 +97,17 @@ export default buildConfig({
     meta: {
       titleSuffix: '· אור הכוכבים של גפן',
     },
+    components: {
+      // The team's Hebrew manual: a card on the dashboard, the guide itself
+      // at /admin/manual.
+      beforeDashboard: ['/payload/components/admin-manual#ManualBanner'],
+      views: {
+        manual: {
+          Component: '/payload/components/admin-manual#ManualView',
+          path: '/manual',
+        },
+      },
+    },
   },
 
   // Content is authored in both languages; Hebrew is the source of truth.
