@@ -3,17 +3,16 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { ArrowLeft, Heart, Sparkles, Star, Trophy, Users } from 'lucide-react'
+import { ArrowLeft, Heart } from 'lucide-react'
 
 import { FilmPlayer } from '@/components/site/film-player'
+import { GoalsCarousel } from '@/components/site/goals-carousel'
 import { Starfield } from '@/components/site/starfield'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
-import { getFilm, getHomePage, listProjects } from '@/lib/payload'
+import { getFilm, getGoalPhotos, getHomePage, listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl } from '@/lib/media'
-
-const goalIcons = { star: Star, users: Users, heart: Heart, trophy: Trophy, sparkles: Sparkles }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -23,16 +22,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const typedLocale = locale as Locale
   const t = await getTranslations()
 
-  const [h, projects, film] = await Promise.all([
+  const [h, projects, film, goalPhotos] = await Promise.all([
     getHomePage(typedLocale),
     listProjects({ locale: typedLocale, limit: 3, where: { featured: { equals: true } } }),
     getFilm(),
+    getGoalPhotos(),
   ])
 
   const heroImage = mediaUrl(h?.heroImage, 'wide')
-  const goals = h?.goals ?? []
   const filmSrc = mediaUrl(film, 'full')
   const filmPoster = film ? mediaUrl(film.poster, 'wide')?.url : undefined
+
+  // The goals slider from the old site: each goal beside a photo of Gefen,
+  // paired by seed order. A goal past the photo list shows text alone.
+  const goalSlides = (h?.goals ?? []).map((goal, i) => {
+    const photo = mediaUrl(goalPhotos[i], 'card')
+    return {
+      title: goal.title,
+      body: goal.body ?? undefined,
+      image: photo ? { url: photo.url, alt: photo.alt } : null,
+    }
+  })
 
   return (
     <>
@@ -124,25 +134,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       )}
 
       {/* --------------------------------------------------------------- Goals */}
-      {goals.length > 0 && (
+      {goalSlides.length > 0 && (
         <section className="container-page py-20">
           <Reveal>
             <h2 className="text-3xl sm:text-4xl">{t('home.goalsTitle')}</h2>
           </Reveal>
-          <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {goals.map((goal, i) => {
-              const Icon = goalIcons[goal.icon ?? 'star'] ?? Star
-              return (
-                <Reveal key={`${goal.title}-${i}`} delay={0.05 * i} as="li">
-                  <div className="h-full rounded-card border border-white/10 bg-night-850/60 p-6 transition hover:border-star-400/40">
-                    <Icon className="size-7 text-star-400" aria-hidden />
-                    <h3 className="mt-4 text-xl">{goal.title}</h3>
-                    <p className="mt-2 leading-relaxed text-cream-50/70">{goal.body}</p>
-                  </div>
-                </Reveal>
-              )
-            })}
-          </ul>
+          <Reveal delay={0.1}>
+            <GoalsCarousel
+              slides={goalSlides}
+              label={t('home.goalsTitle')}
+              prevLabel={t('home.goalsPrev')}
+              nextLabel={t('home.goalsNext')}
+            />
+          </Reveal>
         </section>
       )}
 

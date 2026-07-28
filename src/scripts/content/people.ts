@@ -65,7 +65,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 5,
-    // The old site showed no headshot for him.
+    photo: 'a50afb_e4f321ca6d5845e191bd1dc0d369ced2~mv2.jpg',
     he: {
       name: 'חגי נצר',
       role: 'ועד העמותה',
@@ -93,7 +93,8 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 7,
-    photo: 'a50afb_e4f321ca6d5845e191bd1dc0d369ced2~mv2.jpg',
+    // A headshot the owner supplied directly — not from the old site.
+    photo: 'arnon-mainfeld.jpeg',
     he: { name: 'ארנון מיינפלד', role: 'ועד העמותה' },
     en: { name: 'Arnon Meinfeld', role: 'Board member' },
   },

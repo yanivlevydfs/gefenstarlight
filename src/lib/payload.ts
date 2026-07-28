@@ -83,6 +83,35 @@ export const getFilm = cache(async (): Promise<Media | null> =>
   }, null),
 )
 
+/**
+ * The old Wix home page paired each goal with a photograph of Gefen in a
+ * slider. The pairing lives here, in the order the goals are seeded, so the
+ * carousel can rebuild it from media that is already in the library. A goal
+ * without a photo (or a photo that fails to load) renders as text alone.
+ */
+export const GOAL_PHOTO_SOURCE_FILES = [
+  'a50afb_6a0968b313a14a339ef4b2d5843dce5f~mv2.jpg', // לעודד — judo certificate
+  'a50afb_e2dfaadc060149c4b6adf94e75809551~mv2.jpg', // לסייע — climbing wall
+  'a50afb_fb33877734ed4fbdb52b707098d3f360~mv2.jpg', // להעשיר — painting
+  'a50afb_797baa42b6f04bc883dd02e1934d622d~mv2.jpg', // הישגים — classroom
+  'a50afb_f4e801d151644effac1d6c18a6b63954~mv2.jpg', // לחשוף — rock climbing
+  'd7301b_61e1678c813d4fdd8e80efc4d50c029d~mv2.jpg', // ציוד — the kit
+]
+
+export const getGoalPhotos = cache(async (): Promise<(Media | null)[]> =>
+  safely<(Media | null)[]>(async (payload) => {
+    const { docs } = await payload.find({
+      collection: 'media',
+      limit: GOAL_PHOTO_SOURCE_FILES.length,
+      depth: 0,
+      where: { sourceFile: { in: GOAL_PHOTO_SOURCE_FILES } },
+    })
+    return GOAL_PHOTO_SOURCE_FILES.map(
+      (file) => docs.find((d) => d.sourceFile === file) ?? null,
+    )
+  }, []),
+)
+
 export const getNavigation = cache(
   async (locale: Locale): Promise<Navigation | null> =>
     safely<Navigation | null>(

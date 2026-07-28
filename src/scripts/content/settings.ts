@@ -37,11 +37,11 @@ export const siteSettings = {
   },
 
   // Shared, language-independent values
-  emails: ['aaviram1@012.net.il', 'sama2@netvision.net.il'],
-  phones: [
-    { number: '055-158-7096', he: 'נייד', en: 'Mobile' },
-    { number: '054-771-1120', he: 'נייד', en: 'Mobile' },
-  ],
+  // The one address and one number the foundation publishes — confirmed by
+  // the owner against the old site; anything else that once appeared there
+  // was wrong.
+  emails: ['aaviram1@012.net.il'],
+  phones: [{ number: '054-4249142', he: 'נייד', en: 'Mobile' }],
   whatsapp: '972544249142',
   bank: { branch: '630', account: '630635' },
   international: {

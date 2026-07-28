@@ -55,7 +55,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           <div className="space-y-6">
             {settings?.address && (
               <Detail icon={<MapPin className="size-5" />} label={t('contact.address')}>
-                <ProtectedText reversed={reverseValue(settings.address)} />
+                <ProtectedText value={settings.address} />
               </Detail>
             )}
 
