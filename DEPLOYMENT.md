@@ -7,8 +7,13 @@ console are the same deployment — there is no separate CMS to host.
 
 ## 1. Environment variables
 
-Set these in **Vercel → Project → Settings → Environment Variables**, for
+Set these in **Vercel → the project → Settings → Environment Variables**, for
 Production, Preview and Development.
+
+> **Add them to the project, not the team-wide "Shared" tab.** Shared variables
+> only reach a project once it is explicitly linked to them; until then the
+> deployment cannot see them and the failure is silent. Open `/health` to see
+> exactly what the running deployment has.
 
 | Variable | Required | Value |
 | --- | --- | --- |
