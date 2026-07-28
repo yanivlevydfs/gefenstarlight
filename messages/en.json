@@ -101,6 +101,9 @@
     "bankTitle": "Bank transfer",
     "bankNote": "For transfers within Israel",
     "internationalTitle": "International transfer",
+    "bankName": "Bank",
+    "accountName": "Account name",
+    "beneficiary": "Beneficiary",
     "branch": "Branch",
     "account": "Account",
     "amount": "₪{amount}"

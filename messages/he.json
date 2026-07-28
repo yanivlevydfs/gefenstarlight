@@ -101,6 +101,9 @@
     "bankTitle": "העברה בנקאית",
     "bankNote": "להעברה מישראל",
     "internationalTitle": "העברה מחו״ל",
+    "bankName": "בנק",
+    "accountName": "שם החשבון",
+    "beneficiary": "שם המוטב",
     "branch": "סניף",
     "account": "חשבון",
     "amount": "{amount} ₪"

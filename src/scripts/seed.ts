@@ -39,7 +39,9 @@ type Manifest = Record<string, ManifestItem[]>
 const albumTitles: Record<string, { he: string; en: string }> = {
   'גלריה': { he: 'תמונות מהפעילות', en: 'Photos from our activity' },
   'סרטונים': { he: 'סרטונים', en: 'Videos' },
-  home: { he: 'רגעים נבחרים', en: 'Selected moments' },
+  // Personal photographs of Gefen — climbing, in class, in his gi. They belong
+  // on his page rather than sitting under a vague title.
+  home: { he: 'גפן אבירם ז״ל', en: 'Gefen Aviram' },
   'תודות': { he: 'מכתבים ותודות', en: 'Letters and thanks' },
   'פרוייקטים': { he: 'מיזמים', en: 'Projects' },
   'פרויקט-1': { he: 'פורים 2020', en: 'Purim 2020' },

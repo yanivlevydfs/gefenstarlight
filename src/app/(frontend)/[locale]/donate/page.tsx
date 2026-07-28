@@ -158,10 +158,10 @@ export default async function DonatePage({ params }: { params: Promise<{ locale:
               <p className="mt-2 text-sm text-cream-50/55">{t('donate.bankNote')}</p>
 
               <dl className="mt-5 divide-y divide-white/10 overflow-hidden rounded-card border border-white/10 bg-night-850/60">
-                <Row label={t('donate.bankTitle')} value={bank.bankName} />
+                <Row label={t('donate.bankName')} value={bank.bankName} />
                 <Row label={t('donate.branch')} value={bank.branch} copyable />
                 <Row label={t('donate.account')} value={bank.account} copyable />
-                <Row label={t('contact.name')} value={bank.accountName} />
+                <Row label={t('donate.accountName')} value={bank.accountName} />
               </dl>
             </section>
           )}
@@ -177,7 +177,7 @@ export default async function DonatePage({ params }: { params: Promise<{ locale:
               </Reveal>
 
               <dl className="mt-5 divide-y divide-white/10 overflow-hidden rounded-card border border-white/10 bg-night-850/60">
-                <Row label="Beneficiary" value={intl.beneficiary} />
+                <Row label={t('donate.beneficiary')} value={intl.beneficiary} />
                 <Row label="SWIFT" value={intl.swift} copyable />
                 <Row label="IBAN" value={intl.iban} copyable />
               </dl>
