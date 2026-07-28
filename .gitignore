@@ -53,3 +53,7 @@ lint.log
 seed.log
 .vercel
 .env*
+
+# The foundation film is 146 MB - over GitHub's 100 MB file limit. It is
+# fetched from Wix by scripts and lives in Blob storage in production.
+seed-media/d7301b_1ad63cea63354905941e685bbea39916.mp4

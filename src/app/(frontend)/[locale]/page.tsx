@@ -8,7 +8,7 @@ import { ArrowLeft, Heart, Sparkles, Star, Trophy, Users } from 'lucide-react'
 import { Starfield } from '@/components/site/starfield'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
-import { getHomePage, listProjects } from '@/lib/payload'
+import { getFilm, getHomePage, listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl } from '@/lib/media'
 
@@ -22,13 +22,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const typedLocale = locale as Locale
   const t = await getTranslations()
 
-  const [h, projects] = await Promise.all([
+  const [h, projects, film] = await Promise.all([
     getHomePage(typedLocale),
     listProjects({ locale: typedLocale, limit: 3, where: { featured: { equals: true } } }),
+    getFilm(),
   ])
 
   const heroImage = mediaUrl(h?.heroImage, 'wide')
   const goals = h?.goals ?? []
+  const filmSrc = mediaUrl(film, 'full')
+  const filmPoster = film ? mediaUrl(film.poster, 'wide')?.url : undefined
 
   return (
     <>
@@ -101,6 +104,30 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </Reveal>
         </div>
       </section>
+
+      {/* ---------------------------------------------------------------- Film */}
+      {filmSrc && (
+        <section className="container-page py-20">
+          <Reveal>
+            <h2 className="text-3xl sm:text-4xl">{t('home.filmTitle')}</h2>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="mt-2 max-w-2xl text-cream-50/70">{t('home.filmSubtitle')}</p>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <div className="mt-8 overflow-hidden rounded-card border border-white/10 bg-nightfall shadow-lift">
+              {/* The film only downloads when someone presses play. */}
+              <video
+                controls
+                preload="none"
+                poster={filmPoster}
+                src={filmSrc.url}
+                className="aspect-video w-full"
+              />
+            </div>
+          </Reveal>
+        </section>
+      )}
 
       {/* --------------------------------------------------------------- Goals */}
       {goals.length > 0 && (

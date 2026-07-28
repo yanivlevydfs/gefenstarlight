@@ -64,6 +64,25 @@ export const getDefaultHero = cache(async (locale: Locale) => {
   return settings?.shareImage ?? null
 })
 
+/**
+ * The foundation's film, carried over from the old Wix home page. It lives in
+ * the media library like any upload, so the owner can replace the file in the
+ * admin console without touching code — the page finds it by its source name.
+ */
+export const FILM_SOURCE_FILE = 'd7301b_1ad63cea63354905941e685bbea39916.mp4'
+
+export const getFilm = cache(async (): Promise<Media | null> =>
+  safely<Media | null>(async (payload) => {
+    const found = await payload.find({
+      collection: 'media',
+      limit: 1,
+      depth: 1,
+      where: { sourceFile: { equals: FILM_SOURCE_FILE } },
+    })
+    return (found.docs[0] as Media) ?? null
+  }, null),
+)
+
 export const getNavigation = cache(
   async (locale: Locale): Promise<Navigation | null> =>
     safely<Navigation | null>(

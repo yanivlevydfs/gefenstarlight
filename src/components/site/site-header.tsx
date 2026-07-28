@@ -133,10 +133,10 @@ export function SiteHeader({ navigation, organisationName, locale, backdrop }: P
             {donate && (
               <Link
                 href={localeHref(donate.href, locale)}
-                className="hidden items-center gap-2 rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-nightfall shadow-lg shadow-star-500/25 transition hover:bg-star-hover hover:shadow-star-400/40 sm:inline-flex"
+                className="inline-flex items-center gap-2 rounded-full bg-star-400 p-2.5 text-sm font-bold text-nightfall shadow-lg shadow-star-500/25 transition hover:bg-star-hover hover:shadow-star-400/40 sm:px-5"
               >
                 <Heart className="size-4" aria-hidden />
-                {donate.label}
+                <span className="sr-only sm:not-sr-only">{donate.label}</span>
               </Link>
             )}
 
