@@ -5,6 +5,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, Heart, Sparkles, Star, Trophy, Users } from 'lucide-react'
 
+import { FilmPlayer } from '@/components/site/film-player'
 import { Starfield } from '@/components/site/starfield'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
@@ -116,16 +117,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </Reveal>
           <Reveal delay={0.16}>
             <div className="mt-8 overflow-hidden rounded-card border border-white/10 bg-nightfall shadow-lift">
-              {/* The film only streams when someone presses play; the player
-                  menu offers no download button. */}
-              <video
-                controls
-                controlsList="nodownload"
-                preload="none"
-                poster={filmPoster}
-                src={filmSrc.url}
-                className="aspect-video w-full"
-              />
+              <FilmPlayer src={filmSrc.url} poster={filmPoster} />
             </div>
           </Reveal>
         </section>
