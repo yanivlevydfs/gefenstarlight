@@ -6,6 +6,7 @@ import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
 import { ContactForm } from '@/components/site/contact-form'
 import { PageHeader } from '@/components/site/page-header'
+import { ProtectedContact } from '@/components/site/protected-contact'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload'
@@ -51,13 +52,11 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <ul className="space-y-1">
                   {emails.map((email) => (
                     <li key={email}>
-                      <a
-                        href={`mailto:${email}`}
-                        dir="ltr"
+                      <ProtectedContact
+                        value={email}
+                        scheme="mailto"
                         className="transition hover:text-star-300"
-                      >
-                        {email}
-                      </a>
+                      />
                     </li>
                   ))}
                 </ul>
@@ -69,13 +68,11 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 <ul className="space-y-1">
                   {phones.map((phone) => (
                     <li key={phone.id ?? phone.number}>
-                      <a
-                        href={`tel:${phone.number.replace(/[^+\d]/g, '')}`}
-                        dir="ltr"
+                      <ProtectedContact
+                        value={phone.number}
+                        scheme="tel"
                         className="transition hover:text-star-300"
-                      >
-                        {phone.number}
-                      </a>
+                      />
                     </li>
                   ))}
                 </ul>
@@ -83,15 +80,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             )}
 
             {settings?.whatsapp && (
-              <a
-                href={`https://wa.me/${settings.whatsapp}`}
-                target="_blank"
-                rel="noreferrer noopener"
+              <ProtectedContact
+                value={settings.whatsapp}
+                scheme="whatsapp"
+                label={t('actions.whatsapp')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 font-medium transition hover:border-star-400/60 hover:text-star-300"
               >
                 <MessageCircle className="size-5" aria-hidden />
-                {t('actions.whatsapp')}
-              </a>
+              </ProtectedContact>
             )}
           </div>
         </Reveal>

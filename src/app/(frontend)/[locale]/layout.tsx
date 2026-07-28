@@ -136,7 +136,12 @@ export default async function FrontendLayout({
       <body className="flex min-h-dvh flex-col">
         <JsonLd data={schema} />
         <NextIntlClientProvider>
-          <SiteHeader navigation={navigation} settings={settings} locale={typedLocale} />
+          <SiteHeader
+            navigation={navigation}
+            settings={settings}
+            locale={typedLocale}
+            backdrop={logo?.url}
+          />
           <main id="main" className="flex-1">
             {children}
           </main>

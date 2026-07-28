@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
+import { ProtectedContact } from '@/components/site/protected-contact'
 import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
@@ -45,8 +46,12 @@ export async function SiteFooter({
   )
 
   const orgName = s?.organisationName || t('meta.siteName')
-  const emails = s?.emails?.map((e) => e.email).filter(Boolean) ?? []
-  const phones = s?.phones ?? []
+  const emails = (s?.emails ?? [])
+    .map((entry) => entry.email)
+    .filter((email): email is string => Boolean(email))
+  const phones = (s?.phones ?? []).filter(
+    (phone): phone is { number: string; label?: string } => Boolean(phone.number),
+  )
 
   return (
     <footer className="mt-24 border-t border-white/10 bg-night-900">
@@ -91,37 +96,36 @@ export async function SiteFooter({
             )}
             {emails.map((email) => (
               <li key={email}>
-                <a
-                  href={`mailto:${email}`}
+                <ProtectedContact
+                  value={email}
+                  scheme="mailto"
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"
                 >
                   <Mail className="size-4 shrink-0 text-star-400" aria-hidden />
-                  <span dir="ltr">{email}</span>
-                </a>
+                </ProtectedContact>
               </li>
             ))}
             {phones.map((phone) => (
               <li key={phone.number}>
-                <a
-                  href={`tel:${phone.number}`}
+                <ProtectedContact
+                  value={phone.number}
+                  scheme="tel"
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"
                 >
                   <Phone className="size-4 shrink-0 text-star-400" aria-hidden />
-                  <span dir="ltr">{phone.number}</span>
-                </a>
+                </ProtectedContact>
               </li>
             ))}
             {s?.whatsapp && (
               <li>
-                <a
-                  href={`https://wa.me/${s.whatsapp}`}
-                  target="_blank"
-                  rel="noreferrer noopener"
+                <ProtectedContact
+                  value={s.whatsapp}
+                  scheme="whatsapp"
+                  label={t('actions.whatsapp')}
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"
                 >
                   <MessageCircle className="size-4 shrink-0 text-star-400" aria-hidden />
-                  <span>{t('actions.whatsapp')}</span>
-                </a>
+                </ProtectedContact>
               </li>
             )}
           </ul>

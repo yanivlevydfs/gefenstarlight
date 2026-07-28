@@ -9,6 +9,7 @@ import { Heart, Menu, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { StarMark } from '@/components/site/star-mark'
+import { Starfield } from '@/components/site/starfield'
 import { LocaleSwitcher } from '@/components/site/locale-switcher'
 import { defaultNav, localeHref, navFromGlobal, type NavItem } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
@@ -17,9 +18,11 @@ type Props = {
   navigation: unknown
   settings: unknown
   locale: Locale
+  /** Photograph shown faintly behind the menu, when the CMS has one. */
+  backdrop?: string
 }
 
-export function SiteHeader({ navigation, settings, locale }: Props) {
+export function SiteHeader({ navigation, settings, locale, backdrop }: Props) {
   const t = useTranslations()
   const pathname = usePathname()
   // The menu is open only for the route it was opened on, so navigating away
@@ -152,6 +155,7 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
           <MegaMenu
             items={items}
             locale={locale}
+            backdrop={backdrop}
             onClose={() => setOpen(false)}
             closeLabel={t('nav.closeMenu')}
             title={t('nav.menu')}
@@ -165,12 +169,14 @@ export function SiteHeader({ navigation, settings, locale }: Props) {
 function MegaMenu({
   items,
   locale,
+  backdrop,
   onClose,
   closeLabel,
   title,
 }: {
   items: NavItem[]
   locale: Locale
+  backdrop?: string
   onClose: () => void
   closeLabel: string
   title: string
@@ -192,7 +198,20 @@ function MegaMenu({
       transition={{ duration: 0.25 }}
       className="fixed inset-0 z-100 overflow-y-auto bg-night-950/95 backdrop-blur-xl"
     >
-      <div className="aurora min-h-full">
+      {/* Gefen's portrait sits far behind the menu, with the starfield over it,
+          so the panel feels like part of the site rather than a plain sheet. */}
+      {backdrop && (
+        <Image
+          src={backdrop}
+          alt=""
+          fill
+          sizes="100vw"
+          className="pointer-events-none fixed inset-0 object-cover opacity-15"
+        />
+      )}
+      <Starfield />
+
+      <div className="aurora relative min-h-full">
         <div className="container-page py-6">
           <div className="flex justify-end">
             <button
