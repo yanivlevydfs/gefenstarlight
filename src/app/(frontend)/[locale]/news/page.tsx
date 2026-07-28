@@ -79,7 +79,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                         {article.title}
                       </h2>
                       {article.excerpt && (
-                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
+                        <p dir="auto" className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
                           {article.excerpt}
                         </p>
                       )}

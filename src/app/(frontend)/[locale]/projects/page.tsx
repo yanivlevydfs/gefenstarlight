@@ -90,7 +90,7 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
                       <h2 className="mt-2 text-xl transition group-hover:text-star-300">
                         {project.title}
                       </h2>
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
+                      <p dir="auto" className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
                         {project.summary}
                       </p>
 

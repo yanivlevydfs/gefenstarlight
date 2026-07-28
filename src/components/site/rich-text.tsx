@@ -10,6 +10,10 @@ export function RichText({ data, className }: { data: unknown; className?: strin
 
   return (
     <div
+      // With localization fallback, an untranslated field serves Hebrew on the
+      // English site — `auto` lets the browser lay it out RTL from the text
+      // itself instead of forcing the page direction on it.
+      dir="auto"
       className={[
         'space-y-5 text-lg leading-relaxed text-cream-50/80',
         '[&_h2]:mt-12 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:text-star-300',

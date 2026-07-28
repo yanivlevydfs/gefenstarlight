@@ -49,13 +49,17 @@ export async function PageHeader({
           </Reveal>
         )}
         <Reveal delay={0.06}>
-          <h1 className="mt-4 max-w-4xl text-4xl sm:text-5xl lg:text-6xl">
+          {/* CMS text may be untranslated Hebrew on the English site — `auto`
+              resolves direction from the text itself. */}
+          <h1 dir="auto" className="mt-4 max-w-4xl text-4xl sm:text-5xl lg:text-6xl">
             <span className="text-gradient-star">{title}</span>
           </h1>
         </Reveal>
         {subtitle && (
           <Reveal delay={0.12}>
-            <p className="mt-5 max-w-2xl text-lg text-cream-50/75">{subtitle}</p>
+            <p dir="auto" className="mt-5 max-w-2xl text-lg text-cream-50/75">
+              {subtitle}
+            </p>
           </Reveal>
         )}
         {children}

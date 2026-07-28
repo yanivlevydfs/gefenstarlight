@@ -166,7 +166,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl">{project.title}</h3>
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
+                      <p dir="auto" className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">
                         {project.summary}
                       </p>
                     </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 
@@ -74,8 +74,12 @@ export default async function CatchAllPage({
 
   if (!page) {
     // Not a CMS page — see whether an old Wix URL points at something.
+    // A temporary (307) redirect on purpose: the mapping is edited in the
+    // admin console, and browsers cache a permanent one forever — a fixed
+    // mistake would keep sending returning visitors to the wrong page.
+    // Search engines consolidate long-lived temporary redirects just the same.
     const destination = await findByLegacyPath('/' + segments.join('/'), typedLocale)
-    if (destination) permanentRedirect(destination)
+    if (destination) redirect(destination)
     notFound()
   }
 

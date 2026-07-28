@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -184,14 +184,52 @@ function MegaMenu({
   closeLabel: string
   title: string
 }) {
+  const panel = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    // A modal dialog owns the keyboard: focus moves into it on open, Tab wraps
+    // inside it, and Escape (or closing) hands focus back to the menu button.
+    // Without this, Tab kept walking the page underneath the overlay.
+    const opener = document.activeElement as HTMLElement | null
+
+    const focusables = () =>
+      Array.from(
+        panel.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      )
+
+    focusables()[0]?.focus()
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') return onClose()
+      if (e.key !== 'Tab') return
+
+      const list = focusables()
+      if (list.length === 0) return
+      const first = list[0]
+      const last = list[list.length - 1]
+      const active = document.activeElement
+
+      if (e.shiftKey && (active === first || !panel.current?.contains(active))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (active === last || !panel.current?.contains(active))) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      opener?.focus()
+    }
   }, [onClose])
 
   return (
     <motion.div
+      ref={panel}
       role="dialog"
       aria-modal="true"
       aria-label={title}
