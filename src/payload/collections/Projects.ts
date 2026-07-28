@@ -58,7 +58,10 @@ export const Projects: CollectionConfig = {
     {
       name: 'summary',
       type: 'textarea',
-      required: true,
+      // Deliberately not required. It is localised, and a required localised
+      // field blocks saving the second language until it is filled in — the
+      // owner could not add an English title without also writing an English
+      // summary. Left empty, the Hebrew text shows through instead.
       localized: true,
       label: { he: 'תקציר', en: 'Summary' },
       admin: {
