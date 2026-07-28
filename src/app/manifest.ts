@@ -7,7 +7,9 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'אור הכוכבים',
     description:
       'עמותת אור הכוכבים של גפן מממנת פעילות אומנויות לחימה לנוער בסיכון, לזכרו של גפן אבירם ז״ל.',
-    start_url: '/he',
+    // The bare path, so launching the installed app honours the visitor's
+    // saved language instead of always opening Hebrew.
+    start_url: '/',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',

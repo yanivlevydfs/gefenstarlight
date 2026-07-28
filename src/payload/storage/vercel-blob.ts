@@ -24,16 +24,18 @@ function detach(buffer: Buffer, type: string): Blob {
 
 const CACHE_MAX_AGE = 365 * 24 * 60 * 60
 
-function blobBaseUrl(token: string): string {
+function blobBaseUrl(token: string): string | null {
   // A read/write token looks like vercel_blob_rw_<storeId>_<secret>; the public
-  // host is derived from the store id.
+  // host is derived from the store id. A malformed token returns null instead
+  // of throwing — this runs at config import, and a crash here would take down
+  // every page and the admin console, not just uploads.
   const storeId = token.split('_')[3]
+  if (!/^[a-z0-9]+$/i.test(storeId ?? '')) return null
   return `https://${storeId.toLowerCase()}.public.blob.vercel-storage.com`
 }
 
-function createAdapter(token: string): Adapter {
+function createAdapter(token: string, base: string): Adapter {
   return (): GeneratedAdapter => {
-    const base = blobBaseUrl(token)
     const keyFor = (filename: string, prefix?: string) =>
       prefix ? `${prefix.replace(/\/$/, '')}/${filename}` : filename
 
@@ -94,11 +96,19 @@ export function vercelBlobStorage({
   collections: Partial<Record<UploadCollectionSlug, true>>
   token: string
 }): Plugin {
+  const base = blobBaseUrl(token)
+  if (!base) {
+    console.error(
+      '[storage] BLOB_READ_WRITE_TOKEN does not look like a Blob token — storage stays off, uploads will be served locally.',
+    )
+    return (config) => config
+  }
+
   return cloudStoragePlugin({
     collections: Object.fromEntries(
       Object.keys(collections).map((slug) => [
         slug,
-        { adapter: createAdapter(token), disablePayloadAccessControl: true },
+        { adapter: createAdapter(token, base), disablePayloadAccessControl: true },
       ]),
     ),
   })

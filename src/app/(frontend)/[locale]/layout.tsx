@@ -4,10 +4,10 @@ import { notFound } from 'next/navigation'
 import { Frank_Ruhl_Libre, Heebo } from 'next/font/google'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 
+import { ConsentGate } from '@/components/site/consent-gate'
 import { CookieConsent } from '@/components/site/cookie-consent'
+import { PwaRegister } from '@/components/site/pwa-register'
 import { JsonLd } from '@/components/site/json-ld'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
@@ -147,8 +147,9 @@ export default async function FrontendLayout({
           <CookieConsent locale={typedLocale} />
         </NextIntlClientProvider>
 
-        <Analytics />
-        <SpeedInsights />
+        {/* Analytics mount only after the cookie banner is accepted. */}
+        <ConsentGate />
+        <PwaRegister />
       </body>
     </html>
   )

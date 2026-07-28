@@ -1,6 +1,7 @@
 ﻿import type { CollectionConfig } from 'payload'
 import { slugField, legacyPathsField } from '../fields/slug'
 import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
+import { publishedOnly } from '../access'
 
 /**
  * Free-form content pages (e.g. "Who is Gefen", the bylaws). The owner can add
@@ -21,7 +22,7 @@ export const Pages: CollectionConfig = {
       en: 'Free-form content pages. The URL comes from the slug.',
     },
   },
-  access: { read: () => true },
+  access: { read: publishedOnly },
   versions: { drafts: true },
   // Publish immediately instead of waiting out the revalidation window.
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },

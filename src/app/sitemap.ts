@@ -30,19 +30,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listPagesForSitemap('he'),
   ])
 
-  const paths = [
-    ...staticPaths,
-    ...projects.map((p) => `/projects/${p.slug}`),
-    ...albums.map((a) => `/gallery/${a.slug}`),
-    ...articles.map((a) => `/news/${a.slug}`),
+  // CMS entries carry their real edit date; a constant `new Date()` would tell
+  // crawlers every URL changed every hour, and they learn to ignore it.
+  const entries: { path: string; lastModified?: string }[] = [
+    ...staticPaths.map((path) => ({ path })),
+    ...projects.map((p) => ({ path: `/projects/${p.slug}`, lastModified: p.updatedAt })),
+    ...albums.map((a) => ({ path: `/gallery/${a.slug}`, lastModified: a.updatedAt })),
+    ...articles.map((a) => ({ path: `/news/${a.slug}`, lastModified: a.updatedAt })),
     // CMS pages that already have a static entry (e.g. /gefen) are dropped so
     // no URL is listed twice.
-    ...pages.map((p) => `/${p.slug}`).filter((path) => !staticPaths.includes(path)),
+    ...pages
+      .filter((p) => !staticPaths.includes(`/${p.slug}`))
+      .map((p) => ({ path: `/${p.slug}`, lastModified: p.updatedAt })),
   ]
 
-  return paths.map((path) => ({
+  return entries.map(({ path, lastModified }) => ({
     url: `${SITE_URL}/${routing.defaultLocale}${path}`,
-    lastModified: new Date(),
+    ...(lastModified ? { lastModified: new Date(lastModified) } : {}),
     changeFrequency: path === '' ? 'weekly' : 'monthly',
     priority: path === '' ? 1 : path === '/donate' ? 0.9 : 0.7,
     alternates: {

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { vercelBlobStorage } from './payload/storage/vercel-blob'
@@ -63,7 +64,32 @@ if (!process.env.PAYLOAD_SECRET) {
   console.warn('[payload] PAYLOAD_SECRET is not set — using a derived fallback. Set it properly.')
 }
 
+/**
+ * `RESEND_FROM` is "Display Name <address>" or a bare address; the adapter
+ * wants the two parts separately.
+ */
+const fromMatch = (process.env.RESEND_FROM ?? '').match(/^\s*(?:(.*?)\s*<(.+)>|(\S+@\S+))\s*$/)
+const fromName = fromMatch?.[1] || 'אור הכוכבים של גפן'
+const fromAddress = fromMatch?.[2] || fromMatch?.[3] || 'onboarding@resend.dev'
+
 export default buildConfig({
+  // The base for links Payload generates (password reset emails above all).
+  // Without it those links are built from an empty origin and lead nowhere.
+  serverURL: process.env.NEXT_PUBLIC_SITE_URL,
+
+  // Real outgoing mail for the admin console. Without an adapter Payload's
+  // "Forgot password?" writes the reset link to the server log and sends
+  // nothing — locking the owner out of a forgotten account for good.
+  ...(process.env.RESEND_API_KEY
+    ? {
+        email: resendAdapter({
+          apiKey: process.env.RESEND_API_KEY,
+          defaultFromAddress: fromAddress,
+          defaultFromName: fromName,
+        }),
+      }
+    : {}),
+
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },

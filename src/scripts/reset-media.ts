@@ -31,7 +31,14 @@ console.log('albums deleted')
 // Media in batches — deleting also removes the file from Blob storage.
 let removed = 0
 for (;;) {
-  const { docs } = await payload.find({ collection: 'media', limit: 50, depth: 0 })
+  // The marker written below must actually exclude a failed document from the
+  // next page, or one undeletable row loops this forever.
+  const { docs } = await payload.find({
+    collection: 'media',
+    limit: 50,
+    depth: 0,
+    where: { alt: { not_equals: '__undeletable__' } },
+  })
   if (docs.length === 0) break
   for (const doc of docs) {
     try {

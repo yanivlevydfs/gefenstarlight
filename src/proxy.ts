@@ -11,7 +11,9 @@ export const config = {
   matcher: [
     // Everything except Payload's admin + API, the health check, Next internals
     // and real files. Anything matched here gets a locale prefix, which would
-    // turn /health into /he/health and lose the route.
-    '/((?!admin|api|health|_next|_vercel|media|.*\\..*).*)',
+    // turn /health into /he/health and lose the route. The reserved names are
+    // matched as whole segments — a CMS page like /admin-guide or /media-kit
+    // must still get its locale prefix.
+    '/((?!(?:admin|api|health|_next|_vercel|media)(?:/|$)|.*\\..*).*)',
   ],
 }

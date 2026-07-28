@@ -6,13 +6,14 @@ import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/serve
 import { ArrowLeft } from 'lucide-react'
 
 import { GalleryGrid } from '@/components/site/gallery-grid'
+import { JsonLd } from '@/components/site/json-ld'
 import { PageHeader } from '@/components/site/page-header'
 import { RichText } from '@/components/site/rich-text'
 import { routing, type Locale } from '@/i18n/routing'
-import { findArticle, listArticles } from '@/lib/payload'
+import { findArticle, getSiteSettings, listArticles } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
-import { alternates } from '@/lib/seo'
+import { alternates, articleSchema, breadcrumbSchema } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const articles = await listArticles({ locale: 'he', depth: 0 })
@@ -64,8 +65,27 @@ export default async function ArticlePage({
   const album = typeof article.album === 'object' ? article.album : null
   const albumItems = toGalleryItems(album?.items)
 
+  const settings = await getSiteSettings(typedLocale)
+  const cover = mediaUrl(article.cover, 'wide')
+  const schema = [
+    articleSchema({
+      locale: typedLocale,
+      path: `/news/${article.slug}`,
+      headline: article.title,
+      description: article.excerpt ?? undefined,
+      image: cover?.url,
+      datePublished: article.publishedAt,
+      organisationName: settings?.organisationName || 'Gefen Starlight',
+    }),
+    breadcrumbSchema(typedLocale, [
+      { name: t('news.title'), path: '/news' },
+      { name: article.title, path: `/news/${article.slug}` },
+    ]),
+  ]
+
   return (
     <>
+      <JsonLd data={schema} />
       <PageHeader
         kicker={format.dateTime(new Date(article.publishedAt), {
           year: 'numeric',

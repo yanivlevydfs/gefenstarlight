@@ -1,6 +1,7 @@
 ﻿import type { CollectionConfig } from 'payload'
 import { slugField, legacyPathsField } from '../fields/slug'
 import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
+import { publishedOnly } from '../access'
 
 /** A photo/video album. This is the single container for gallery media. */
 export const Albums: CollectionConfig = {
@@ -18,7 +19,7 @@ export const Albums: CollectionConfig = {
       en: 'Photo and video albums. Drag items to reorder them.',
     },
   },
-  access: { read: () => true },
+  access: { read: publishedOnly },
   versions: { drafts: true },
   // Publish immediately instead of waiting out the revalidation window.
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },

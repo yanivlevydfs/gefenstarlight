@@ -24,11 +24,20 @@ const schema = z.object({
 
 export type ContactState = { status: 'idle' | 'success' | 'error' }
 
-/** The visitor's address, as reported by the proxy in front of the app. */
+/**
+ * The visitor's address. `x-vercel-forwarded-for` is set by the platform and
+ * cannot be supplied by the client, so it is preferred — a spammer who mints a
+ * fresh `x-forwarded-for` per request would otherwise get a fresh rate-limit
+ * bucket each time.
+ */
 async function clientIp(): Promise<string | null> {
   const list = await headers()
-  const forwarded = list.get('x-forwarded-for')
-  return forwarded?.split(',')[0]?.trim() || list.get('x-real-ip') || null
+  return (
+    list.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
+    list.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    list.get('x-real-ip') ||
+    null
+  )
 }
 
 /**
@@ -72,6 +81,15 @@ export async function submitEnquiry(
           where: { and: [{ senderKey: { equals: key } }, { createdAt: { greater_than: since } }] },
         })
       : { totalDocs: 0 }
+
+    // A sender already over the limit gets the fake success without a write —
+    // otherwise a looping bot fills the database and buries the owner's
+    // enquiries view under thousands of rows. The first over-limit submissions
+    // were already recorded above the threshold, so nothing is lost.
+    if (recent.totalDocs > RATE_LIMIT.max) {
+      console.warn('[contact] rate limit exceeded, submission dropped')
+      return { status: 'success' }
+    }
 
     const assessment = assessSubmission({
       name: data.name,

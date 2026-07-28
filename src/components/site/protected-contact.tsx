@@ -47,15 +47,33 @@ export function ProtectedContact({
 
   const reveal = () => setHref(target())
 
+  // Announced instead of the reversed gibberish; the real value is only
+  // spoken once the link is focused and the href exists.
+  const ariaLabel =
+    label ??
+    { mailto: 'דוא״ל · email', tel: 'טלפון · phone', whatsapp: 'וואטסאפ · WhatsApp' }[scheme]
+
   return (
     <a
       href={href}
       className={className}
+      // An anchor without href is unfocusable — a keyboard visitor could never
+      // reach the link at all, and onFocus (which builds the href) never fired.
+      tabIndex={0}
+      role="link"
+      aria-label={ariaLabel}
       rel={scheme === 'whatsapp' ? 'noreferrer noopener' : undefined}
       target={scheme === 'whatsapp' ? '_blank' : undefined}
       onMouseEnter={reveal}
       onFocus={reveal}
       onTouchStart={reveal}
+      onKeyDown={(event) => {
+        if (event.key !== 'Enter' || href) return
+        event.preventDefault()
+        const url = target()
+        if (scheme === 'whatsapp') window.open(url, '_blank', 'noreferrer,noopener')
+        else window.location.href = url
+      }}
       onClick={(event) => {
         if (href) return
         event.preventDefault()

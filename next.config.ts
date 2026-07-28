@@ -5,6 +5,25 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // No framing by other sites — protects a logged-in admin from
+          // clickjacking. Same-origin keeps any future live preview working.
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+        ],
+      },
+    ]
+  },
+
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
@@ -20,13 +39,11 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
 
-  async redirects() {
-    // The bare domain goes to Hebrew, the default locale. Every other legacy
-    // URL is resolved from the CMS at request time — see
-    // src/app/(frontend)/[locale]/[...rest]/page.tsx — so the site owner can
-    // add pages and their old links without a code change.
-    return [{ source: '/', destination: '/he', permanent: false }]
-  },
+  // No redirect for the bare domain here on purpose: config redirects run
+  // before the proxy, so a hard `/` → `/he` rule would override next-intl's
+  // locale negotiation and force Hebrew on every visitor — including those who
+  // chose English (NEXT_LOCALE cookie) or whose browser asks for it. The proxy
+  // sends `/` to the right locale, falling back to Hebrew.
 }
 
 export default withPayload(withNextIntl(nextConfig), { devBundleServerPackages: false })

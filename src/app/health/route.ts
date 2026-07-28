@@ -28,12 +28,16 @@ async function checkImageProcessing() {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const blobToken = process.env.BLOB_READ_WRITE_TOKEN
   const databaseUrl =
     process.env.DATABASE_URI || process.env.POSTGRES_URL || process.env.DATABASE_URL
 
-  const imageProcessing = await checkImageProcessing()
+  // The sharp round-trip costs real CPU, so it only runs when asked for
+  // (`/health?deep=1`) — the bare endpoint stays cheap enough that a looping
+  // client cannot burn compute with it.
+  const deep = new URL(request.url).searchParams.get('deep') === '1'
+  const imageProcessing = deep ? await checkImageProcessing() : { ok: 'skipped — add ?deep=1' }
 
   return NextResponse.json({
     ok: true,

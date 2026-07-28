@@ -10,13 +10,24 @@ import type { Locale } from '@/i18n/routing'
 
 const STORAGE_KEY = 'gefen-cookie-consent'
 
-/** Other tabs answering the banner should dismiss it here too. */
-function subscribe(onChange: () => void) {
+/** Fired on the window when this tab answers the banner. */
+const CONSENT_EVENT = 'gefen-consent-change'
+
+/**
+ * One store, two subscribers: the banner (to hide itself) and the analytics
+ * gate (to start or stay off). The storage event covers other tabs; the custom
+ * event covers the tab the visitor clicked in, where storage events never fire.
+ */
+export function subscribeToConsent(onChange: () => void) {
   window.addEventListener('storage', onChange)
-  return () => window.removeEventListener('storage', onChange)
+  window.addEventListener(CONSENT_EVENT, onChange)
+  return () => {
+    window.removeEventListener('storage', onChange)
+    window.removeEventListener(CONSENT_EVENT, onChange)
+  }
 }
 
-function readChoice(): string | null {
+export function readConsent(): string | null {
   try {
     return window.localStorage.getItem(STORAGE_KEY)
   } catch {
@@ -35,7 +46,7 @@ function readChoice(): string | null {
 export function CookieConsent({ locale }: { locale: Locale }) {
   const t = useTranslations('cookies')
   const [dismissed, setDismissed] = useState(false)
-  const choice = useSyncExternalStore(subscribe, readChoice, () => 'server')
+  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => 'server')
 
   const answer = (value: 'accepted' | 'declined') => {
     try {
@@ -43,6 +54,7 @@ export function CookieConsent({ locale }: { locale: Locale }) {
     } catch {
       // The choice simply is not remembered.
     }
+    window.dispatchEvent(new Event(CONSENT_EVENT))
     setDismissed(true)
   }
 

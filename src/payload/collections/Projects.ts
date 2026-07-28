@@ -1,6 +1,7 @@
 ﻿import type { CollectionConfig } from 'payload'
 import { slugField, legacyPathsField } from '../fields/slug'
 import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidate'
+import { publishedOnly } from '../access'
 
 /**
  * A project / initiative page. The site owner creates these from the admin
@@ -21,7 +22,7 @@ export const Projects: CollectionConfig = {
       en: 'Each project becomes its own page. Click “Create new” to add one.',
     },
   },
-  access: { read: () => true },
+  access: { read: publishedOnly },
   versions: { drafts: true },
   // Publish immediately instead of waiting out the revalidation window.
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },

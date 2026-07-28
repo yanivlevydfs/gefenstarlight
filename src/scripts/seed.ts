@@ -454,7 +454,7 @@ async function main() {
     data: {
       ...siteSettings.he,
       // Social previews use the hero portrait of Gefen.
-      shareImage: heroImageId,
+      ...(heroImageId ? { shareImage: heroImageId } : {}),
       bank: { ...siteSettings.he.bank, ...siteSettings.bank },
       international: siteSettings.international,
       emails: siteSettings.emails.map((email) => ({ email })),
@@ -533,9 +533,9 @@ async function main() {
     locale: 'he',
     data: {
       ...homePage.he,
-      heroImage: heroImageId,
+      ...(heroImageId ? { heroImage: heroImageId } : {}),
       goals: homePage.goals.map((goal) => ({ ...goal.he, icon: goal.icon })),
-      featuredAlbum: albumIds.get('גלריה'),
+      ...(albumIds.get('גלריה') ? { featuredAlbum: albumIds.get('גלריה') } : {}),
     },
   })
 

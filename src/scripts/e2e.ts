@@ -3,11 +3,15 @@
  * creating an album, a project and an article, translating them, and confirming
  * each appears on the public pages. Everything it creates is removed again.
  *
- *   npm run e2e                      # against production
- *   npm run e2e -- http://localhost:3001
+ *   npm run e2e                      # against the local dev server
+ *   npm run e2e -- https://example.com   # explicitly against a deployment
  *
  * Credentials come from E2E_EMAIL / E2E_PASSWORD, falling back to the seeded
  * account.
+ *
+ * The default is deliberately local: the test publishes real (temporary)
+ * content, and a partial failure would leave Hebrew test entries visible to
+ * visitors and crawlers — that risk should require an explicit URL.
  */
 export {}
 
@@ -15,7 +19,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const BASE = (process.argv[2] || 'https://gefenstarlight.vercel.app').replace(/\/$/, '')
+const BASE = (process.argv[2] || 'http://localhost:3001').replace(/\/$/, '')
 const EMAIL = process.env.E2E_EMAIL || 'admin@gefenstarlight.com'
 const PASSWORD = process.env.E2E_PASSWORD || 'ChangeMe!2026'
 
