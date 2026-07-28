@@ -10,7 +10,7 @@ import { submitEnquiry, type ContactState } from '@/app/(frontend)/[locale]/cont
 const fieldClass =
   'w-full rounded-xl border border-white/12 bg-night-900/60 px-4 py-3 text-cream-50 placeholder:text-cream-50/35 transition focus:border-star-400/70 focus:outline-none'
 
-export function ContactForm({ locale }: { locale: string }) {
+export function ContactForm({ locale, token }: { locale: string; token: string }) {
   const t = useTranslations('contact')
   const [state, formAction] = useActionState<ContactState, FormData>(submitEnquiry, {
     status: 'idle',
@@ -28,6 +28,9 @@ export function ContactForm({ locale }: { locale: string }) {
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="locale" value={locale} />
+      {/* Signed on the server when the page was built, so the time taken to
+          fill the form in can be measured without trusting the browser. */}
+      <input type="hidden" name="token" value={token} />
 
       {/* Honeypot — hidden from people, tempting to bots. */}
       <input

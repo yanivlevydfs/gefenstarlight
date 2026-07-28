@@ -1,8 +1,12 @@
 'use server'
 
+import { headers } from 'next/headers'
 import { z } from 'zod'
 
-import { getPayloadClient } from '@/lib/payload'
+import { sendEnquiryNotification } from '@/lib/email'
+import { getPayloadClient, getSiteSettings } from '@/lib/payload'
+import { assessSubmission, RATE_LIMIT, senderKey } from '@/lib/spam'
+import type { Locale } from '@/i18n/routing'
 
 const schema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -10,13 +14,28 @@ const schema = z.object({
   phone: z.string().trim().max(40).optional(),
   message: z.string().trim().min(5).max(5000),
   locale: z.string().max(5),
-  // Bots fill hidden fields; humans leave them empty.
+  token: z.string().max(80).optional(),
+  // Hidden from people; only automation fills it in.
   website: z.string().max(0).optional(),
 })
 
 export type ContactState = { status: 'idle' | 'success' | 'error' }
 
-/** Stores a contact-form submission so it shows up in the admin console. */
+/** The visitor's address, as reported by the proxy in front of the app. */
+async function clientIp(): Promise<string | null> {
+  const list = await headers()
+  const forwarded = list.get('x-forwarded-for')
+  return forwarded?.split(',')[0]?.trim() || list.get('x-real-ip') || null
+}
+
+/**
+ * Records a contact-form submission and notifies the foundation.
+ *
+ * The enquiry is stored before the email is attempted, so a mail failure never
+ * loses a message. Spam is scored server-side — see lib/spam.ts — and anything
+ * that fails is answered as though it succeeded, so a bot learns nothing about
+ * which of its attempts got through.
+ */
 export async function submitEnquiry(
   _prev: ContactState,
   formData: FormData,
@@ -27,26 +46,79 @@ export async function submitEnquiry(
     phone: formData.get('phone') || undefined,
     message: formData.get('message'),
     locale: formData.get('locale'),
+    token: formData.get('token') || undefined,
     website: formData.get('website') || undefined,
   })
 
   if (!parsed.success) return { status: 'error' }
-
-  // Silently accept honeypot hits so bots do not learn they were caught.
-  if (parsed.data.website) return { status: 'success' }
+  const data = parsed.data
 
   try {
     const payload = await getPayloadClient()
-    await payload.create({
+    const key = senderKey(await clientIp())
+
+    // How many times has this sender written recently?
+    const since = new Date(Date.now() - RATE_LIMIT.windowMs).toISOString()
+    const recent = await payload.count({
       collection: 'enquiries',
+      overrideAccess: true,
+      where: { and: [{ senderKey: { equals: key } }, { createdAt: { greater_than: since } }] },
+    })
+
+    const assessment = assessSubmission({
+      name: data.name,
+      email: data.email,
+      message: data.message,
+      honeypot: data.website,
+      token: data.token ?? null,
+      recentFromSender: recent.totalDocs,
+    })
+
+    // Refused submissions are still recorded, marked as spam, so the owner can
+    // see what was blocked and correct a false positive.
+    const enquiry = await payload.create({
+      collection: 'enquiries',
+      overrideAccess: true,
       data: {
-        name: parsed.data.name,
-        email: parsed.data.email,
-        phone: parsed.data.phone,
-        message: parsed.data.message,
-        locale: parsed.data.locale,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+        locale: data.locale,
+        senderKey: key,
+        spamScore: assessment.score,
+        status: assessment.reject ? 'spam' : 'new',
+        emailSent: false,
       },
     })
+
+    if (assessment.reject) {
+      console.warn('[contact] refused a submission:', assessment.reasons.join('; '))
+      // Answered as a success on purpose: telling a bot it was caught only
+      // teaches it which check to defeat next.
+      return { status: 'success' }
+    }
+
+    const settings = await getSiteSettings(data.locale as Locale)
+    const recipients = (settings?.emails ?? [])
+      .map((entry) => entry.email)
+      .filter((email): email is string => Boolean(email))
+
+    const { sent, error } = await sendEnquiryNotification(
+      { ...data, phone: data.phone },
+      recipients,
+    )
+    if (!sent) console.warn('[contact] notification not sent:', error)
+
+    // Record whether the owner was actually told, so a silent mail failure is
+    // visible in the admin console rather than assumed.
+    await payload.update({
+      collection: 'enquiries',
+      id: enquiry.id,
+      overrideAccess: true,
+      data: { emailSent: sent },
+    })
+
     return { status: 'success' }
   } catch (error) {
     console.error('[contact] failed to store enquiry:', (error as Error).message)

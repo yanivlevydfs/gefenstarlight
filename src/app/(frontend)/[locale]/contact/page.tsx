@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload'
+import { issueFormToken } from '@/lib/spam'
 
 export async function generateMetadata({
   params,
@@ -99,7 +100,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           <div className="rounded-card border border-white/10 bg-night-850/60 p-7">
             <h2 className="text-2xl">{t('contact.formTitle')}</h2>
             <div className="mt-6">
-              <ContactForm locale={locale} />
+              <ContactForm locale={locale} token={issueFormToken()} />
             </div>
           </div>
         </Reveal>

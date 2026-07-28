@@ -111,19 +111,72 @@ export const Enquiries: CollectionConfig = {
   admin: {
     group: { he: 'מערכת', en: 'System' },
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'createdAt'],
+    defaultColumns: ['name', 'email', 'status', 'createdAt'],
   },
   access: {
-    // Anyone may submit the contact form; only logged-in staff may read.
-    create: () => true,
+    // Submissions arrive through a server action, which is trusted. The public
+    // API must not accept them directly, or the form's spam checks can simply
+    // be skipped by posting here instead.
+    create: ({ req }) => Boolean(req.user),
     read: ({ req }) => Boolean(req.user),
-    update: () => false,
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
   },
   fields: [
     { name: 'name', type: 'text', required: true, label: { he: 'שם', en: 'Name' } },
     { name: 'email', type: 'email', required: true, label: { he: 'דוא״ל', en: 'Email' } },
     { name: 'phone', type: 'text', label: { he: 'טלפון', en: 'Phone' } },
     { name: 'message', type: 'textarea', required: true, label: { he: 'הודעה', en: 'Message' } },
-    { name: 'locale', type: 'text', label: { he: 'שפת הפנייה', en: 'Submitted in' } },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'new',
+      label: { he: 'סטטוס', en: 'Status' },
+      options: [
+        { value: 'new', label: { he: 'חדש', en: 'New' } },
+        { value: 'handled', label: { he: 'טופל', en: 'Handled' } },
+        { value: 'spam', label: { he: 'ספאם', en: 'Spam' } },
+      ],
+      admin: { position: 'sidebar' },
+    },
+    {
+      name: 'locale',
+      type: 'text',
+      label: { he: 'שפת הפנייה', en: 'Submitted in' },
+      admin: { position: 'sidebar', readOnly: true },
+    },
+    {
+      name: 'spamScore',
+      type: 'number',
+      label: { he: 'ניקוד ספאם', en: 'Spam score' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: {
+          he: 'ככל שהניקוד גבוה יותר, כך הפנייה חשודה יותר.',
+          en: 'The higher the score, the more suspicious the submission.',
+        },
+      },
+    },
+    {
+      name: 'senderKey',
+      type: 'text',
+      index: true,
+      label: { he: 'מזהה שולח', en: 'Sender key' },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: {
+          he: 'טביעת אצבע מגובבת של כתובת ה-IP, לצורך הגבלת קצב בלבד.',
+          en: 'A hashed fingerprint of the IP address, used only for rate limiting.',
+        },
+      },
+    },
+    {
+      name: 'emailSent',
+      type: 'checkbox',
+      label: { he: 'נשלחה התראה במייל', en: 'Notification emailed' },
+      admin: { position: 'sidebar', readOnly: true },
+    },
   ],
 }

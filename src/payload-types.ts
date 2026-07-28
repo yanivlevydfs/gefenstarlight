@@ -468,7 +468,17 @@ export interface Enquiry {
   email: string;
   phone?: string | null;
   message: string;
+  status?: ('new' | 'handled' | 'spam') | null;
   locale?: string | null;
+  /**
+   * The higher the score, the more suspicious the submission.
+   */
+  spamScore?: number | null;
+  /**
+   * A hashed fingerprint of the IP address, used only for rate limiting.
+   */
+  senderKey?: string | null;
+  emailSent?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -823,7 +833,11 @@ export interface EnquiriesSelect<T extends boolean = true> {
   email?: T;
   phone?: T;
   message?: T;
+  status?: T;
   locale?: T;
+  spamScore?: T;
+  senderKey?: T;
+  emailSent?: T;
   updatedAt?: T;
   createdAt?: T;
 }
