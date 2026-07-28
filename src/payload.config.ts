@@ -7,7 +7,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { vercelBlobStorage } from './payload/storage/vercel-blob'
 import { he as heAdmin } from '@payloadcms/translations/languages/he'
 import { en as enAdmin } from '@payloadcms/translations/languages/en'
 import sharp from 'sharp'
@@ -139,18 +139,7 @@ export default buildConfig({
       generateDescription: ({ doc }) => doc?.summary ?? doc?.excerpt ?? '',
     }),
     // In production media lives in Vercel Blob; locally it stays on disk.
-    //
-    // `disablePayloadAccessControl` makes Payload hand out the Blob CDN URL
-    // directly instead of proxying every image through /api/media/file. These
-    // are public photos, so the proxy bought nothing and cost a function
-    // invocation per image — and Next's image optimizer rejected those URLs.
-    ...(blobToken
-      ? [
-          vercelBlobStorage({
-            collections: { media: { disablePayloadAccessControl: true } },
-            token: blobToken,
-          }),
-        ]
-      : []),
+    // Uses our own adapter — see the note in payload/storage/vercel-blob.ts.
+    ...(blobToken ? [vercelBlobStorage({ collections: { media: true }, token: blobToken })] : []),
   ],
 })
