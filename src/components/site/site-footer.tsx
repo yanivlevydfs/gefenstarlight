@@ -1,8 +1,9 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
-import { ProtectedContact, reverseValue } from '@/components/site/protected-contact'
+import { ProtectedContact } from '@/components/site/protected-contact'
+import { reverseValue } from '@/lib/contact'
 import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'

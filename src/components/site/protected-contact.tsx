@@ -75,8 +75,3 @@ export function ProtectedContact({
     </a>
   )
 }
-
-/** Reverses a value for {@link ProtectedContact}. Safe to call on the server. */
-export function reverseValue(value: string): string {
-  return [...value].reverse().join('')
-}
