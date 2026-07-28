@@ -7,28 +7,30 @@ type Scheme = 'mailto' | 'tel' | 'whatsapp'
 /**
  * Shows a contact detail without leaving a harvestable one in the markup.
  *
- * Scrapers read the served HTML for `user@domain`, for `mailto:` and `tel:`
- * links, and for phone numbers. None of those appear here:
+ * Two things had to be true for this to work:
  *
- *  - the characters are written in reverse and flipped back by CSS, so the
- *    readable value never exists as a contiguous string in the document;
- *  - the link target is assembled only when somebody hovers, focuses or clicks.
+ *  - the value is passed in **already reversed**. A client component's props
+ *    are serialised into the page for hydration, so handing this component a
+ *    plain address would put that address straight back into the HTML — which
+ *    is exactly what a scraper reads.
+ *  - the link target is assembled only on interaction, so no `mailto:`, `tel:`
+ *    or `wa.me` appears in the document either.
  *
- * It stays readable, selectable and usable with JavaScript disabled, because
- * the reversal is done in CSS and a click falls back to navigating directly.
+ * The reversed text is flipped back by CSS rather than by a script, so it stays
+ * readable, selectable and clickable with JavaScript disabled.
  */
 export function ProtectedContact({
-  value,
+  reversed,
   scheme,
   className,
   children,
   label,
 }: {
-  /** The real value: an address, or a phone number in any readable form. */
-  value: string
+  /** The value written backwards, e.g. `li.ten.210@1marivaa`. */
+  reversed: string
   scheme: Scheme
   className?: string
-  /** Icon and any other fixed content shown alongside the value. */
+  /** Icon or other fixed content shown alongside the value. */
   children?: React.ReactNode
   /** Replaces the value as the visible text, e.g. "Message us on WhatsApp". */
   label?: string
@@ -36,6 +38,7 @@ export function ProtectedContact({
   const [href, setHref] = useState<string | undefined>()
 
   const target = () => {
+    const value = [...reversed].reverse().join('')
     const digits = value.replace(/[^+\d]/g, '')
     if (scheme === 'mailto') return `mailto:${value}`
     if (scheme === 'tel') return `tel:${digits}`
@@ -66,9 +69,14 @@ export function ProtectedContact({
         <span>{label}</span>
       ) : (
         <span dir="ltr" style={{ unicodeBidi: 'bidi-override', direction: 'rtl' }}>
-          {[...value].reverse().join('')}
+          {reversed}
         </span>
       )}
     </a>
   )
+}
+
+/** Reverses a value for {@link ProtectedContact}. Safe to call on the server. */
+export function reverseValue(value: string): string {
+  return [...value].reverse().join('')
 }

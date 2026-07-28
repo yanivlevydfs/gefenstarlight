@@ -16,13 +16,18 @@ import type { Locale } from '@/i18n/routing'
 
 type Props = {
   navigation: unknown
-  settings: unknown
+  /**
+   * Only the name, never the settings object. A client component's props are
+   * serialised into every page, so passing the whole record would publish the
+   * contact addresses and phone numbers in the markup.
+   */
+  organisationName?: string
   locale: Locale
   /** Photograph shown faintly behind the menu, when the CMS has one. */
   backdrop?: string
 }
 
-export function SiteHeader({ navigation, settings, locale, backdrop }: Props) {
+export function SiteHeader({ navigation, organisationName, locale, backdrop }: Props) {
   const t = useTranslations()
   const pathname = usePathname()
   // The menu is open only for the route it was opened on, so navigating away
@@ -51,9 +56,7 @@ export function SiteHeader({ navigation, settings, locale, backdrop }: Props) {
 
   const primary = items.filter((item) => !item.highlight)
   const donate = items.find((item) => item.highlight)
-  const orgName =
-    ((settings as { organisationName?: string } | null)?.organisationName as string) ||
-    t('meta.siteName')
+  const orgName = organisationName || t('meta.siteName')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)

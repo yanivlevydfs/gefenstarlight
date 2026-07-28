@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
-import { ProtectedContact } from '@/components/site/protected-contact'
+import { ProtectedContact, reverseValue } from '@/components/site/protected-contact'
 import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
@@ -97,7 +97,7 @@ export async function SiteFooter({
             {emails.map((email) => (
               <li key={email}>
                 <ProtectedContact
-                  value={email}
+                  reversed={reverseValue(email)}
                   scheme="mailto"
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"
                 >
@@ -108,7 +108,7 @@ export async function SiteFooter({
             {phones.map((phone) => (
               <li key={phone.number}>
                 <ProtectedContact
-                  value={phone.number}
+                  reversed={reverseValue(phone.number)}
                   scheme="tel"
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"
                 >
@@ -119,7 +119,7 @@ export async function SiteFooter({
             {s?.whatsapp && (
               <li>
                 <ProtectedContact
-                  value={s.whatsapp}
+                  reversed={reverseValue(s.whatsapp)}
                   scheme="whatsapp"
                   label={t('actions.whatsapp')}
                   className="flex items-center gap-2.5 text-cream-50/70 transition hover:text-star-300"

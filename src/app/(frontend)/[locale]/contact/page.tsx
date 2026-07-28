@@ -6,7 +6,7 @@ import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
 import { ContactForm } from '@/components/site/contact-form'
 import { PageHeader } from '@/components/site/page-header'
-import { ProtectedContact } from '@/components/site/protected-contact'
+import { ProtectedContact, reverseValue } from '@/components/site/protected-contact'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload'
@@ -53,7 +53,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                   {emails.map((email) => (
                     <li key={email}>
                       <ProtectedContact
-                        value={email}
+                        reversed={reverseValue(email)}
                         scheme="mailto"
                         className="transition hover:text-star-300"
                       />
@@ -69,7 +69,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                   {phones.map((phone) => (
                     <li key={phone.id ?? phone.number}>
                       <ProtectedContact
-                        value={phone.number}
+                        reversed={reverseValue(phone.number)}
                         scheme="tel"
                         className="transition hover:text-star-300"
                       />
@@ -81,7 +81,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
             {settings?.whatsapp && (
               <ProtectedContact
-                value={settings.whatsapp}
+                reversed={reverseValue(settings.whatsapp)}
                 scheme="whatsapp"
                 label={t('actions.whatsapp')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 font-medium transition hover:border-star-400/60 hover:text-star-300"

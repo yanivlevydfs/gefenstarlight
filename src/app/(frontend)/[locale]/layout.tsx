@@ -138,7 +138,7 @@ export default async function FrontendLayout({
         <NextIntlClientProvider>
           <SiteHeader
             navigation={navigation}
-            settings={settings}
+            organisationName={siteName}
             locale={typedLocale}
             backdrop={logo?.url}
           />
