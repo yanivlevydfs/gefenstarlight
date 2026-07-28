@@ -8,6 +8,7 @@ import { GalleryGrid } from '@/components/site/gallery-grid'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
+import { alternates } from '@/lib/seo'
 import { findAlbum, listTestimonials } from '@/lib/payload'
 import { toGalleryItems } from '@/lib/media'
 
@@ -19,7 +20,11 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'thanks' })
-  return { title: t('title'), description: t('subtitle') }
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: alternates(locale as Locale, '/thanks'),
+  }
 }
 
 export default async function ThanksPage({ params }: { params: Promise<{ locale: string }> }) {

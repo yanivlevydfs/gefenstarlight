@@ -75,9 +75,13 @@ export function navFromGlobal(global: unknown, fallback: NavItem[]): NavItem[] {
     }
     if (!item.label || !item.href) continue
 
+    // External and protocol links pass through untouched — prefixing them with
+    // a slash (and later the locale) would turn them into broken internal URLs.
+    const external = /^(https?:)?\/\//.test(item.href) || /^(mailto|tel):/.test(item.href)
+
     resolved.push({
       label: item.label,
-      href: item.href.startsWith('/') ? item.href : `/${item.href}`,
+      href: external || item.href.startsWith('/') ? item.href : `/${item.href}`,
       description: item.description || undefined,
       image: toNavImage(item.image, item.label),
       highlight: Boolean(item.highlight),

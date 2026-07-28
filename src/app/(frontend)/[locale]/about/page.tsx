@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { StarMark } from '@/components/site/star-mark'
 import { routing, type Locale } from '@/i18n/routing'
+import { alternates } from '@/lib/seo'
 import { getSiteSettings, listBoardMembers } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 
@@ -19,7 +20,7 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'nav' })
-  return { title: t('about') }
+  return { title: t('about'), alternates: alternates(locale as Locale, '/about') }
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -61,12 +61,12 @@ const albumTitles: Record<string, { he: string; en: string }> = {
 }
 
 /**
- * Chosen deliberately rather than "first photo in the album": the home page is
- * about Gefen, so it opens on a portrait of him, and his own page opens on the
- * photograph of him in his gi holding a Krav Maga certificate.
+ * Chosen deliberately rather than "first photo in the album": every page banner
+ * opens on the same portrait of Gefen, including his own page — a different
+ * photo there cropped badly in the wide banner and broke the visual rhythm.
  */
 const HERO_HOME = 'a50afb_99d4162785f34f9dba63b197e6e756e5~mv2.jpg'
-const HERO_GEFEN = 'a50afb_b6629c93bd6f45aaa9f0f8ce77bae747~mv2.jpg'
+const HERO_GEFEN = HERO_HOME
 
 // The old Wix logo and green banner artwork are deliberately not imported —
 // they are dated, and the site uses its own starlight mark instead.
@@ -211,6 +211,8 @@ async function main() {
     const uploaded: number[] = []
     /** First still image, so an album cover is never a video with no thumbnail. */
     let coverId: number | undefined
+    /** First poster frame — the cover for albums that contain only videos. */
+    let posterCoverId: number | undefined
 
     for (const item of items) {
       const id = await uploadOnce(item.file, titles.he)
@@ -223,6 +225,7 @@ async function main() {
         const posterId = await uploadOnce(item.posterFile, titles.he)
         if (posterId) {
           await payload.update({ collection: 'media', id, data: { poster: posterId } })
+          if (!posterCoverId) posterCoverId = posterId
         }
       }
     }
@@ -240,7 +243,7 @@ async function main() {
       slug,
       kind: hasVideo && items.every((i) => i.isVideo) ? ('videos' as const) : ('photos' as const),
       showInGallery: !['board', 'gefen', 'projects'].includes(slug),
-      cover: coverId ?? uploaded[0],
+      cover: coverId ?? posterCoverId ?? uploaded[0],
       items: uploaded,
       _status: 'published' as const,
     }

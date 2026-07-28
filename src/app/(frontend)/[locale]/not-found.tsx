@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 import { Starfield } from '@/components/site/starfield'
 
 export default async function NotFound() {
   const t = await getTranslations('errors')
+  const locale = await getLocale()
 
   return (
     <section className="relative isolate grid min-h-[70vh] place-items-center overflow-hidden">
@@ -16,7 +17,7 @@ export default async function NotFound() {
         <h1 className="mt-4 text-3xl sm:text-4xl">{t('notFoundTitle')}</h1>
         <p className="mx-auto mt-4 max-w-md text-cream-50/70">{t('notFoundBody')}</p>
         <Link
-          href="/"
+          href={`/${locale}`}
           className="mt-9 inline-flex rounded-full bg-star-400 px-7 py-3 font-bold text-night-950 transition hover:bg-star-300"
         >
           {t('backHome')}

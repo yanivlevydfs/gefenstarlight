@@ -17,12 +17,21 @@ import 'yet-another-react-lightbox/plugins/thumbnails.css'
 
 import type { GalleryItem } from '@/lib/media'
 
-export function GalleryGrid({ items }: { items: GalleryItem[] }) {
+/** The lightbox needs a MIME type; derive it from the file rather than assuming mp4. */
+function videoType(src: string): string {
+  const ext = src.split('?')[0].split('.').pop()?.toLowerCase()
+  if (ext === 'webm') return 'video/webm'
+  if (ext === 'mov') return 'video/quicktime'
+  if (ext === 'ogg' || ext === 'ogv') return 'video/ogg'
+  return 'video/mp4'
+}
+
+export function GalleryGrid({ items, emptyLabel }: { items: GalleryItem[]; emptyLabel?: string }) {
   const t = useTranslations('gallery')
   const [index, setIndex] = useState(-1)
 
   if (items.length === 0) {
-    return <p className="py-16 text-center text-cream-50/60">{t('empty')}</p>
+    return <p className="py-16 text-center text-cream-50/60">{emptyLabel ?? t('empty')}</p>
   }
 
   const slides: Slide[] = items.map((item) =>
@@ -32,7 +41,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
           poster: item.poster,
           width: item.width ?? 1280,
           height: item.height ?? 720,
-          sources: [{ src: item.src, type: 'video/mp4' }],
+          sources: [{ src: item.src, type: videoType(item.src) }],
           description: item.caption,
         }
       : {
@@ -55,13 +64,27 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               aria-label={item.alt || t('openImage')}
               className="group relative block aspect-square w-full overflow-hidden rounded-xl border border-white/10 bg-night-850 transition hover:border-star-400/50 focus-visible:border-star-400"
             >
-              <Image
-                src={item.isVideo ? (item.poster ?? item.thumb) : item.thumb}
-                alt={item.alt}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover transition duration-700 group-hover:scale-108"
-              />
+              {item.isVideo && !item.poster ? (
+                // No poster frame uploaded — next/image cannot resize a video
+                // file, so show the clip's own first frame instead.
+                <video
+                  src={item.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  aria-hidden
+                  tabIndex={-1}
+                  className="absolute inset-0 size-full object-cover transition duration-700 group-hover:scale-108"
+                />
+              ) : (
+                <Image
+                  src={item.isVideo && item.poster ? item.poster : item.thumb}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition duration-700 group-hover:scale-108"
+                />
+              )}
               <span className="absolute inset-0 bg-gradient-to-t from-night-950/60 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
               {item.isVideo && (
                 <span className="absolute inset-0 grid place-items-center">

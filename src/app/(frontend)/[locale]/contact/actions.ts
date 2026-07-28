@@ -15,8 +15,11 @@ const schema = z.object({
   message: z.string().trim().min(5).max(5000),
   locale: z.string().max(5),
   token: z.string().max(80).optional(),
-  // Hidden from people; only automation fills it in.
-  website: z.string().max(0).optional(),
+  // Hidden from people; only automation fills it in. Deliberately accepts any
+  // value: rejecting it at the schema would answer with the visible error state
+  // and tell a bot exactly which check caught it. Instead the value flows into
+  // the spam score, which refuses it behind a fake success.
+  website: z.string().max(200).optional(),
 })
 
 export type ContactState = { status: 'idle' | 'success' | 'error' }
@@ -55,15 +58,20 @@ export async function submitEnquiry(
 
   try {
     const payload = await getPayloadClient()
-    const key = senderKey(await clientIp())
+    const ip = await clientIp()
+    const key = senderKey(ip)
 
-    // How many times has this sender written recently?
+    // How many times has this sender written recently? Only counted when the
+    // sender is actually identifiable — with no IP header every visitor shares
+    // one bucket, and a handful of genuine messages would lock out the world.
     const since = new Date(Date.now() - RATE_LIMIT.windowMs).toISOString()
-    const recent = await payload.count({
-      collection: 'enquiries',
-      overrideAccess: true,
-      where: { and: [{ senderKey: { equals: key } }, { createdAt: { greater_than: since } }] },
-    })
+    const recent = ip
+      ? await payload.count({
+          collection: 'enquiries',
+          overrideAccess: true,
+          where: { and: [{ senderKey: { equals: key } }, { createdAt: { greater_than: since } }] },
+        })
+      : { totalDocs: 0 }
 
     const assessment = assessSubmission({
       name: data.name,

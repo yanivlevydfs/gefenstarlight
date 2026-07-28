@@ -205,6 +205,13 @@
     transform: scaleX(-1);
   }
 
+  /* A left-pointing arrow that should follow the reading direction — forward
+     is left in Hebrew and right in English. (`.flip-x` is its mirror: right
+     for back-links in Hebrew, left in English.) */
+  [dir='ltr'] .point-forward {
+    transform: scaleX(-1);
+  }
+
   /*
    * Content rises slightly as it scrolls into view.
    *

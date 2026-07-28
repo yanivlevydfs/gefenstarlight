@@ -1,9 +1,12 @@
 import type { MetadataRoute } from 'next'
 
-import { routing } from '@/i18n/routing'
+import { localeTag, routing } from '@/i18n/routing'
 import { listAlbums, listArticles, listPagesForSitemap, listProjects } from '@/lib/payload'
+import { SITE_URL } from '@/lib/seo'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.gefenstarlight.com'
+// Regenerate hourly, so content published in the admin console shows up
+// without waiting for the next deploy.
+export const revalidate = 3600
 
 /** Routes that exist in code rather than in the CMS. */
 const staticPaths = [
@@ -32,7 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...projects.map((p) => `/projects/${p.slug}`),
     ...albums.map((a) => `/gallery/${a.slug}`),
     ...articles.map((a) => `/news/${a.slug}`),
-    ...pages.map((p) => `/${p.slug}`),
+    // CMS pages that already have a static entry (e.g. /gefen) are dropped so
+    // no URL is listed twice.
+    ...pages.map((p) => `/${p.slug}`).filter((path) => !staticPaths.includes(path)),
   ]
 
   return paths.map((path) => ({
@@ -41,9 +46,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: path === '' ? 'weekly' : 'monthly',
     priority: path === '' ? 1 : path === '/donate' ? 0.9 : 0.7,
     alternates: {
-      languages: Object.fromEntries(
-        routing.locales.map((locale) => [locale, `${SITE_URL}/${locale}${path}`]),
-      ),
+      // The same hreflang tags the pages themselves emit — differing signals
+      // for one URL pair make search engines distrust both.
+      languages: {
+        ...Object.fromEntries(
+          routing.locales.map((locale) => [localeTag[locale], `${SITE_URL}/${locale}${path}`]),
+        ),
+        'x-default': `${SITE_URL}/${routing.defaultLocale}${path}`,
+      },
     },
   }))
 }

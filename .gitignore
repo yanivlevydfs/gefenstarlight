@@ -51,3 +51,5 @@ next-env.d.ts
 build.log
 lint.log
 seed.log
+.vercel
+.env*

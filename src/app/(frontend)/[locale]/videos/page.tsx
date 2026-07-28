@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { routing, type Locale } from '@/i18n/routing'
 import { listVideos } from '@/lib/payload'
 import { toGalleryItems } from '@/lib/media'
+import { alternates } from '@/lib/seo'
 
 export async function generateMetadata({
   params,
@@ -17,7 +18,11 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'videos' })
-  return { title: t('title'), description: t('subtitle') }
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: alternates(locale as Locale, '/videos'),
+  }
 }
 
 export default async function VideosPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -32,7 +37,7 @@ export default async function VideosPage({ params }: { params: Promise<{ locale:
     <>
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
       <section className="container-page py-16">
-        <GalleryGrid items={toGalleryItems(videos)} />
+        <GalleryGrid items={toGalleryItems(videos)} emptyLabel={t('empty')} />
       </section>
     </>
   )

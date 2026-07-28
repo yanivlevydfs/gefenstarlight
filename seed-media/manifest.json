@@ -1342,5 +1342,23 @@
       "isVideo": false,
       "originalName": ""
     }
+  ],
+  "סרטונים": [
+    {
+      "file": "a50afb_c0155098d5164584881d25a5f6fcd008.mp4",
+      "posterFile": "a50afb_c0155098d5164584881d25a5f6fcd008f000.jpg",
+      "isVideo": true,
+      "width": 480,
+      "height": 848,
+      "originalName": "VID-20221124-WA0060.mp4"
+    },
+    {
+      "file": "a50afb_333507f453e64d58954f2be36e814940.mp4",
+      "posterFile": "a50afb_333507f453e64d58954f2be36e814940f000.jpg",
+      "isVideo": true,
+      "width": 480,
+      "height": 848,
+      "originalName": "VID-20221124-WA0059 (1).mp4"
+    }
   ]
 }

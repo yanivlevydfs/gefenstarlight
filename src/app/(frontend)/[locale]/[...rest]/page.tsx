@@ -9,6 +9,7 @@ import { RichText } from '@/components/site/rich-text'
 import { routing, type Locale } from '@/i18n/routing'
 import { findByLegacyPath, findPage } from '@/lib/payload'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { alternates } from '@/lib/seo'
 
 /**
  * The last route to be tried. It serves two purposes:
@@ -47,13 +48,14 @@ export async function generateMetadata({
   const { locale, rest } = await params
   if (!hasLocale(routing.locales, locale)) return {}
 
-  const { page } = await resolve(locale as Locale, rest)
+  const { page, slug } = await resolve(locale as Locale, rest)
   if (!page) return {}
 
   const hero = mediaUrl(page.hero, 'wide')
   return {
     title: page.title,
     description: page.subtitle ?? undefined,
+    alternates: alternates(locale as Locale, `/${slug}`),
     openGraph: hero ? { images: [{ url: hero.url }] } : undefined,
   }
 }

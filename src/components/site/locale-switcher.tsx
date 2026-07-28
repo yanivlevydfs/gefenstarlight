@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Languages } from 'lucide-react'
 
@@ -11,6 +11,7 @@ import { routing, type Locale } from '@/i18n/routing'
 export function LocaleSwitcher({ locale }: { locale: Locale }) {
   const t = useTranslations('language')
   const pathname = usePathname()
+  const router = useRouter()
 
   const other = routing.locales.find((l) => l !== locale) ?? routing.defaultLocale
   const segments = pathname.split('/').filter(Boolean)
@@ -21,6 +22,14 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
   return (
     <Link
       href={href}
+      // The query string and anchor are only known in the browser — carry them
+      // across so switching language keeps the visitor's exact place.
+      onClick={(event) => {
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey) return
+        event.preventDefault()
+        const { search, hash } = window.location
+        router.push(href + search + hash)
+      }}
       lang={other}
       hrefLang={other}
       aria-label={t('switcher')}

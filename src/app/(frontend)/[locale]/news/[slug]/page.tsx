@@ -12,6 +12,7 @@ import { routing, type Locale } from '@/i18n/routing'
 import { findArticle, listArticles } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { alternates } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const articles = await listArticles({ locale: 'he', depth: 0 })
@@ -35,6 +36,7 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.excerpt ?? undefined,
+    alternates: alternates(locale as Locale, `/news/${slug}`),
     openGraph: {
       type: 'article',
       publishedTime: article.publishedAt,

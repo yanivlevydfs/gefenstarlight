@@ -81,7 +81,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 font-medium transition hover:border-star-400/60 hover:text-star-300"
               >
                 {t('nav.gefen')}
-                <ArrowLeft className="flip-x size-4" aria-hidden />
+                <ArrowLeft className="point-forward size-4" aria-hidden />
               </Link>
             </div>
           </Reveal>
@@ -139,7 +139,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 className="inline-flex items-center gap-2 text-sm font-semibold text-star-300 transition hover:text-star-200"
               >
                 {t('projects.allProjects')}
-                <ArrowLeft className="flip-x size-4" aria-hidden />
+                <ArrowLeft className="point-forward size-4" aria-hidden />
               </Link>
             </div>
           </Reveal>

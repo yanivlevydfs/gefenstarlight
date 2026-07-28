@@ -42,10 +42,12 @@ export function mediaUrl(value: unknown, size: SizeName = 'card'): ResolvedMedia
 
   // Always prefer the absolute CDN address captured at import time. When the
   // storage plugin is inactive Payload still returns a relative `/api/media`
-  // path here, which looks valid but resolves to nothing once deployed — so it
-  // must lose to the recorded URL, not merely act as a fallback.
+  // path here, which looks valid but resolves to nothing once deployed — so a
+  // relative variant must lose to the recorded URLs; an absolute one (live Blob
+  // storage) is still preferred over the full-resolution original.
   const sized = isVideo ? undefined : media.publicSizes?.[size]
-  const url = sized || media.publicUrl || chosen?.url || source
+  const liveSized = chosen?.url && /^https?:\/\//.test(chosen.url) ? chosen.url : undefined
+  const url = sized || liveSized || media.publicUrl || chosen?.url || source
 
   return {
     url,

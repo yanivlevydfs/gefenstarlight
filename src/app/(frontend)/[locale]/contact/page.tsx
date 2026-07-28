@@ -10,8 +10,14 @@ import { ProtectedContact } from '@/components/site/protected-contact'
 import { reverseValue } from '@/lib/contact'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
+import { alternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload'
 import { issueFormToken } from '@/lib/spam'
+
+// Rendered per request, never prerendered: the anti-bot token is a signed
+// timestamp of when the form was served, and a cached copy would hand every
+// visitor a stale one — old enough to count against them in the spam score.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({
   params,
@@ -21,7 +27,11 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'contact' })
-  return { title: t('title'), description: t('subtitle') }
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: alternates(locale as Locale, '/contact'),
+  }
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {

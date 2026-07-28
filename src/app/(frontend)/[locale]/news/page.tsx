@@ -8,6 +8,7 @@ import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/serve
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
+import { alternates } from '@/lib/seo'
 import { listArticles } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl } from '@/lib/media'
@@ -20,7 +21,11 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'news' })
-  return { title: t('title'), description: t('subtitle') }
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: alternates(locale as Locale, '/news'),
+  }
 }
 
 export default async function NewsPage({ params }: { params: Promise<{ locale: string }> }) {

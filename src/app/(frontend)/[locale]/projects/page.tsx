@@ -9,6 +9,7 @@ import { ArrowLeft, MapPin } from 'lucide-react'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
+import { alternates } from '@/lib/seo'
 import { listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
 import { mediaUrl } from '@/lib/media'
@@ -21,7 +22,7 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'projects' })
-  return { title: t('title') }
+  return { title: t('title'), alternates: alternates(locale as Locale, '/projects') }
 }
 
 export default async function ProjectsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -96,7 +97,7 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
                       <span className="mt-auto flex items-center gap-2 pt-5 text-sm font-semibold text-star-300">
                         {tActions('readMore')}
                         <ArrowLeft
-                          className="flip-x size-4 transition group-hover:-translate-x-1"
+                          className="point-forward size-4 transition group-hover:-translate-x-1"
                           aria-hidden
                         />
                       </span>

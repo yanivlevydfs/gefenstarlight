@@ -73,6 +73,16 @@ export const getNavigation = cache(
 
 /* -------------------------------------------------------------- collections */
 
+/**
+ * The draft-enabled collections must be filtered explicitly: the local API
+ * bypasses access control, so without this a half-written draft would be
+ * publicly visible the moment it is saved.
+ */
+const published: Where = { _status: { equals: 'published' } }
+
+const withPublished = (where?: Where): Where =>
+  where ? { and: [published, where] } : published
+
 type ListArgs = {
   locale: Locale
   limit?: number
@@ -88,7 +98,7 @@ export const listProjects = cache(
         collection: 'projects',
         locale,
         limit,
-        where,
+        where: withPublished(where),
         sort,
         depth,
       })
@@ -99,7 +109,7 @@ export const listProjects = cache(
 export const listAlbums = cache(
   async ({ locale, limit = 200, where, sort = '-date', depth = 1 }: ListArgs): Promise<Album[]> =>
     safely<Album[]>(async (payload) => {
-      const { docs } = await payload.find({ collection: 'albums', locale, limit, where, sort, depth })
+      const { docs } = await payload.find({ collection: 'albums', locale, limit, where: withPublished(where), sort, depth })
       return docs
     }, []),
 )
@@ -117,7 +127,7 @@ export const listArticles = cache(
         collection: 'articles',
         locale,
         limit,
-        where,
+        where: withPublished(where),
         sort,
         depth,
       })
@@ -179,6 +189,7 @@ export const listPagesForSitemap = cache(
         locale,
         limit: 200,
         depth: 0,
+        where: published,
       })
       return docs
     }, []),
@@ -194,7 +205,7 @@ export const findProject = cache(
         locale,
         depth: 3,
         limit: 1,
-        where: { slug: { equals: slug } },
+        where: withPublished({ slug: { equals: slug } }),
       })
       return docs[0] ?? null
     }, null),
@@ -208,7 +219,7 @@ export const findAlbum = cache(
         locale,
         depth: 2,
         limit: 1,
-        where: { slug: { equals: slug } },
+        where: withPublished({ slug: { equals: slug } }),
       })
       return docs[0] ?? null
     }, null),
@@ -222,7 +233,7 @@ export const findArticle = cache(
         locale,
         depth: 3,
         limit: 1,
-        where: { slug: { equals: slug } },
+        where: withPublished({ slug: { equals: slug } }),
       })
       return docs[0] ?? null
     }, null),
@@ -236,7 +247,7 @@ export const findPage = cache(
         locale,
         depth: 3,
         limit: 1,
-        where: { slug: { equals: slug } },
+        where: withPublished({ slug: { equals: slug } }),
       })
       return docs[0] ?? null
     }, null),
@@ -263,7 +274,7 @@ export const findByLegacyPath = cache(
           locale,
           depth: 0,
           limit: 1,
-          where: { 'legacyPaths.path': { equals: path } },
+          where: withPublished({ 'legacyPaths.path': { equals: path } }),
         })
         const slug = docs[0]?.slug
         if (slug) return prefix ? `/${locale}/${prefix}/${slug}` : `/${locale}/${slug}`
