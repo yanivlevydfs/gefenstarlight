@@ -64,16 +64,24 @@ export async function SiteFooter({
             <StarMark className="size-8 text-star-400" />
             <span className="font-display text-xl font-bold">{orgName}</span>
           </div>
-          {/* The blue mark needs a light surface to stay legible on the night
-              theme, so it sits on a daylight tile — like stationery. */}
-          <div className="mt-5 inline-block rounded-card bg-daylight p-4 shadow-lift">
+          {/* Two colourways of the same transparent mark: the brand blue on
+              light surfaces, a starlight tint on the night sky. */}
+          <div className="mt-5 w-28">
+            <Image
+              src="/logo-night.png"
+              alt={orgName}
+              width={293}
+              height={447}
+              sizes="120px"
+              className="only-dark h-auto w-full"
+            />
             <Image
               src="/logo.png"
               alt={orgName}
               width={293}
               height={447}
               sizes="120px"
-              className="h-auto w-28"
+              className="only-light h-auto w-full"
             />
           </div>
           {s?.tagline && <p className="mt-4 max-w-xs text-sm text-cream-50/65">{s.tagline}</p>}

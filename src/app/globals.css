@@ -124,6 +124,17 @@
   display: block;
 }
 
+/* Elements that exist in one theme only — e.g. the two logo colourways. */
+.only-light {
+  display: none;
+}
+:root[data-theme='light'] .only-light {
+  display: block;
+}
+:root[data-theme='light'] .only-dark {
+  display: none;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
