@@ -128,7 +128,7 @@ for (const a of articles) {
   }
 
   const cover = a.coverSource ? await mediaBySource(a.coverSource) : null
-  let album = a.albumSlug ? await albumBySlug(a.albumSlug) : null
+  const album = a.albumSlug ? await albumBySlug(a.albumSlug) : null
 
   // The wine album's cover doubles as the article cover when none is named.
   let coverId = cover

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
@@ -35,7 +36,7 @@ export function ManualBanner() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <b>📖 מדריך עדכון האתר</b>
       <span>איך מפרסמים כתבה, מחליפים תמונות, מעדכנים פרטי קשר ועוד — צעד אחר צעד.</span>
-      <a href="/admin/manual">לפתיחת המדריך ←</a>
+      <Link href="/admin/manual">לפתיחת המדריך ←</Link>
     </div>
   )
 }
@@ -76,7 +77,7 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
 
           <h2>📰 חדשות — פרסום כתבה</h2>
           <ol>
-            <li>נכנסים אל <a href="/admin/collections/articles">כתבות</a> ולוחצים <b>Create new / צור חדש</b>.</li>
+            <li>נכנסים אל <Link href="/admin/collections/articles">כתבות</Link> ולוחצים <b>Create new / צור חדש</b>.</li>
             <li>ממלאים כותרת, תאריך פרסום ותקציר (מופיע ברשימת החדשות).</li>
             <li>בוחרים <b>תמונת נושא</b> — מהמדיה הקיימת או מעלים חדשה.</li>
             <li>כותבים את התוכן בעורך — אפשר כותרות משנה, הדגשות ורשימות.</li>
@@ -84,16 +85,16 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
             <li>לוחצים <b>Publish / פרסם</b>. הכתבה מופיעה מיד בעמוד העדכונים.</li>
           </ol>
 
-          <h2>👦 העמודים "מיהו גפן" והתקנון</h2>
+          <h2>👦 העמודים ״מיהו גפן״ והתקנון</h2>
           <p>
-            נמצאים תחת <a href="/admin/collections/pages">עמודים</a>: לוחצים על העמוד ועורכים את
+            נמצאים תחת <Link href="/admin/collections/pages">עמודים</Link>: לוחצים על העמוד ועורכים את
             הטקסט בעורך. אפשר גם ליצור עמוד חדש לגמרי — הכתובת שלו באתר נקבעת לפי שדה
             ה־<code>slug</code>, ואפשר לקשר אליו מהתפריט.
           </p>
 
           <h2>🥋 מיזמים</h2>
           <ol>
-            <li><a href="/admin/collections/projects">מיזמים</a> ← בוחרים מיזם או יוצרים חדש.</li>
+            <li><Link href="/admin/collections/projects">מיזמים</Link> ← בוחרים מיזם או יוצרים חדש.</li>
             <li>שדות חשובים: כותרת, תקציר (מופיע בכרטיס), תוכן מלא, <b>תמונת נושא</b>, תאריך.</li>
             <li><b>אלבום מקושר</b> — התמונות של המיזם. חיבור אלבום למיזם גם מוסיף לעמוד האלבום בגלריה כפתור שמוביל למיזם.</li>
             <li><b>כפתור תשלום</b>: בשדות ctaUrl / ctaLabel שמים את קישור Grow ואת הטקסט (כמו במיזם היין).</li>
@@ -102,13 +103,13 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
           <h2>🖼️ תמונות ואלבומים</h2>
           <h3>העלאת קבצים</h3>
           <ol>
-            <li><a href="/admin/collections/media">מדיה</a> ← Create new ← גוררים תמונה או וידאו.</li>
+            <li><Link href="/admin/collections/media">מדיה</Link> ← Create new ← גוררים תמונה או וידאו.</li>
             <li>ממלאים <b>טקסט חלופי</b> (עוזר לנגישות ולגוגל).</li>
             <li>התמונות מוקטנות אוטומטית לכל הגדלים — מעלים פעם אחת בלבד.</li>
           </ol>
           <h3>אלבום</h3>
           <ol>
-            <li><a href="/admin/collections/albums">אלבומים</a> ← בוחרים אלבום או יוצרים חדש.</li>
+            <li><Link href="/admin/collections/albums">אלבומים</Link> ← בוחרים אלבום או יוצרים חדש.</li>
             <li>מוסיפים פריטים מהמדיה, בוחרים <b>תמונת שער</b>, ומסמנים אם להציג בגלריה הראשית.</li>
           </ol>
           <div className="warn">
@@ -117,7 +118,7 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
           </div>
 
           <h2>🏠 דף הבית</h2>
-          <p>הכול במסך אחד: <a href="/admin/globals/home-page">דף הבית</a>.</p>
+          <p>הכול במסך אחד: <Link href="/admin/globals/home-page">דף הבית</Link>.</p>
           <ul>
             <li><b>כותרת ראשית</b> — הטקסטים ותמונת הרקע של פתיח האתר.</li>
             <li><b>מיקוד העמותה</b> — הפסקה שאחרי הסרט.</li>
@@ -129,14 +130,14 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
 
           <h2>🧭 התפריט</h2>
           <p>
-            <a href="/admin/globals/navigation">התפריט</a> — כל פריט הוא שורה: שם, קישור, תיאור
+            <Link href="/admin/globals/navigation">התפריט</Link> — כל פריט הוא שורה: שם, קישור, תיאור
             ותמונה (מופיעים בתפריט המסך המלא). גרירה משנה סדר; הפריט המסומן כמודגש הופך
             לכפתור התרומות הזהוב.
           </p>
 
           <h2>📞 פרטי קשר, תרומות ופרטי העמותה</h2>
           <p>
-            <a href="/admin/globals/site-settings">הגדרות האתר</a> — שם העמותה והתקציר, כתובת,
+            <Link href="/admin/globals/site-settings">הגדרות האתר</Link> — שם העמותה והתקציר, כתובת,
             דוא״ל, טלפון, וואטסאפ, <b>סכומי התרומה וקישורי Grow</b>, פרטי חשבון הבנק, תרומות
             מחו״ל והערת המס. כל אלה מופיעים אוטומטית בעמוד התרומות, בעמוד צור קשר ובתחתית
             כל עמוד.
@@ -144,22 +145,22 @@ export function ManualView({ initPageResult, params, searchParams }: AdminViewSe
 
           <h2>👥 ועד העמותה, המלצות וסרטונים</h2>
           <ul>
-            <li><a href="/admin/collections/board-members">ועד העמותה</a> — שם, תפקיד, ביוגרפיה ותמונה לכל חבר/ה.</li>
-            <li><a href="/admin/collections/testimonials">המלצות</a> — ציטוטים ומכתבי תודה שמופיעים בעמודי המיזמים.</li>
-            <li><a href="/admin/collections/youtube-videos">סרטוני YouTube</a> — מדביקים קישור, והסרטון מופיע בעמוד הסרטונים.</li>
+            <li><Link href="/admin/collections/board-members">ועד העמותה</Link> — שם, תפקיד, ביוגרפיה ותמונה לכל חבר/ה.</li>
+            <li><Link href="/admin/collections/testimonials">המלצות</Link> — ציטוטים ומכתבי תודה שמופיעים בעמודי המיזמים.</li>
+            <li><Link href="/admin/collections/youtube-videos">סרטוני YouTube</Link> — מדביקים קישור, והסרטון מופיע בעמוד הסרטונים.</li>
           </ul>
 
           <h2>✉️ פניות מהאתר</h2>
           <p>
-            כל פנייה מטופס יצירת הקשר נשמרת ב<a href="/admin/collections/enquiries">פניות</a>
+            כל פנייה מטופס יצירת הקשר נשמרת ב<Link href="/admin/collections/enquiries">פניות</Link>
             {' '}(וגם נשלחת למייל העמותה).
           </p>
 
           <h2>⚙️ טיפים אחרונים</h2>
           <ul>
-            <li><b>שפת המערכת:</b> <a href="/admin/account">החשבון שלי</a> ← Language ← עברית.</li>
-            <li><b>משתמש חדש לצוות:</b> <a href="/admin/collections/users">משתמשים</a> ← Create new.</li>
-            <li><b>קישורי וויקס ישנים:</b> לכל מיזם/עמוד/כתבה יש שדה "כתובות ישנות" — כתובת ישנה שתוזן שם תפנה אוטומטית לעמוד החדש.</li>
+            <li><b>שפת המערכת:</b> <Link href="/admin/account">החשבון שלי</Link> ← Language ← עברית.</li>
+            <li><b>משתמש חדש לצוות:</b> <Link href="/admin/collections/users">משתמשים</Link> ← Create new.</li>
+            <li><b>קישורי וויקס ישנים:</b> לכל מיזם/עמוד/כתבה יש שדה ״כתובות ישנות״ — כתובת ישנה שתוזן שם תפנה אוטומטית לעמוד החדש.</li>
             <li>אחרי כל שינוי — לרענן את האתר אחרי כדקה ולוודא שהכול נראה טוב, בעברית ובאנגלית.</li>
           </ul>
         </div>
