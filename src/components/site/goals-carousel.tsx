@@ -67,15 +67,27 @@ export function GoalsCarousel({
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="grid items-stretch md:grid-cols-2"
         >
-          <div className="relative aspect-[4/3] md:aspect-auto md:min-h-96">
+          <div className="relative h-[26rem] overflow-hidden bg-nightfall/40 md:h-auto md:min-h-[34rem]">
             {slide.image ? (
-              <Image
-                src={slide.image.url}
-                alt={slide.image.alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
+              <>
+                {/* A blurred copy fills the frame; the photo itself is never
+                    cropped — portraits and landscapes both show whole. */}
+                <Image
+                  src={slide.image.url}
+                  alt=""
+                  aria-hidden
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="scale-110 object-cover opacity-35 blur-xl"
+                />
+                <Image
+                  src={slide.image.url}
+                  alt={slide.image.alt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain"
+                />
+              </>
             ) : (
               <div className="aurora absolute inset-0" aria-hidden />
             )}
