@@ -20,6 +20,7 @@ import { Projects } from './payload/collections/Projects'
 import { Articles } from './payload/collections/Articles'
 import { Pages } from './payload/collections/Pages'
 import { BoardMembers, Testimonials, Enquiries } from './payload/collections/People'
+import { YouTubeVideos } from './payload/collections/YouTubeVideos'
 import { Navigation } from './payload/globals/Navigation'
 import { SiteSettings } from './payload/globals/SiteSettings'
 import { HomePage } from './payload/globals/HomePage'
@@ -120,6 +121,7 @@ export default buildConfig({
     Articles,
     Pages,
     Media,
+    YouTubeVideos,
     BoardMembers,
     Testimonials,
     Enquiries,

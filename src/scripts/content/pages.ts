@@ -51,7 +51,7 @@ export const pages: SeedPage[] = [
         'Matanot Ktanot — Matanot Gdolot, in memory of Gefen Aviram (Registered Association 580713121)',
       body: [
         'The full terms of use and site policy are published in Hebrew, which is the binding version. In the event of any conflict between the Hebrew text and a translation, the Hebrew version prevails.',
-        'For any question regarding these terms, or to raise a concern about content published on this site, please contact us at sama2@netvision.net.il or on +972-54-771-1120.',
+        'For any question regarding these terms, or to raise a concern about content published on this site, please reach us through the contact page — full contact details are shown there.',
       ],
     },
   },

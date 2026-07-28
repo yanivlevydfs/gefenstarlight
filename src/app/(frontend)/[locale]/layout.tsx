@@ -119,7 +119,6 @@ export default async function FrontendLayout({
       name: siteName,
       description: settings?.description ?? undefined,
       logo: logo?.url,
-      address: settings?.address ?? undefined,
     }),
     websiteSchema(typedLocale, siteName),
   ]

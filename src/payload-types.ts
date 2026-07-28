@@ -72,6 +72,7 @@ export interface Config {
     articles: Article;
     pages: Page;
     media: Media;
+    'youtube-videos': YoutubeVideo;
     'board-members': BoardMember;
     testimonials: Testimonial;
     enquiries: Enquiry;
@@ -88,6 +89,7 @@ export interface Config {
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'youtube-videos': YoutubeVideosSelect<false> | YoutubeVideosSelect<true>;
     'board-members': BoardMembersSelect<false> | BoardMembersSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
@@ -431,6 +433,23 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Videos too large to upload directly — put them on YouTube and paste the link here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos".
+ */
+export interface YoutubeVideo {
+  id: number;
+  title: string;
+  url: string;
+  /**
+   * Used for ordering
+   */
+  date?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "board-members".
  */
@@ -551,6 +570,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'youtube-videos';
+        value: number | YoutubeVideo;
       } | null)
     | ({
         relationTo: 'board-members';
@@ -797,6 +820,17 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-videos_select".
+ */
+export interface YoutubeVideosSelect<T extends boolean = true> {
+  title?: T;
+  url?: T;
+  date?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

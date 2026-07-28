@@ -84,13 +84,11 @@ export function organisationSchema({
   name,
   description,
   logo,
-  address,
 }: {
   locale: Locale
   name: string
   description?: string
   logo?: string
-  address?: string
 }): JsonLd {
   return {
     '@context': 'https://schema.org',
@@ -103,13 +101,11 @@ export function organisationSchema({
     ...(logo ? { logo, image: logo } : {}),
     foundingDate: '2022',
     nonprofitStatus: 'NonprofitANBI',
-    address: address
-      ? { '@type': 'PostalAddress', streetAddress: address, addressCountry: 'IL' }
-      : undefined,
     // No address or telephone here on purpose. Structured data is plain text in
     // the page, so listing them would hand every harvester exactly what the
-    // contact links were rewritten to hide. Visitors reach the foundation
-    // through the contact page, which search engines index anyway.
+    // contact links were rewritten to hide — the street address included.
+    // Visitors reach the foundation through the contact page, which search
+    // engines index anyway.
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'general',

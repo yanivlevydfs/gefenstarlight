@@ -14,6 +14,7 @@ import type {
   Project,
   SiteSetting,
   Testimonial,
+  YoutubeVideo,
 } from '@/payload-types'
 
 /** Shared Payload instance. `getPayload` is already memoised per process. */
@@ -175,6 +176,21 @@ export const listVideos = cache(
         limit: 200,
         sort: '-createdAt',
         where: { mimeType: { like: 'video' } },
+      })
+      return docs
+    }, []),
+)
+
+/** Videos hosted on YouTube — the large files the admin console cannot accept. */
+export const listYouTubeVideos = cache(
+  async (locale: Locale): Promise<YoutubeVideo[]> =>
+    safely<YoutubeVideo[]>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'youtube-videos',
+        locale,
+        limit: 100,
+        sort: '-date',
+        depth: 0,
       })
       return docs
     }, []),

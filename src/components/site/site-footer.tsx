@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
 import { ProtectedContact } from '@/components/site/protected-contact'
+import { ProtectedText } from '@/components/site/protected-text'
 import { reverseValue } from '@/lib/contact'
 import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
@@ -92,7 +93,7 @@ export async function SiteFooter({
             {s?.address && (
               <li className="flex items-start gap-2.5 text-cream-50/70">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-star-400" aria-hidden />
-                <span>{s.address}</span>
+                <ProtectedText reversed={reverseValue(s.address)} />
               </li>
             )}
             {emails.map((email) => (

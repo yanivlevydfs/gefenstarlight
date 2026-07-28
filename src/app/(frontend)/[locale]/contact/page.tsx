@@ -7,6 +7,7 @@ import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { ContactForm } from '@/components/site/contact-form'
 import { PageHeader } from '@/components/site/page-header'
 import { ProtectedContact } from '@/components/site/protected-contact'
+import { ProtectedText } from '@/components/site/protected-text'
 import { reverseValue } from '@/lib/contact'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
@@ -54,7 +55,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           <div className="space-y-6">
             {settings?.address && (
               <Detail icon={<MapPin className="size-5" />} label={t('contact.address')}>
-                {settings.address}
+                <ProtectedText reversed={reverseValue(settings.address)} />
               </Detail>
             )}
 

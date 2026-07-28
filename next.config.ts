@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
       { protocol: 'https', hostname: '*.blob.vercel-storage.com' },
+      // Thumbnails for embedded YouTube videos.
+      { protocol: 'https', hostname: 'i.ytimg.com' },
     ],
     // Uploads are served by Payload at /api/media/file/... whenever Blob storage
     // is not configured. Without this the optimizer rejects them outright and
