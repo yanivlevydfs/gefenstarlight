@@ -90,7 +90,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3 font-bold text-night-950 transition hover:bg-star-300 disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3 font-bold text-nightfall transition hover:bg-star-hover disabled:opacity-60"
     >
       <Send className="flip-x size-4" aria-hidden />
       {pending ? t('sending') : t('send')}

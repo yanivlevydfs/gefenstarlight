@@ -132,7 +132,7 @@ export default async function ProjectPage({
               href={project.ctaUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-6 py-3 font-bold text-night-950 transition hover:bg-star-300"
+              className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-6 py-3 font-bold text-nightfall transition hover:bg-star-hover"
             >
               {project.ctaLabel || t('actions.readMore')}
               <ExternalLink className="size-4" aria-hidden />

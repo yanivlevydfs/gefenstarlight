@@ -77,8 +77,8 @@ export default async function GalleryIndexPage({
                       ) : (
                         <Images className="absolute inset-0 m-auto size-10 text-night-600" aria-hidden />
                       )}
-                      <span className="absolute inset-0 bg-gradient-to-t from-night-950/70 to-transparent" />
-                      <span className="absolute bottom-3 start-4 text-sm font-medium text-cream-50/85">
+                      <span className="absolute inset-0 bg-gradient-to-t from-nightfall/70 to-transparent" />
+                      <span className="absolute bottom-3 start-4 text-sm font-medium text-daylight/85">
                         {t('itemCount', { count })}
                       </span>
                     </div>

@@ -15,6 +15,7 @@ import { localeDir, localeTag, routing, type Locale } from '@/i18n/routing'
 import { mediaUrl } from '@/lib/media'
 import { getNavigation, getSiteSettings } from '@/lib/payload'
 import { alternates, organisationSchema, SITE_URL, websiteSchema } from '@/lib/seo'
+import { THEME_COLORS } from '@/lib/theme'
 
 import '../../globals.css'
 
@@ -131,6 +132,25 @@ export default async function FrontendLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-dvh flex-col">
+        {/*
+          Applies the visitor's saved theme (falling back to the system
+          preference) before anything paints, so a light-mode visitor never
+          sees a dark flash. Runs inline for that reason; `<html>` already has
+          suppressHydrationWarning for the attribute this sets.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              `(function(){try{` +
+              `var t=localStorage.getItem('theme');` +
+              `if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';` +
+              `document.documentElement.dataset.theme=t;` +
+              `var m=document.createElement('meta');m.name='theme-color';` +
+              `m.content=t==='light'?'${THEME_COLORS.light}':'${THEME_COLORS.dark}';` +
+              `document.head.appendChild(m)` +
+              `}catch(e){}})()`,
+          }}
+        />
         <JsonLd data={schema} />
         <NextIntlClientProvider>
           <SiteHeader

@@ -37,7 +37,7 @@ export default function FrontendError({
         <button
           type="button"
           onClick={reset}
-          className="mt-9 inline-flex rounded-full bg-star-400 px-7 py-3 font-bold text-night-950 transition hover:bg-star-300"
+          className="mt-9 inline-flex rounded-full bg-star-400 px-7 py-3 font-bold text-nightfall transition hover:bg-star-hover"
         >
           <span lang="he">לנסות שוב</span>
           <span aria-hidden>&nbsp;·&nbsp;</span>

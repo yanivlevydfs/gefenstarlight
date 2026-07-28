@@ -91,7 +91,7 @@ export function CookieConsent({ locale }: { locale: Locale }) {
           <button
             type="button"
             onClick={() => answer('accepted')}
-            className="rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-night-950 transition hover:bg-star-300"
+            className="rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-nightfall transition hover:bg-star-hover"
           >
             {t('accept')}
           </button>

@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl'
 import { StarMark } from '@/components/site/star-mark'
 import { Starfield } from '@/components/site/starfield'
 import { LocaleSwitcher } from '@/components/site/locale-switcher'
+import { ThemeToggle } from '@/components/site/theme-toggle'
 import { defaultNav, localeHref, navFromGlobal, type NavItem } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
 
@@ -80,7 +81,7 @@ export function SiteHeader({ navigation, organisationName, locale, backdrop }: P
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:start-3 focus:z-100 focus:rounded-full focus:bg-star-400 focus:px-5 focus:py-2 focus:font-semibold focus:text-night-950"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:start-3 focus:z-100 focus:rounded-full focus:bg-star-400 focus:px-5 focus:py-2 focus:font-semibold focus:text-nightfall"
       >
         {t('nav.skipToContent')}
       </a>
@@ -126,12 +127,13 @@ export function SiteHeader({ navigation, organisationName, locale, backdrop }: P
           </nav>
 
           <div className="ms-auto flex items-center gap-2 lg:ms-0">
+            <ThemeToggle />
             <LocaleSwitcher locale={locale} />
 
             {donate && (
               <Link
                 href={localeHref(donate.href, locale)}
-                className="hidden items-center gap-2 rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-night-950 shadow-lg shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40 sm:inline-flex"
+                className="hidden items-center gap-2 rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-nightfall shadow-lg shadow-star-500/25 transition hover:bg-star-hover hover:shadow-star-400/40 sm:inline-flex"
               >
                 <Heart className="size-4" aria-hidden />
                 {donate.label}

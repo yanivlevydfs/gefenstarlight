@@ -143,6 +143,9 @@
     "he": "עברית",
     "en": "English"
   },
+  "theme": {
+    "toggle": "Switch between light and dark mode"
+  },
   "errors": {
     "notFoundTitle": "Page not found",
     "notFoundBody": "The link may have changed, or the page may have been removed.",

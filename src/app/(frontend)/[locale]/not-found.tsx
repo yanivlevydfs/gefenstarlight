@@ -18,7 +18,7 @@ export default async function NotFound() {
         <p className="mx-auto mt-4 max-w-md text-cream-50/70">{t('notFoundBody')}</p>
         <Link
           href={`/${locale}`}
-          className="mt-9 inline-flex rounded-full bg-star-400 px-7 py-3 font-bold text-night-950 transition hover:bg-star-300"
+          className="mt-9 inline-flex rounded-full bg-star-400 px-7 py-3 font-bold text-nightfall transition hover:bg-star-hover"
         >
           {t('backHome')}
         </Link>

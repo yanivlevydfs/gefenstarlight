@@ -71,7 +71,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href={localeHref('/donate', typedLocale)}
-                className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3.5 font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300 hover:shadow-star-400/40"
+                className="inline-flex items-center gap-2 rounded-full bg-star-400 px-7 py-3.5 font-bold text-nightfall shadow-xl shadow-star-500/25 transition hover:bg-star-hover hover:shadow-star-400/40"
               >
                 <Heart className="size-5" aria-hidden />
                 {t('actions.donateNow')}
@@ -193,7 +193,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <Reveal delay={0.18}>
             <Link
               href={localeHref('/donate', typedLocale)}
-              className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-8 py-4 text-lg font-bold text-night-950 shadow-xl shadow-star-500/25 transition hover:bg-star-300"
+              className="mt-10 inline-flex items-center gap-2 rounded-full bg-star-400 px-8 py-4 text-lg font-bold text-nightfall shadow-xl shadow-star-500/25 transition hover:bg-star-hover"
             >
               <Heart className="size-5" aria-hidden />
               {t('actions.donateNow')}

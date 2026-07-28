@@ -85,10 +85,10 @@ export function GalleryGrid({ items, emptyLabel }: { items: GalleryItem[]; empty
                   className="object-cover transition duration-700 group-hover:scale-108"
                 />
               )}
-              <span className="absolute inset-0 bg-gradient-to-t from-night-950/60 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
+              <span className="absolute inset-0 bg-gradient-to-t from-nightfall/60 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
               {item.isVideo && (
                 <span className="absolute inset-0 grid place-items-center">
-                  <span className="grid size-12 place-items-center rounded-full bg-night-950/70 backdrop-blur-sm transition group-hover:bg-star-400 group-hover:text-night-950">
+                  <span className="grid size-12 place-items-center rounded-full bg-nightfall/70 text-daylight backdrop-blur-sm transition group-hover:bg-star-400 group-hover:text-nightfall">
                     <Play className="size-5 translate-x-px" aria-hidden />
                   </span>
                 </span>
