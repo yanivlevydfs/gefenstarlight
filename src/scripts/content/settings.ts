@@ -267,5 +267,16 @@ export const homePage = {
         body: 'Expose them, wherever possible, to inspiring people and talent from the world of martial arts.',
       },
     },
+    {
+      icon: 'heart' as const,
+      he: {
+        title: 'ציוד לכל מתאמן',
+        body: 'להעניק לכל ילד ערכת ציוד אישית — מדים, חולצה ותיק — כדי שאף אחד לא יישאר בחוץ מטעמי עלות.',
+      },
+      en: {
+        title: 'Kit for every trainee',
+        body: 'Give every child their own kit — uniform, shirt and bag — so that cost never keeps anyone out.',
+      },
+    },
   ],
 }

@@ -9,12 +9,34 @@ import { NextResponse } from 'next/server'
  */
 export const dynamic = 'force-dynamic'
 
-export function GET() {
+/**
+ * Uploads need sharp to build the resized variants. If it cannot load, or
+ * cannot run, every upload fails with an unhelpful "Something went wrong".
+ */
+async function checkImageProcessing() {
+  try {
+    const { default: sharp } = await import('sharp')
+    const png = await sharp({
+      create: { width: 8, height: 8, channels: 3, background: '#000000' },
+    })
+      .png()
+      .toBuffer()
+    const meta = await sharp(png).metadata()
+    return { ok: true, format: meta.format, width: meta.width }
+  } catch (error) {
+    return { ok: false, error: (error as Error).message.slice(0, 200) }
+  }
+}
+
+export async function GET() {
   const blobToken = process.env.BLOB_READ_WRITE_TOKEN
   const databaseUrl =
     process.env.DATABASE_URI || process.env.POSTGRES_URL || process.env.DATABASE_URL
 
+  const imageProcessing = await checkImageProcessing()
+
   return NextResponse.json({
+    imageProcessing,
     ok: true,
     checkedAt: new Date().toISOString(),
     config: {
