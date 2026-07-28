@@ -201,20 +201,23 @@ function MegaMenu({
       transition={{ duration: 0.25 }}
       className="fixed inset-0 z-100 overflow-y-auto bg-night-950/95 backdrop-blur-xl"
     >
-      {/* Gefen's portrait sits far behind the menu, with the starfield over it,
-          so the panel feels like part of the site rather than a plain sheet. */}
-      {backdrop && (
-        <Image
-          src={backdrop}
-          alt=""
-          fill
-          sizes="100vw"
-          className="pointer-events-none fixed inset-0 object-cover opacity-15"
-        />
-      )}
-      <Starfield />
+      {/*
+        Gefen's portrait and the starfield sit behind the menu.
 
-      <div className="aurora relative min-h-full">
+        They live in their own layer pinned to the viewport rather than inside
+        the scrolling list: `fill` positions an image against its nearest
+        positioned ancestor, so putting it in the scroller left the backdrop
+        ending partway down a long menu.
+      */}
+      <div className="pointer-events-none fixed inset-0" aria-hidden>
+        {backdrop && (
+          <Image src={backdrop} alt="" fill sizes="100vw" className="object-cover opacity-15" />
+        )}
+        <div className="aurora absolute inset-0" />
+        <Starfield />
+      </div>
+
+      <div className="relative min-h-full">
         <div className="container-page py-6">
           <div className="flex justify-end">
             <button
