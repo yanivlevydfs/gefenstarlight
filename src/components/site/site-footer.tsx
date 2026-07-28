@@ -1,4 +1,5 @@
-﻿import Link from 'next/link'
+﻿import Image from 'next/image'
+import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
@@ -62,6 +63,18 @@ export async function SiteFooter({
           <div className="flex items-center gap-3">
             <StarMark className="size-8 text-star-400" />
             <span className="font-display text-xl font-bold">{orgName}</span>
+          </div>
+          {/* The blue mark needs a light surface to stay legible on the night
+              theme, so it sits on a daylight tile — like stationery. */}
+          <div className="mt-5 inline-block rounded-card bg-daylight p-4 shadow-lift">
+            <Image
+              src="/logo.png"
+              alt={orgName}
+              width={293}
+              height={447}
+              sizes="120px"
+              className="h-auto w-28"
+            />
           </div>
           {s?.tagline && <p className="mt-4 max-w-xs text-sm text-cream-50/65">{s.tagline}</p>}
           <p className="mt-6 text-sm text-cream-50/45">{t('footer.builtWith')}</p>
