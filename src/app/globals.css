@@ -62,6 +62,16 @@
   }
 }
 
+/* Used by .reveal — position only, so nothing is ever hidden. */
+@keyframes rise {
+  from {
+    transform: translateY(1.5rem);
+  }
+  to {
+    transform: none;
+  }
+}
+
 @keyframes twinkle {
   0%,
   100% {
@@ -196,12 +206,14 @@
   }
 
   /*
-   * Content fades up as it scrolls into view.
+   * Content rises slightly as it scrolls into view.
    *
-   * Driven by the scroll position rather than JavaScript, so the element is
-   * fully visible by default and stays visible in browsers without support,
-   * with JavaScript disabled, and before hydration. An earlier version hid
-   * everything until a script revealed it, which left whole sections blank.
+   * Deliberately animates position only, never opacity. A scroll-driven
+   * animation holds an off-screen element at its starting frame, so fading from
+   * zero leaves everything below the fold invisible — which is what happened
+   * when this faded in, whether the fade was driven by script or by scroll.
+   * Moving only the transform means the text is always readable, at any scroll
+   * position, in any browser, with or without JavaScript.
    */
   .reveal {
     opacity: 1;
@@ -209,9 +221,9 @@
 
   @supports (animation-timeline: view()) {
     .reveal {
-      animation: fade-up both;
+      animation: rise both;
       animation-timeline: view();
-      animation-range: entry 0% cover 22%;
+      animation-range: entry 0% cover 18%;
     }
   }
 }
