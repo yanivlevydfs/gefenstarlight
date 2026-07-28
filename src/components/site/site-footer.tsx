@@ -66,7 +66,7 @@ export async function SiteFooter({
           </div>
           {/* Two colourways of the same transparent mark: the brand blue on
               light surfaces, a starlight tint on the night sky. */}
-          <div className="mx-auto mt-5 w-28">
+          <div className="mx-auto mt-5 w-28 md:ms-0">
             <Image
               src="/logo-night.png"
               alt={orgName}
