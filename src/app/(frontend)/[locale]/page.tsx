@@ -116,9 +116,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </Reveal>
           <Reveal delay={0.16}>
             <div className="mt-8 overflow-hidden rounded-card border border-white/10 bg-nightfall shadow-lift">
-              {/* The film only downloads when someone presses play. */}
+              {/* The film only streams when someone presses play; the player
+                  menu offers no download button. */}
               <video
                 controls
+                controlsList="nodownload"
                 preload="none"
                 poster={filmPoster}
                 src={filmSrc.url}

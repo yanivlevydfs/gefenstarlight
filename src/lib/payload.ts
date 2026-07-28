@@ -246,6 +246,25 @@ export const findProject = cache(
     }, null),
 )
 
+/**
+ * The project an album belongs to, when one claims it. Album pages use this
+ * to send visitors onward — the wine-bottles album, for example, links to the
+ * wine fundraiser and its purchase button.
+ */
+export const findProjectByAlbum = cache(
+  async (albumId: number, locale: Locale): Promise<Project | null> =>
+    safely<Project | null>(async (payload) => {
+      const { docs } = await payload.find({
+        collection: 'projects',
+        locale,
+        depth: 0,
+        limit: 1,
+        where: withPublished({ album: { equals: albumId } }),
+      })
+      return docs[0] ?? null
+    }, null),
+)
+
 export const findAlbum = cache(
   async (slug: string, locale: Locale): Promise<Album | null> =>
     safely<Album | null>(async (payload) => {

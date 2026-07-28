@@ -70,6 +70,7 @@
     "title": "Pictures",
     "subtitle": "Albums from the foundation's activity.",
     "albums": "Albums",
+    "toProject": "View the project",
     "itemCount": "{count, plural, one {1 item} other {# items}}",
     "photoCount": "{count, plural, one {1 photo} other {# photos}}",
     "empty": "There are no photos in this album yet.",

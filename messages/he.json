@@ -70,6 +70,7 @@
     "title": "תמונות",
     "subtitle": "אלבומים מהפעילות של העמותה.",
     "albums": "אלבומים",
+    "toProject": "לעמוד המיזם",
     "itemCount": "{count, plural, one {פריט אחד} two {שני פריטים} other {# פריטים}}",
     "photoCount": "{count, plural, one {תמונה אחת} two {שתי תמונות} other {# תמונות}}",
     "empty": "עדיין אין תמונות באלבום הזה.",
