@@ -38,11 +38,10 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
 
   return (
     <>
-      <PageHeader
-        title={t('title')}
-        subtitle={t('subtitle')}
-        image={mediaUrl(projects[0]?.cover, 'wide')}
-      />
+      {/* No image passed: the header falls back to the portrait of Gefen.
+          Using the newest project's cover put an event poster behind the
+          heading, and its text fought with the title. */}
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       <section className="container-page py-16">
         {projects.length === 0 ? (

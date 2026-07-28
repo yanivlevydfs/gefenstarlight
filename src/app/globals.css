@@ -194,6 +194,26 @@
   [dir='rtl'] .flip-x {
     transform: scaleX(-1);
   }
+
+  /*
+   * Content fades up as it scrolls into view.
+   *
+   * Driven by the scroll position rather than JavaScript, so the element is
+   * fully visible by default and stays visible in browsers without support,
+   * with JavaScript disabled, and before hydration. An earlier version hid
+   * everything until a script revealed it, which left whole sections blank.
+   */
+  .reveal {
+    opacity: 1;
+  }
+
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: fade-up both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

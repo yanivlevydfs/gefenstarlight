@@ -1,31 +1,24 @@
-'use client'
-
 import type React from 'react'
-import { motion } from 'motion/react'
 
-/** Fades content up the first time it scrolls into view. */
+/**
+ * Fades content up as it scrolls into view.
+ *
+ * Deliberately CSS-only. The previous version rendered everything at zero
+ * opacity and relied on a script to reveal it, so any section the reader had
+ * not scrolled to was blank — and stayed blank if the script never ran. Here the
+ * content is visible by default and the animation is an enhancement.
+ */
 export function Reveal({
   children,
-  delay = 0,
-  as = 'div',
+  as: Component = 'div',
   className,
 }: {
   children: React.ReactNode
-  delay?: number
+  /** Kept for call sites that need the correct element inside a list. */
   as?: 'div' | 'li' | 'section'
+  /** Accepted for API compatibility; ordering now comes from scroll position. */
+  delay?: number
   className?: string
 }) {
-  const Component = motion[as]
-
-  return (
-    <Component
-      className={className}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </Component>
-  )
+  return <Component className={['reveal', className].filter(Boolean).join(' ')}>{children}</Component>
 }
