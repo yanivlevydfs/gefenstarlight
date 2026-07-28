@@ -59,14 +59,15 @@ export async function SiteFooter({
   return (
     <footer className="mt-24 border-t border-white/10 bg-night-900">
       <div className="container-page grid gap-10 py-14 md:grid-cols-3">
-        <div>
+        {/* The brand block reads as one centred unit: name, mark, tagline. */}
+        <div className="flex flex-col items-center text-center">
           <div className="flex items-center gap-3">
             <StarMark className="size-8 text-star-400" />
             <span className="font-display text-xl font-bold">{orgName}</span>
           </div>
           {/* Two colourways of the same transparent mark: the brand blue on
               light surfaces, a starlight tint on the night sky. */}
-          <div className="mx-auto mt-5 w-28 md:ms-0">
+          <div className="mt-5 w-28">
             <Image
               src="/logo-night.png"
               alt={orgName}

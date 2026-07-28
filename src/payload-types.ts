@@ -954,6 +954,10 @@ export interface HomePage {
     | {
         title: string;
         body?: string | null;
+        /**
+         * Shown beside the goal in the home-page carousel. A goal without one gets a soft backdrop.
+         */
+        image?: (number | null) | Media;
         icon?: ('star' | 'users' | 'heart' | 'trophy' | 'sparkles') | null;
         id?: string | null;
       }[]
@@ -1070,6 +1074,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         body?: T;
+        image?: T;
         icon?: T;
         id?: T;
       };

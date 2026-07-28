@@ -33,10 +33,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const filmSrc = mediaUrl(film, 'full')
   const filmPoster = film ? mediaUrl(film.poster, 'wide')?.url : undefined
 
-  // The goals slider from the old site: each goal beside a photo of Gefen,
-  // paired by seed order. A goal past the photo list shows text alone.
+  // The goals slider from the old site: each goal beside a photo of Gefen.
+  // The admin chooses each goal's photo in the home-page settings; goals
+  // without one fall back to the classic pairing carried over from Wix.
   const goalSlides = (h?.goals ?? []).map((goal, i) => {
-    const photo = mediaUrl(goalPhotos[i], 'card')
+    const photo = mediaUrl(goal.image, 'card') ?? mediaUrl(goalPhotos[i], 'card')
     return {
       title: goal.title,
       body: goal.body ?? undefined,

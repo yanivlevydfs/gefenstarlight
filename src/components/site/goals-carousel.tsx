@@ -36,13 +36,16 @@ export function GoalsCarousel({
 
   const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count])
 
+  // Loops on its own, pausing only while the visitor's pointer or focus is
+  // on it. Reduced-motion preferences make the change instant rather than
+  // stopping the rotation — the owner wants the slider alive.
   useEffect(() => {
-    if (stillness || paused || count < 2) return
+    if (paused || count < 2) return
     timer.current = setInterval(() => setIndex((i) => (i + 1) % count), 6000)
     return () => {
       if (timer.current) clearInterval(timer.current)
     }
-  }, [stillness, paused, count])
+  }, [paused, count])
 
   if (count === 0) return null
   const slide = slides[index]

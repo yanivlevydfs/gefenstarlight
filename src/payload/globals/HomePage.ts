@@ -54,6 +54,18 @@ export const HomePage: GlobalConfig = {
         },
         { name: 'body', type: 'textarea', localized: true, label: { he: 'תיאור', en: 'Body' } },
         {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          label: { he: 'תמונה בקרוסלה', en: 'Carousel photo' },
+          admin: {
+            description: {
+              he: 'התמונה שמוצגת לצד המטרה בקרוסלה בדף הבית. מטרה בלי תמונה תוצג עם רקע רך.',
+              en: 'Shown beside the goal in the home-page carousel. A goal without one gets a soft backdrop.',
+            },
+          },
+        },
+        {
           name: 'icon',
           type: 'select',
           defaultValue: 'star',
