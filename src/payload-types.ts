@@ -167,7 +167,7 @@ export interface Project {
   /**
    * A sentence or two shown on the project card in the projects list.
    */
-  summary: string;
+  summary?: string | null;
   cover?: (number | null) | Media;
   body?: {
     root: {

@@ -39,7 +39,7 @@ export async function generateMetadata({
     locale: locale as Locale,
     path: `/projects/${slug}`,
     title: project.title,
-    description: project.summary,
+    description: project.summary ?? undefined,
     image: cover,
     type: 'article',
     publishedTime: project.date,
@@ -73,7 +73,7 @@ export default async function ProjectPage({
       locale: typedLocale,
       path: `/projects/${slug}`,
       headline: project.title,
-      description: project.summary,
+      description: project.summary ?? undefined,
       image: cover?.url,
       datePublished: project.date,
       organisationName: settings?.organisationName || t('meta.siteName'),
@@ -91,7 +91,7 @@ export default async function ProjectPage({
       <PageHeader
         kicker={t('projects.title')}
         title={project.title}
-        subtitle={project.summary}
+        subtitle={project.summary ?? undefined}
         image={mediaUrl(project.cover, 'wide')}
       >
         <Reveal delay={0.18}>
