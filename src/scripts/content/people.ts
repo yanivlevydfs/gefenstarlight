@@ -79,7 +79,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 6,
-    photo: 'a50afb_e4f321ca6d5845e191bd1dc0d369ced2~mv2.jpg',
+    photo: 'a50afb_17b62465c45a4f8ba030eba3e81a3344~mv2.jpg',
     he: {
       name: 'הדר טל',
       role: 'עורך דין',
@@ -93,7 +93,7 @@ export const boardMembers: SeedPerson[] = [
   },
   {
     order: 7,
-    photo: 'a50afb_17b62465c45a4f8ba030eba3e81a3344~mv2.jpg',
+    photo: 'a50afb_e4f321ca6d5845e191bd1dc0d369ced2~mv2.jpg',
     he: { name: 'ארנון מיינפלד', role: 'ועד העמותה' },
     en: { name: 'Arnon Meinfeld', role: 'Board member' },
   },

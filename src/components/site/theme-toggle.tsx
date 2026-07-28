@@ -1,9 +1,28 @@
 'use client'
 
+import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { Moon, Sun } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { THEME_COLORS, type Theme } from '@/lib/theme'
+
+/** The saved choice, falling back to the system preference — the same rule as
+ *  the pre-paint script in the locale layout. */
+function resolveTheme(): Theme {
+  try {
+    const stored = localStorage.getItem('theme')
+    if (stored === 'light' || stored === 'dark') return stored
+  } catch {
+    // Storage can be blocked (private browsing) — fall through.
+  }
+  return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.dataset.theme = theme
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme])
+}
 
 /**
  * Switches between the night and daylight palettes by stamping
@@ -16,19 +35,23 @@ import { THEME_COLORS, type Theme } from '@/lib/theme'
  */
 export function ThemeToggle() {
   const t = useTranslations('theme')
+  const pathname = usePathname()
+
+  // Changing route can re-render <html> — switching language rewrites its
+  // lang/dir — and the reconciled element loses the data-theme attribute the
+  // pre-paint script set. Re-assert the choice after every navigation.
+  useEffect(() => {
+    applyTheme(resolveTheme())
+  }, [pathname])
 
   const toggle = () => {
-    const root = document.documentElement
-    const next: Theme = root.dataset.theme === 'light' ? 'dark' : 'light'
-    root.dataset.theme = next
+    const next: Theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'
+    applyTheme(next)
     try {
       localStorage.setItem('theme', next)
     } catch {
       // Storage can be blocked (private browsing); the theme still switches.
     }
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', THEME_COLORS[next])
   }
 
   return (

@@ -11,6 +11,7 @@ import { PwaRegister } from '@/components/site/pwa-register'
 import { JsonLd } from '@/components/site/json-ld'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
+import { VineBackdrop } from '@/components/site/vine-backdrop'
 import { localeDir, localeTag, routing, type Locale } from '@/i18n/routing'
 import { mediaUrl } from '@/lib/media'
 import { getNavigation, getSiteSettings } from '@/lib/payload'
@@ -152,6 +153,7 @@ export default async function FrontendLayout({
           }}
         />
         <JsonLd data={schema} />
+        <VineBackdrop />
         <NextIntlClientProvider>
           <SiteHeader
             navigation={navigation}
