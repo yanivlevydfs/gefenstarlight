@@ -8,72 +8,70 @@ import { useTranslations } from 'next-intl'
 import { localeHref } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
 
-const STORAGE_KEY = 'gefen-cookie-consent'
-
-/** Fired on the window when this tab answers the banner. */
-const CONSENT_EVENT = 'gefen-consent-change'
+export type Consent = 'accepted' | 'declined' | null
 
 /**
- * One store, two subscribers: the banner (to hide itself) and the analytics
- * gate (to start or stay off). The storage event covers other tabs; the custom
- * event covers the tab the visitor clicked in, where storage events never fire.
+ * The banner belongs to the live site only.
+ *
+ * Vercel sets NEXT_PUBLIC_VERCEL_ENV on every deployment, and leaves it unset
+ * when the app runs anywhere else — so this is false on localhost and on
+ * preview deployments, and the banner never interrupts development or review.
+ * Analytics ride on the same switch: consent can only be given where the
+ * banner appears, so nothing is measured off production either.
  */
+export const IS_LIVE_SITE = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+
+/**
+ * The answer lives in memory for the length of the page view and is never
+ * written to storage — deliberately. Nothing is remembered between visits, so
+ * a returning visitor is asked again rather than held to a choice they made
+ * once and cannot see.
+ *
+ * The practical consequence: the banner returns on every full page load. It
+ * survives navigation within the site, because the App Router keeps this
+ * module alive across client-side route changes.
+ */
+let consent: Consent = null
+const listeners = new Set<() => void>()
+
+/** One store, two subscribers: the banner (to hide itself) and the analytics gate. */
 export function subscribeToConsent(onChange: () => void) {
-  window.addEventListener('storage', onChange)
-  window.addEventListener(CONSENT_EVENT, onChange)
+  listeners.add(onChange)
   return () => {
-    window.removeEventListener('storage', onChange)
-    window.removeEventListener(CONSENT_EVENT, onChange)
+    listeners.delete(onChange)
   }
 }
 
-export function readConsent(): string | null {
-  try {
-    return window.localStorage.getItem(STORAGE_KEY)
-  } catch {
-    // Storage blocked (private browsing) — treat as answered rather than nag.
-    return 'unavailable'
-  }
+export function readConsent(): Consent {
+  return consent
+}
+
+function setConsent(value: Consent) {
+  consent = value
+  for (const notify of listeners) notify()
 }
 
 /**
- * Forget the stored answer, which brings the banner back so the visitor can
- * choose again. Withdrawing consent has to be as easy as giving it, and the
- * banner is the only place the choice is offered.
+ * Forget the answer, which brings the banner back so the visitor can choose
+ * again. Withdrawing consent has to be as easy as giving it, and the banner is
+ * the only place the choice is offered.
  */
 export function clearConsent() {
-  try {
-    window.localStorage.removeItem(STORAGE_KEY)
-  } catch {
-    // Nothing was stored to begin with.
-  }
-  window.dispatchEvent(new Event(CONSENT_EVENT))
+  setConsent(null)
 }
 
 /**
  * Consent banner for the analytics cookies.
  *
- * The stored choice is read through `useSyncExternalStore` so the server
- * renders nothing and the client decides after hydration — no mismatch, and no
- * flash of the banner for someone who already answered.
+ * The answer is read through `useSyncExternalStore` so the server renders
+ * nothing and the client decides after hydration — no mismatch, and no flash
+ * of the banner on a page that has already been answered.
  */
 export function CookieConsent({ locale }: { locale: Locale }) {
   const t = useTranslations('cookies')
-  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => 'server')
+  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => null)
 
-  // Visibility follows the stored answer alone. A local `dismissed` flag used
-  // to hide the banner as well, which meant clearing the choice from the
-  // footer could not bring it back within the same page view.
-  const answer = (value: 'accepted' | 'declined') => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, value)
-    } catch {
-      // The choice simply is not remembered.
-    }
-    window.dispatchEvent(new Event(CONSENT_EVENT))
-  }
-
-  if (choice !== null) return null
+  if (!IS_LIVE_SITE || choice !== null) return null
 
   return (
     <div
@@ -88,7 +86,7 @@ export function CookieConsent({ locale }: { locale: Locale }) {
         <p className="flex-1 text-sm leading-relaxed text-cream-50/80">
           {t('message')}{' '}
           <Link
-            href={localeHref('/terms', locale)}
+            href={localeHref('/privacy', locale)}
             className="text-star-300 underline underline-offset-4 hover:text-star-200"
           >
             {t('learnMore')}
@@ -98,14 +96,14 @@ export function CookieConsent({ locale }: { locale: Locale }) {
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
-            onClick={() => answer('declined')}
+            onClick={() => setConsent('declined')}
             className="rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium transition hover:border-white/40"
           >
             {t('decline')}
           </button>
           <button
             type="button"
-            onClick={() => answer('accepted')}
+            onClick={() => setConsent('accepted')}
             className="rounded-full bg-star-400 px-5 py-2.5 text-sm font-bold text-nightfall transition hover:bg-star-hover"
           >
             {t('accept')}

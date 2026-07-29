@@ -13,7 +13,7 @@ import { readConsent, subscribeToConsent } from '@/components/site/cookie-consen
  * keeps them off entirely.
  */
 export function ConsentGate() {
-  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => 'server')
+  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => null)
 
   if (choice !== 'accepted') return null
 

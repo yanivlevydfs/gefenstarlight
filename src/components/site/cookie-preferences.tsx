@@ -4,7 +4,12 @@ import { Cookie } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useSyncExternalStore } from 'react'
 
-import { clearConsent, readConsent, subscribeToConsent } from '@/components/site/cookie-consent'
+import {
+  clearConsent,
+  IS_LIVE_SITE,
+  readConsent,
+  subscribeToConsent,
+} from '@/components/site/cookie-consent'
 
 /**
  * Footer control that reopens the cookie banner.
@@ -16,9 +21,11 @@ import { clearConsent, readConsent, subscribeToConsent } from '@/components/site
  */
 export function CookiePreferences({ className }: { className?: string }) {
   const t = useTranslations('cookies')
-  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => 'server')
+  const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => null)
 
-  if (choice === null || choice === 'server' || choice === 'unavailable') return null
+  // Nothing to change until an answer exists, and off the live site the banner
+  // never appears in the first place.
+  if (!IS_LIVE_SITE || choice === null) return null
 
   return (
     <button type="button" onClick={clearConsent} className={className}>
