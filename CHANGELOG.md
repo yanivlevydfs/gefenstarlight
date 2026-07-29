@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — 2026-07-29
+- Accessibility statement and privacy policy, both bilingual and both ordinary CMS pages (`pages/3`, `pages/4`) so every word is owner-editable. The privacy text describes what the code actually does, including that the visitor's IP is hashed and never stored.
+- Footer card row for the three legal pages plus a cookie-preferences control, replacing three small underlined links nobody found.
+- Sienna accessibility toolbar (MIT, pinned to 2.2.333), loaded outside the cookie gate so it never waits on consent.
+- `/.well-known/security.txt` (RFC 9116) as a route, so `Expires` is always a year out and the contact address tracks site settings.
+- `coverImage()` and `<CoverImage>`: a listing card resolves its picture from the entry's own cover, its photos, or its attached album, and always draws the frame — the starlight mark stands in when there is genuinely no picture.
+- `cover` leads the admin list columns for articles, projects and albums, so a missing preview is visible without opening the entry.
+
+### Changed — 2026-07-29
+- Subtle premium refinements, tagged `pre-refinements-2026-07-29` for rollback: light surfaces warmed to `#faf8f2` paper, starlight gold moved onto a champagne hue in both themes, a very weak radial of morning light behind the hero, and the vine watermark raised to 0.062 with the leaves enlarged and the grapes reduced.
+- Cookie banner appears on the production deployment only and no longer persists the answer — it holds for the visit and asks again next time.
+- Both manuals (in-console and standalone) cover the new pages, the toolbar, the cookie control and security.txt.
+
+### Fixed — 2026-07-29
+- The wine article had no preview picture anywhere — news card, WhatsApp share and JSON-LD alike — because it was created before its album had a cover. Backfilled, and the resolver above makes the shape impossible to repeat.
+- Postgres `sslmode` pinned to `verify-full`. `pg` treats `require` as verified today but warns that v9 will not, which would have silently downgraded the connection.
+- Clearing the cookie choice could not reopen the banner in the same page view (a local `dismissed` flag outranked the store).
+- Editor no longer reports Tailwind v4's `@theme` as an unknown at-rule.
+
 ### Added — 2026-07-28
 - Light/dark theme toggle on every page: palette-variable remap, pre-paint script, choice persists across reloads and language switches.
 - Vine-leaves watermark background site-wide, tinted per theme.

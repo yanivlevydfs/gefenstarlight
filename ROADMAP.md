@@ -19,7 +19,10 @@ This document outlines the planned roadmap, feature goals, and milestones for **
 - [ ] Set up interactive dashboard views
 - [ ] API integration layer & data fetching utilities
 
-### Open decisions & near-term work (2026-07-28)
+### Open decisions & near-term work (2026-07-29)
+- [ ] **Design refinements awaiting team sign-off** — warm paper background, champagne gold, hero glow and a stronger vine watermark are live; `design-refinements.html` is the before/after sheet sent to the team. Rollback point: tag `pre-refinements-2026-07-29`, or revert commit `c22d8e4`.
+- [ ] **Named accessibility coordinator** — the statement currently points at the contact page. The regulations expect a person; add the name to `pages/3` once chosen.
+- [ ] **DNS still on Wix** — `www.gefenstarlight.com` serves the old site; the new one is only on the Vercel address.
 - [ ] **Site palette** — the team is choosing between five mockup directions (`palette-mockups.html`); applying the choice is a token swap in `globals.css`.
 - [ ] **Full-CMS plan phases** — audit done; Phase 1 (film upload field, SEO extras, hide empty news), Phase 2 (logo uploads, PWA manifest from settings), Phase 3 (editable-texts global) await go-ahead.
 - [ ] Optional: lighter 720p web variant of the home-page film to cut autoplay bandwidth.
