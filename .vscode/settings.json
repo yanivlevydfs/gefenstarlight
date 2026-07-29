@@ -1,0 +1,8 @@
+{
+  // Tailwind v4 keeps the design tokens in CSS, so globals.css uses at-rules
+  // the editor's built-in CSS language service has never heard of — @theme,
+  // @layer, @apply. They are valid; only the linter disagrees.
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
+}
