@@ -5,6 +5,7 @@ import { Frank_Ruhl_Libre, Heebo } from 'next/font/google'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
+import { AccessibilityWidget } from '@/components/site/accessibility-widget'
 import { ConsentGate } from '@/components/site/consent-gate'
 import { CookieConsent } from '@/components/site/cookie-consent'
 import { PwaRegister } from '@/components/site/pwa-register'
@@ -167,6 +168,8 @@ export default async function FrontendLayout({
           <SiteFooter navigation={navigation} settings={settings} locale={typedLocale} />
           <CookieConsent locale={typedLocale} />
         </NextIntlClientProvider>
+
+        <AccessibilityWidget />
 
         {/* Analytics mount only after the cookie banner is accepted. */}
         <ConsentGate />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { Cookie } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -37,6 +37,20 @@ export function readConsent(): string | null {
 }
 
 /**
+ * Forget the stored answer, which brings the banner back so the visitor can
+ * choose again. Withdrawing consent has to be as easy as giving it, and the
+ * banner is the only place the choice is offered.
+ */
+export function clearConsent() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Nothing was stored to begin with.
+  }
+  window.dispatchEvent(new Event(CONSENT_EVENT))
+}
+
+/**
  * Consent banner for the analytics cookies.
  *
  * The stored choice is read through `useSyncExternalStore` so the server
@@ -45,9 +59,11 @@ export function readConsent(): string | null {
  */
 export function CookieConsent({ locale }: { locale: Locale }) {
   const t = useTranslations('cookies')
-  const [dismissed, setDismissed] = useState(false)
   const choice = useSyncExternalStore(subscribeToConsent, readConsent, () => 'server')
 
+  // Visibility follows the stored answer alone. A local `dismissed` flag used
+  // to hide the banner as well, which meant clearing the choice from the
+  // footer could not bring it back within the same page view.
   const answer = (value: 'accepted' | 'declined') => {
     try {
       window.localStorage.setItem(STORAGE_KEY, value)
@@ -55,10 +71,9 @@ export function CookieConsent({ locale }: { locale: Locale }) {
       // The choice simply is not remembered.
     }
     window.dispatchEvent(new Event(CONSENT_EVENT))
-    setDismissed(true)
   }
 
-  if (choice !== null || dismissed) return null
+  if (choice !== null) return null
 
   return (
     <div

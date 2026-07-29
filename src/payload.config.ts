@@ -48,6 +48,30 @@ const postgresUrl = [
 ].find((url) => url?.startsWith('postgres'))
 
 /**
+ * The same string with `sslmode` pinned to `verify-full`.
+ *
+ * `pg` currently treats `prefer`, `require` and `verify-ca` as aliases for
+ * `verify-full` — the certificate really is checked — but warns that pg v9
+ * will give them libpq semantics, where `require` encrypts without verifying
+ * the server at all. Upgrading would then silently downgrade this connection
+ * to something a man in the middle can impersonate. Naming the mode we
+ * already get keeps the behaviour across that change and silences the warning.
+ *
+ * Normalised here rather than in the environment because Vercel's Neon
+ * integration writes POSTGRES_URL itself, with `sslmode=require`, and nobody
+ * gets the chance to edit it. Neon presents a publicly rooted certificate, so
+ * full verification succeeds.
+ *
+ * Kept separate from `postgresUrl`: the fallback secret below is derived from
+ * that string, and rewriting it would change the secret and sign every admin
+ * out.
+ */
+const postgresConnectionString = postgresUrl?.replace(
+  /([?&]sslmode=)(prefer|require|verify-ca)\b/,
+  '$1verify-full',
+)
+
+/**
  * Payload refuses to start without a secret, which takes the whole admin
  * console down. Rather than fail, derive a stable one from the database
  * credential — already a secret, and already required for anything to work.
@@ -154,7 +178,7 @@ export default buildConfig({
   // interactive, so scripts (seed, migrations, CI) turn it off with PAYLOAD_PUSH=false.
   db: postgresUrl
     ? postgresAdapter({
-        pool: { connectionString: postgresUrl },
+        pool: { connectionString: postgresConnectionString },
         push: process.env.PAYLOAD_PUSH !== 'false' && process.env.NODE_ENV !== 'production',
       })
     : sqliteAdapter({

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 
+import { CookiePreferences } from '@/components/site/cookie-preferences'
 import { ProtectedContact } from '@/components/site/protected-contact'
 import { ProtectedText } from '@/components/site/protected-text'
 import { reverseValue } from '@/lib/contact'
@@ -157,9 +158,12 @@ export async function SiteFooter({
       </div>
 
       <div className="border-t border-white/10 py-5">
-        <p className="container-page text-center text-xs text-cream-50/45">
-          © {new Date().getFullYear()} {s?.legalName || orgName} · {t('footer.rights')}
-        </p>
+        <div className="container-page flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-xs text-cream-50/45">
+          <p>
+            © {new Date().getFullYear()} {s?.legalName || orgName} · {t('footer.rights')}
+          </p>
+          <CookiePreferences />
+        </div>
       </div>
     </footer>
   )

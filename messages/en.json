@@ -141,7 +141,8 @@
     "message": "This site uses cookies to measure usage and improve the experience. There is no advertising here and we do not sell any data.",
     "accept": "Accept",
     "decline": "No thanks",
-    "learnMore": "Read the terms"
+    "learnMore": "Read the terms",
+    "preferences": "Cookie preferences"
   },
   "language": {
     "switcher": "Language",
