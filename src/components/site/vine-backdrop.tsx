@@ -10,7 +10,7 @@ export function VineBackdrop() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 text-star-500 opacity-[0.055]"
+      className="pointer-events-none fixed inset-0 -z-10 text-star-500 opacity-[0.062]"
     >
       <svg className="size-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -22,8 +22,8 @@ export function VineBackdrop() {
               <path d="M0,30 C2,40 -2,46 -6,50" strokeWidth="2" />
             </g>
 
-            {/* Bunch of grapes with stem */}
-            <g transform="translate(212 232) rotate(8)" fill="none" stroke="currentColor" strokeWidth="2">
+            {/* Bunch of grapes with stem — kept as a small accent; the leaves carry the motif */}
+            <g transform="translate(212 232) rotate(8) scale(0.72)" fill="none" stroke="currentColor" strokeWidth="2.8">
               <path d="M0,-34 C4,-28 2,-22 0,-18 M0,-34 C-8,-36 -14,-42 -14,-48" />
               <circle cx="-13" cy="-8" r="7.5" />
               <circle cx="0" cy="-10" r="7.5" />
@@ -33,8 +33,8 @@ export function VineBackdrop() {
               <circle cx="0" cy="17" r="7.5" />
             </g>
 
-            {/* Small leaf */}
-            <g transform="translate(224 66) rotate(22) scale(0.55)" fill="none" stroke="currentColor" strokeWidth="3">
+            {/* Second leaf */}
+            <g transform="translate(220 74) rotate(22) scale(0.8)" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M0,-48 C10,-40 20,-42 26,-33 C37,-37 45,-28 42,-18 C52,-13 52,0 43,4 C47,15 38,25 27,22 C25,33 13,39 5,32 C3,42 -3,42 -5,32 C-13,39 -25,33 -27,22 C-38,25 -47,15 -43,4 C-52,0 -52,-13 -42,-18 C-45,-28 -37,-37 -26,-33 C-20,-42 -10,-40 0,-48 Z" />
               <path d="M0,-42 L0,30 M0,-8 L-22,10 M0,-8 L22,10" strokeWidth="2" />
             </g>

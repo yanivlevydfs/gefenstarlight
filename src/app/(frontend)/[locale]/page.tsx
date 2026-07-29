@@ -61,6 +61,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           />
         )}
         <div className="aurora absolute inset-0 -z-10" />
+        <div className="hero-light absolute inset-0 -z-10" />
         <Starfield />
 
         <div className="container-page relative flex min-h-[78vh] flex-col justify-center py-24">

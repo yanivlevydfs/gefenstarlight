@@ -14,13 +14,15 @@
   --color-night-600: #27355e;
   --color-night-500: #3a4a78;
 
-  /* Starlight — the warm accent */
-  --color-star-200: #fdefc8;
-  --color-star-300: #fbe09a;
-  --color-star-400: #f7cd6c;
-  --color-star-500: #edb94a;
-  --color-star-600: #d69c2c;
-  --color-star-700: #a9761d;
+  /* Starlight — the warm accent. Champagne rather than amber: the hue sits a
+     few degrees off orange and the mid tones are muted, so headings read rich
+     instead of neon. */
+  --color-star-200: #fbecc0;
+  --color-star-300: #f3dba0;
+  --color-star-400: #ebc972;
+  --color-star-500: #dcb457;
+  --color-star-600: #c39c3b;
+  --color-star-700: #99772c;
 
   /* Warm neutrals — daylight sections */
   --color-cream-50: #fdfaf3;
@@ -44,7 +46,7 @@
 
   /* Gold CTA hover — lighter gold in the dark theme, deeper in the light
      theme, so hovered buttons keep their dark text readable in both. */
-  --color-star-hover: #fbe09a;
+  --color-star-hover: #f3dba0;
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display), ui-serif, Georgia, serif;
@@ -75,23 +77,25 @@
 :root[data-theme='light'] {
   color-scheme: light;
 
-  /* Surfaces — the daylight sky */
-  --color-night-950: #fdfaf3;
-  --color-night-900: #f6eedd;
-  --color-night-850: #fffcf5;
-  --color-night-800: #f0e4cc;
-  --color-night-700: #e6d7b6;
-  --color-night-600: #d8c397;
-  --color-night-500: #c1a878;
+  /* Surfaces — the daylight sky. Warm premium paper, never clinical white:
+     the page sits at #faf8f2 and only raised cards go lighter. */
+  --color-night-950: #faf8f2;
+  --color-night-900: #f3efe4;
+  --color-night-850: #fdfbf6;
+  --color-night-800: #ece6d6;
+  --color-night-700: #ded5bf;
+  --color-night-600: #cbbd9d;
+  --color-night-500: #b5a582;
 
-  /* Starlight — deepened to bronze for contrast on cream */
-  --color-star-200: #6d4d0c;
-  --color-star-300: #8a5f10;
-  --color-star-400: #c58f17;
-  --color-star-500: #a9761d;
-  --color-star-600: #8a5f13;
-  --color-star-700: #6d4a0e;
-  --color-star-hover: #ad7c12;
+  /* Starlight — deepened for contrast on paper, but kept on the champagne hue
+     so headings stay gold rather than sliding into bronze. */
+  --color-star-200: #6f5210;
+  --color-star-300: #8c6915;
+  --color-star-400: #c0921f;
+  --color-star-500: #a87d1a;
+  --color-star-600: #8c6915;
+  --color-star-700: #6f5210;
+  --color-star-hover: #ab8018;
 
   /* Text — cream flips to ink */
   --color-cream-50: #1a1c26;
@@ -265,6 +269,22 @@
         color-mix(in oklab, var(--color-night-700) 90%, transparent),
         transparent 70%
       );
+  }
+
+  /*
+   * Soft morning light around the hero subject. One very wide, very weak
+   * radial — deliberately larger than the figure and with no visible edge, so
+   * it reads as daylight in the room rather than a halo behind a person.
+   * Built from the theme-invariant paper white: `star-*` would flip to bronze
+   * in the light theme and darken the middle of the frame instead of lifting
+   * it.
+   */
+  .hero-light {
+    background-image: radial-gradient(
+      70% 62% at 50% 46%,
+      color-mix(in oklab, var(--color-daylight) 10%, transparent),
+      transparent 72%
+    );
   }
 
   .text-gradient-star {
