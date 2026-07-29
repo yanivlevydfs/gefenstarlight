@@ -5,6 +5,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, Heart } from 'lucide-react'
 
+import { CoverImage } from '@/components/site/cover-image'
 import { FilmPlayer } from '@/components/site/film-player'
 import { GoalsCarousel } from '@/components/site/goals-carousel'
 import { Starfield } from '@/components/site/starfield'
@@ -12,7 +13,7 @@ import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { getFilm, getGoalPhotos, getHomePage, listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
-import { mediaUrl } from '@/lib/media'
+import { coverImage, mediaUrl } from '@/lib/media'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -173,24 +174,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
           <ul className="mt-10 grid gap-6 md:grid-cols-3">
             {projects.map((project, i) => {
-              const cover = mediaUrl(project.cover, 'card')
+              const cover = coverImage(project, 'card')
               return (
                 <Reveal key={project.id} delay={0.06 * i} as="li">
                   <Link
                     href={localeHref(`/projects/${project.slug}`, typedLocale)}
                     className="group block h-full overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-night-800">
-                      {cover && (
-                        <Image
-                          src={cover.url}
-                          alt=""
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover transition duration-700 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
+                    <CoverImage media={cover} sizes="(max-width: 768px) 100vw, 33vw" />
                     <div className="p-6">
                       <h3 className="text-xl">{project.title}</h3>
                       <p dir="auto" className="mt-2 line-clamp-3 text-sm leading-relaxed text-cream-50/70">

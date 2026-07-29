@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server'
 
+import { CoverImage } from '@/components/site/cover-image'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { alternates } from '@/lib/seo'
 import { listArticles } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
-import { mediaUrl } from '@/lib/media'
+import { coverImage } from '@/lib/media'
 
 export async function generateMetadata({
   params,
@@ -49,24 +49,18 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
         ) : (
           <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {articles.map((article, i) => {
-              const cover = mediaUrl(article.cover, 'card')
+              const cover = coverImage(article, 'card')
               return (
                 <Reveal key={article.id} delay={0.05 * (i % 6)} as="li">
                   <Link
                     href={localeHref(`/news/${article.slug}`, typedLocale)}
                     className="group flex h-full flex-col overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
-                    {cover && (
-                      <div className="relative aspect-[16/10] overflow-hidden bg-night-800">
-                        <Image
-                          src={cover.url}
-                          alt=""
-                          fill
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="object-cover transition duration-700 group-hover:scale-105"
-                        />
-                      </div>
-                    )}
+                    <CoverImage
+                      media={cover}
+                      aspect="aspect-[16/10]"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
                     <div className="flex flex-1 flex-col p-6">
                       <time dateTime={article.publishedAt} className="text-xs text-star-300">
                         {format.dateTime(new Date(article.publishedAt), {

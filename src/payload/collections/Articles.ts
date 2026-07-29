@@ -13,7 +13,9 @@ export const Articles: CollectionConfig = {
   admin: {
     group: { he: 'תוכן', en: 'Content' },
     useAsTitle: 'title',
-    defaultColumns: ['title', 'publishedAt', '_status'],
+    // `cover` first, so the list is a wall of thumbnails and an article
+    // missing its preview picture is obvious at a glance.
+    defaultColumns: ['cover', 'title', 'publishedAt', '_status'],
     description: {
       he: 'עדכונים וחדשות מהעמותה.',
       en: 'News and updates from the foundation.',
@@ -51,6 +53,12 @@ export const Articles: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       label: { he: 'תמונת נושא', en: 'Cover image' },
+      admin: {
+        description: {
+          he: 'התמונה שמופיעה בכרטיס הכתבה ברשימת החדשות. אם לא נבחרה תמונה, תוצג תמונת האלבום המצורף.',
+          en: 'The picture on the article’s card in the news list. Left empty, the attached album’s cover is used.',
+        },
+      },
     },
     {
       name: 'body',

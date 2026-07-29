@@ -1,18 +1,18 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getFormatter, getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowLeft, MapPin } from 'lucide-react'
 
+import { CoverImage } from '@/components/site/cover-image'
 import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { routing, type Locale } from '@/i18n/routing'
 import { alternates } from '@/lib/seo'
 import { listProjects } from '@/lib/payload'
 import { localeHref } from '@/lib/nav'
-import { mediaUrl } from '@/lib/media'
+import { coverImage } from '@/lib/media'
 
 export async function generateMetadata({
   params,
@@ -50,24 +50,18 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
         ) : (
           <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, i) => {
-              const cover = mediaUrl(project.cover, 'card')
+              const cover = coverImage(project, 'card')
               return (
                 <Reveal key={project.id} delay={0.05 * (i % 6)} as="li">
                   <Link
                     href={localeHref(`/projects/${project.slug}`, typedLocale)}
                     className="group flex h-full flex-col overflow-hidden rounded-card border border-white/10 bg-night-850/60 transition hover:border-star-400/40"
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-night-800">
-                      {cover && (
-                        <Image
-                          src={cover.url}
-                          alt=""
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transition duration-700 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
+                    <CoverImage
+                      media={cover}
+                      aspect="aspect-[16/10]"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
 
                     <div className="flex flex-1 flex-col p-6">
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-star-300">

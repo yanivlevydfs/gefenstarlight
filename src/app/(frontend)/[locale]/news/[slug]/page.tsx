@@ -12,7 +12,7 @@ import { RichText } from '@/components/site/rich-text'
 import { routing, type Locale } from '@/i18n/routing'
 import { findArticle, getSiteSettings, listArticles } from '@/lib/payload'
 import { decodeSlug, localeHref } from '@/lib/nav'
-import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { coverImage, toGalleryItems } from '@/lib/media'
 import { alternates, articleSchema, breadcrumbSchema } from '@/lib/seo'
 
 export async function generateStaticParams() {
@@ -34,7 +34,7 @@ export async function generateMetadata({
   const article = await findArticle(slug, locale as Locale)
   if (!article) return {}
 
-  const cover = mediaUrl(article.cover, 'wide')
+  const cover = coverImage(article, 'wide')
   return {
     title: article.title,
     description: article.excerpt ?? undefined,
@@ -69,7 +69,7 @@ export default async function ArticlePage({
   const albumItems = toGalleryItems(album?.items)
 
   const settings = await getSiteSettings(typedLocale)
-  const cover = mediaUrl(article.cover, 'wide')
+  const cover = coverImage(article, 'wide')
   const schema = [
     articleSchema({
       locale: typedLocale,
@@ -97,7 +97,7 @@ export default async function ArticlePage({
         })}
         title={article.title}
         subtitle={article.excerpt ?? undefined}
-        image={mediaUrl(article.cover, 'wide')}
+        image={coverImage(article, 'wide')}
       />
 
       <article className="container-page py-14">

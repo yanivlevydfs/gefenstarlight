@@ -16,7 +16,7 @@ export const Projects: CollectionConfig = {
   admin: {
     group: { he: 'תוכן', en: 'Content' },
     useAsTitle: 'title',
-    defaultColumns: ['title', 'date', 'featured', '_status'],
+    defaultColumns: ['cover', 'title', 'date', 'featured', '_status'],
     description: {
       he: 'כל מיזם הופך לעמוד באתר. הוסיפו מיזם חדש בלחיצה על "צור חדש".',
       en: 'Each project becomes its own page. Click “Create new” to add one.',
@@ -77,6 +77,12 @@ export const Projects: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       label: { he: 'תמונת נושא', en: 'Cover image' },
+      admin: {
+        description: {
+          he: 'התמונה שמופיעה בכרטיס המיזם ברשימת המיזמים ובדף הבית.',
+          en: 'The picture on the project’s card in the projects list and on the home page.',
+        },
+      },
     },
     {
       name: 'body',

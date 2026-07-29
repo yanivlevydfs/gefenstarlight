@@ -11,7 +11,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { routing, type Locale } from '@/i18n/routing'
 import { findAlbum, findProjectByAlbum, listAlbums } from '@/lib/payload'
 import { decodeSlug, localeHref } from '@/lib/nav'
-import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { coverImage, toGalleryItems } from '@/lib/media'
 import { breadcrumbSchema, imageGallerySchema, pageMetadata } from '@/lib/seo'
 
 export async function generateStaticParams() {
@@ -33,7 +33,7 @@ export async function generateMetadata({
   const album = await findAlbum(slug, locale as Locale)
   if (!album) return {}
 
-  const cover = mediaUrl(album.cover, 'wide')
+  const cover = coverImage(album, 'wide')
   return pageMetadata({
     locale: locale as Locale,
     path: `/gallery/${slug}`,
@@ -88,7 +88,7 @@ export default async function AlbumPage({
         kicker={t('gallery.albums')}
         title={album.title}
         subtitle={album.description ?? undefined}
-        image={mediaUrl(album.cover, 'wide')}
+        image={coverImage(album, 'wide')}
       />
 
       <section className="container-page py-14">

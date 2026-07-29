@@ -13,7 +13,7 @@ export const Albums: CollectionConfig = {
   admin: {
     group: { he: 'תוכן', en: 'Content' },
     useAsTitle: 'title',
-    defaultColumns: ['title', 'date', 'kind', 'updatedAt'],
+    defaultColumns: ['cover', 'title', 'date', 'kind', 'updatedAt'],
     description: {
       he: 'אלבומי תמונות וסרטונים. גררו תמונות לשדה "פריטים" כדי לסדר אותן.',
       en: 'Photo and video albums. Drag items to reorder them.',

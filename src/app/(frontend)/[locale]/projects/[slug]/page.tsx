@@ -13,7 +13,7 @@ import { RichText } from '@/components/site/rich-text'
 import { routing, type Locale } from '@/i18n/routing'
 import { findProject, getSiteSettings, listProjects } from '@/lib/payload'
 import { decodeSlug, localeHref } from '@/lib/nav'
-import { mediaUrl, toGalleryItems } from '@/lib/media'
+import { coverImage, toGalleryItems } from '@/lib/media'
 import { articleSchema, breadcrumbSchema, pageMetadata } from '@/lib/seo'
 
 export async function generateStaticParams() {
@@ -35,7 +35,7 @@ export async function generateMetadata({
   const project = await findProject(slug, locale as Locale)
   if (!project) return {}
 
-  const cover = mediaUrl(project.cover, 'wide')
+  const cover = coverImage(project, 'wide')
   return pageMetadata({
     locale: locale as Locale,
     path: `/projects/${slug}`,
@@ -70,7 +70,7 @@ export default async function ProjectPage({
   const quotes = project.quotes ?? []
 
   const settings = await getSiteSettings(typedLocale)
-  const cover = mediaUrl(project.cover, 'wide')
+  const cover = coverImage(project, 'wide')
   const schema = [
     articleSchema({
       locale: typedLocale,
@@ -95,7 +95,7 @@ export default async function ProjectPage({
         kicker={t('projects.title')}
         title={project.title}
         subtitle={project.summary ?? undefined}
-        image={mediaUrl(project.cover, 'wide')}
+        image={coverImage(project, 'wide')}
       >
         <Reveal delay={0.18}>
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-cream-50/60">

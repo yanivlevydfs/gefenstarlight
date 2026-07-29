@@ -70,6 +70,37 @@ export function mediaList(value: unknown, size: SizeName = 'card'): ResolvedMedi
   return resolved
 }
 
+/**
+ * The preview picture for a listing card.
+ *
+ * `cover` is optional in every collection that has one, so an entry can reach
+ * a listing with the field blank — an editor skips it, or a script fills it
+ * from an album that had no cover of its own yet, which is how the wine
+ * article shipped with a headline and no picture. Rather than trust the field,
+ * fall through to whatever the entry already carries: its own cover, then its
+ * album's cover, then the album's first photo. Resolved at read time, so a row
+ * that gains a photo later stops needing a backfill.
+ *
+ * Returns null only when there is genuinely no picture anywhere; `CoverImage`
+ * draws the placeholder in that case, so the card is never a bare box.
+ */
+export function coverImage(doc: unknown, size: SizeName = 'card'): ResolvedMedia | null {
+  if (!doc || typeof doc !== 'object') return null
+  const { cover, items, album } = doc as { cover?: unknown; items?: unknown; album?: unknown }
+
+  const own = mediaUrl(cover, size)
+  if (own) return own
+
+  // An album holds its photos directly; an article or project reaches them
+  // through the album it is attached to.
+  const first = mediaList(items, size)[0]
+  if (first) return first
+
+  if (!album || typeof album !== 'object') return null
+  const { cover: albumCover, items: albumItems } = album as { cover?: unknown; items?: unknown }
+  return mediaUrl(albumCover, size) ?? mediaList(albumItems, size)[0] ?? null
+}
+
 export type GalleryItem = {
   src: string
   thumb: string
