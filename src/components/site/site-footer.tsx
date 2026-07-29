@@ -1,7 +1,15 @@
 ﻿import Image from 'next/image'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
-import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import {
+  Accessibility,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  ScrollText,
+  ShieldCheck,
+} from 'lucide-react'
 
 import { CookiePreferences } from '@/components/site/cookie-preferences'
 import { ProtectedContact } from '@/components/site/protected-contact'
@@ -11,11 +19,21 @@ import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
 
+/**
+ * The pages the law expects to be reachable from anywhere on the site. Given
+ * cards rather than the row of small underlined links they used to be: at that
+ * size nobody found them, which defeats the point of publishing them.
+ */
 const LEGAL_PAGES = [
-  { href: '/accessibility', key: 'footer.accessibility' },
-  { href: '/privacy', key: 'footer.privacy' },
-  { href: '/terms', key: 'footer.terms' },
+  { href: '/accessibility', key: 'accessibility', Icon: Accessibility },
+  { href: '/privacy', key: 'privacy', Icon: ShieldCheck },
+  { href: '/terms', key: 'terms', Icon: ScrollText },
 ] as const
+
+/** Shared by the three links and the cookie button, so all four read as one row. */
+const CARD =
+  'group flex items-center gap-3 rounded-card border border-white/10 bg-night-850/50 px-4 py-3.5 ' +
+  'transition hover:border-star-400/40 hover:bg-night-850'
 
 type Settings = {
   organisationName?: string
@@ -163,25 +181,31 @@ export async function SiteFooter({
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-5">
-        <div className="container-page flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-xs text-cream-50/45">
-          <p>
-            © {new Date().getFullYear()} {s?.legalName || orgName} · {t('footer.rights')}
-          </p>
-          {/* The legal pages the law expects to be reachable from every page.
-              Each is an ordinary CMS page, so the owner edits the wording in
-              the admin console; only the link lives here. */}
-          {LEGAL_PAGES.map(({ href, key }) => (
-            <Link
-              key={href}
-              href={localeHref(href, locale)}
-              className="underline underline-offset-4 transition hover:text-star-300"
-            >
-              {t(key)}
+      {/* Each card is an ordinary CMS page — the owner edits the wording in the
+          admin console; only the link and its one-line summary live here. */}
+      <div className="border-t border-white/10">
+        <div className="container-page grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-4">
+          {LEGAL_PAGES.map(({ href, key, Icon }) => (
+            <Link key={href} href={localeHref(href, locale)} className={CARD}>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-star-400/10 text-star-400 transition group-hover:bg-star-400/20">
+                <Icon className="size-4.5" aria-hidden />
+              </span>
+              <span>
+                <span className="block text-sm font-semibold transition group-hover:text-star-300">
+                  {t(`footer.${key}`)}
+                </span>
+                <span className="block text-xs text-cream-50/55">{t(`footer.${key}Note`)}</span>
+              </span>
             </Link>
           ))}
-          <CookiePreferences />
+          <CookiePreferences className={CARD} />
         </div>
+      </div>
+
+      <div className="border-t border-white/10 py-5">
+        <p className="container-page text-center text-xs text-cream-50/45">
+          © {new Date().getFullYear()} {s?.legalName || orgName} · {t('footer.rights')}
+        </p>
       </div>
     </footer>
   )

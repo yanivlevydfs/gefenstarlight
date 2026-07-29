@@ -137,7 +137,10 @@
     "builtWith": "Built with love, in memory of Gefen",
     "accessibility": "Accessibility",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "accessibilityNote": "How we keep this site usable by everyone",
+    "privacyNote": "What the site collects and what we do with it",
+    "termsNote": "Terms of use and foundation details"
   },
   "cookies": {
     "title": "Cookie notice",
@@ -145,7 +148,8 @@
     "accept": "Accept",
     "decline": "No thanks",
     "learnMore": "Read the terms",
-    "preferences": "Cookie preferences"
+    "preferences": "Cookie preferences",
+    "preferencesNote": "Change your cookie choice at any time"
   },
   "language": {
     "switcher": "Language",

@@ -137,7 +137,10 @@
     "builtWith": "נבנה באהבה לזכרו של גפן",
     "accessibility": "הצהרת נגישות",
     "privacy": "מדיניות פרטיות",
-    "terms": "תקנון"
+    "terms": "תקנון",
+    "accessibilityNote": "מה עשינו כדי שהאתר יהיה נגיש לכולם",
+    "privacyNote": "איזה מידע נאסף באתר ומה נעשה בו",
+    "termsNote": "תנאי השימוש באתר ופרטי העמותה"
   },
   "cookies": {
     "title": "הודעה על שימוש בעוגיות",
@@ -145,7 +148,8 @@
     "accept": "אישור",
     "decline": "לא תודה",
     "learnMore": "פרטים בתקנון",
-    "preferences": "העדפות עוגיות"
+    "preferences": "העדפות עוגיות",
+    "preferencesNote": "שינוי הבחירה בעוגיות בכל רגע"
   },
   "language": {
     "switcher": "בחירת שפה",
