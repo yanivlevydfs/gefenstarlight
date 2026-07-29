@@ -134,7 +134,10 @@
     "navTitle": "Navigate",
     "contactTitle": "Get in touch",
     "supportTitle": "Support",
-    "builtWith": "Built with love, in memory of Gefen"
+    "builtWith": "Built with love, in memory of Gefen",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "cookies": {
     "title": "Cookie notice",

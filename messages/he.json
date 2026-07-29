@@ -134,7 +134,10 @@
     "navTitle": "ניווט",
     "contactTitle": "יצירת קשר",
     "supportTitle": "תמיכה",
-    "builtWith": "נבנה באהבה לזכרו של גפן"
+    "builtWith": "נבנה באהבה לזכרו של גפן",
+    "accessibility": "הצהרת נגישות",
+    "privacy": "מדיניות פרטיות",
+    "terms": "תקנון"
   },
   "cookies": {
     "title": "הודעה על שימוש בעוגיות",

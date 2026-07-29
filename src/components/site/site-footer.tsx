@@ -11,6 +11,12 @@ import { StarMark } from '@/components/site/star-mark'
 import { defaultNav, localeHref, navFromGlobal } from '@/lib/nav'
 import type { Locale } from '@/i18n/routing'
 
+const LEGAL_PAGES = [
+  { href: '/accessibility', key: 'footer.accessibility' },
+  { href: '/privacy', key: 'footer.privacy' },
+  { href: '/terms', key: 'footer.terms' },
+] as const
+
 type Settings = {
   organisationName?: string
   legalName?: string
@@ -162,6 +168,18 @@ export async function SiteFooter({
           <p>
             © {new Date().getFullYear()} {s?.legalName || orgName} · {t('footer.rights')}
           </p>
+          {/* The legal pages the law expects to be reachable from every page.
+              Each is an ordinary CMS page, so the owner edits the wording in
+              the admin console; only the link lives here. */}
+          {LEGAL_PAGES.map(({ href, key }) => (
+            <Link
+              key={href}
+              href={localeHref(href, locale)}
+              className="underline underline-offset-4 transition hover:text-star-300"
+            >
+              {t(key)}
+            </Link>
+          ))}
           <CookiePreferences />
         </div>
       </div>

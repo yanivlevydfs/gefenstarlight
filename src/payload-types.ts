@@ -170,6 +170,9 @@ export interface Project {
    * A sentence or two shown on the project card in the projects list.
    */
   summary?: string | null;
+  /**
+   * The picture on the project’s card in the projects list and on the home page.
+   */
   cover?: (number | null) | Media;
   body?: {
     root: {
@@ -351,6 +354,9 @@ export interface Article {
     | null;
   publishedAt: string;
   excerpt?: string | null;
+  /**
+   * The picture on the article’s card in the news list. Left empty, the attached album’s cover is used.
+   */
   cover?: (number | null) | Media;
   body?: {
     root: {
