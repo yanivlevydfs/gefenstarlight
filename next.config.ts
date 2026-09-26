@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+          // Keep every response — pages, images, API — out of search and AI
+          // indexes, including crawlers that skip robots.txt. See robots.ts.
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai',
+          },
         ],
       },
     ]

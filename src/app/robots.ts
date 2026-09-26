@@ -1,35 +1,76 @@
 import type { MetadataRoute } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.gefenstarlight.com'
-
-// Media files are served from /api/media/file when Blob storage is off, and
-// those URLs are what OG tags and image search are given — so they must stay
-// crawlable even though the rest of the API is not. The admin console and its
-// API are not for crawlers.
-const ALLOW = ['/', '/api/media/file/']
-const DISALLOW = ['/admin', '/api']
-
 /**
- * AI search crawlers, listed explicitly so the foundation stays visible in
- * ChatGPT, Claude, Perplexity and Google's AI features — a small charity
- * benefits from every answer engine that can cite it. They get the same rules
- * as everyone else; being explicit documents that this is a choice.
+ * The site is closed to crawlers: search engines and AI bots alike. `*` covers
+ * every crawler that honours robots.txt; the named agents are listed as well
+ * because some (AdsBot-Google, several AI crawlers) ignore the `*` group and
+ * only obey rules addressed to them by name. The noindex meta tag and
+ * X-Robots-Tag header (layout.tsx, next.config.ts) back this up for anything
+ * that fetches a page anyway.
  */
+const GOOGLE_CRAWLERS = [
+  'Googlebot',
+  'Googlebot-Image',
+  'Googlebot-News',
+  'Googlebot-Video',
+  'Google-InspectionTool',
+  'GoogleOther',
+  'GoogleOther-Image',
+  'GoogleOther-Video',
+  'Google-Extended',
+  'Google-CloudVertexBot',
+  'Storebot-Google',
+  'AdsBot-Google',
+  'AdsBot-Google-Mobile',
+  'Mediapartners-Google',
+  'APIs-Google',
+  'FeedFetcher-Google',
+  'Google-Read-Aloud',
+]
+
 const AI_CRAWLERS = [
   'GPTBot',
+  'ChatGPT-User',
   'OAI-SearchBot',
   'ClaudeBot',
+  'Claude-User',
+  'Claude-SearchBot',
+  'claude-web',
   'anthropic-ai',
   'PerplexityBot',
-  'Google-Extended',
+  'Perplexity-User',
+  'CCBot',
+  'Bytespider',
+  'Amazonbot',
+  'Applebot',
+  'Applebot-Extended',
+  'meta-externalagent',
+  'meta-externalfetcher',
+  'FacebookBot',
+  'cohere-ai',
+  'cohere-training-data-crawler',
+  'MistralAI-User',
+  'DuckAssistBot',
+  'YouBot',
+  'Diffbot',
+  'AI2Bot',
+  'Ai2Bot-Dolma',
+  'PetalBot',
+  'PanguBot',
+  'Timpibot',
+  'ImagesiftBot',
+  'omgili',
+  'omgilibot',
+  'Webzio-Extended',
+  'img2dataset',
+  'FirecrawlAgent',
 ]
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: '*', allow: ALLOW, disallow: DISALLOW },
-      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: ALLOW, disallow: DISALLOW })),
+      { userAgent: '*', disallow: '/' },
+      { userAgent: [...GOOGLE_CRAWLERS, ...AI_CRAWLERS], disallow: '/' },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

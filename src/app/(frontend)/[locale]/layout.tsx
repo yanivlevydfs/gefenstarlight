@@ -71,10 +71,14 @@ export async function generateMetadata({
       locale === 'he'
         ? ['עמותה', 'נוער בסיכון', 'ג׳ודו', 'קרב מגע', 'אומנויות לחימה', 'תרומה', 'גפן אבירם']
         : ['charity', 'youth at risk', 'judo', 'krav maga', 'martial arts', 'donate', 'Israel'],
+    // Closed to search engines and AI crawlers — see src/app/robots.ts.
     robots: {
-      index: true,
-      follow: true,
-      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
+      index: false,
+      follow: false,
+      nocache: true,
+      noimageindex: true,
+      nosnippet: true,
+      googleBot: { index: false, follow: false, noimageindex: true, nosnippet: true },
     },
     openGraph: {
       type: 'website',

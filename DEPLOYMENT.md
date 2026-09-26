@@ -136,7 +136,8 @@ code change.
 
 - `/{he,en}` — the public site, Hebrew by default
 - `/admin` — the admin console, in Hebrew
-- `/sitemap.xml`, `/robots.txt` — generated from the CMS
+- `/robots.txt` — blocks all crawlers, Google and AI bots included (plus `noindex` meta tag and `X-Robots-Tag` header)
+- `/sitemap.xml` — generated from the CMS, but no longer listed in robots.txt
 
 ---
 
