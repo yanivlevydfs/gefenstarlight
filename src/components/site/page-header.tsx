@@ -34,7 +34,7 @@ export async function PageHeader({
           fill
           priority
           sizes="100vw"
-          className="-z-10 animate-drift object-cover opacity-25"
+          className="-z-10 animate-drift object-cover object-[center_20%] opacity-25"
         />
       )}
       <div className="aurora absolute inset-0 -z-10" />
