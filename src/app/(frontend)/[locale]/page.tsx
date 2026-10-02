@@ -58,7 +58,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             fill
             priority
             sizes="100vw"
-            className="-z-10 animate-drift object-cover opacity-30"
+            className="-z-10 animate-drift object-cover object-[center_20%] opacity-30"
           />
         )}
         <div className="aurora absolute inset-0 -z-10" />
