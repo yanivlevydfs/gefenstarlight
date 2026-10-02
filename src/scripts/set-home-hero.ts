@@ -5,6 +5,8 @@
  *
  *   node --env-file=.env.production.local --import tsx src/scripts/set-home-hero.ts
  */
+export {}
+
 const { getPayload } = await import('payload')
 const { default: config } = await import('../payload.config.js')
 
